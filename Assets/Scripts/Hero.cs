@@ -2,6 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using Unity.VisualScripting;
 using UnityEngine;
+using System;
 
 public class Hero : MonoBehaviour
 {
@@ -10,10 +11,13 @@ public class Hero : MonoBehaviour
 
     private HeroStats currentStats;
     private int xp = 0;
+    private int currentEnergy = 0;  //Aktuelle Energie des Helden
 
-    private void Start()
+    private EnergyBar energyBar;
+
+    private void Awake()
     {
-        UpdateHeroStats();
+        InitialUpdateHeroStats();
     }
 
     //Methode, um XP hinzuzufügen und den Rang zu erhöhen
@@ -41,10 +45,17 @@ public class Hero : MonoBehaviour
         }
     }
 
+    private void InitialUpdateHeroStats()
+    {
+        currentStats = HeroManager.heroData[(heroType, heroRank)];
+        //Debug.Log($"{heroType} auf {heroRank} hat {currentStats.energyToAct} Energie, {currentStats.crownDamage} KronenSchaden, {currentStats.bulwarkDamage} Bulwarkschaden, {currentStats.delayAdding} Delay, {currentStats.healingAdding} Healing und {currentStats.energyAdding} Energiezufuhr.");
+    }
+
     private void UpdateHeroStats()
     {
         currentStats = HeroManager.heroData[(heroType, heroRank)];
-        Debug.Log($"{heroType} auf {heroRank} hat {currentStats.energyToAct} Energie, {currentStats.crownDamage} KronenSchaden, {currentStats.bulwarkDamage} Bulwarkschaden, {currentStats.delayAdding} Delay, {currentStats.healingAdding} Healing und {currentStats.energyAdding} Energiezufuhr.");
+        energyBar.UpdateEnergieDisplay(currentEnergy, getMaxEnergy());
+        //Debug.Log($"{heroType} auf {heroRank} hat {currentStats.energyToAct} Energie, {currentStats.crownDamage} KronenSchaden, {currentStats.bulwarkDamage} Bulwarkschaden, {currentStats.delayAdding} Delay, {currentStats.healingAdding} Healing und {currentStats.energyAdding} Energiezufuhr.");
     }
 
     // Beispiel für das Senden einer Bombe
@@ -54,5 +65,57 @@ public class Hero : MonoBehaviour
         // TODO
     }
 
-    //Methode, um Energie hinzuzufügen
+    //Methode zur Energieerfassung
+    public void AddEnergy(int amount)
+    {
+        currentEnergy += amount;
+        int maxEnergy = getMaxEnergy();
+        if (currentEnergy > maxEnergy)
+        {
+            currentEnergy = 0;
+        }
+
+        energyBar.UpdateEnergieDisplay(currentEnergy, maxEnergy);
+    }
+
+    //Methoden um die Werte auszulesen
+    public int getCrownDamage()
+    {
+        return currentStats.crownDamage;
+    }
+
+    public int getBulwarkDamage()
+    {
+        return currentStats.bulwarkDamage;
+    }
+
+    public int getDelayAdding()
+    {
+        return currentStats.delayAdding;
+    }
+
+    public int getHealingAdding()
+    {
+        return currentStats.healingAdding;
+    }
+
+    public int getEnergyAdding()
+    {
+        return currentStats.energyAdding;
+    }
+
+    public string getHeroName()
+    {
+        return heroType.ToString();
+    }
+
+    public int getMaxEnergy()
+    {
+        return currentStats.energyToAct;
+    }
+
+    public void setEnergyBar(EnergyBar bar)
+    {
+        energyBar = bar;
+    }
 }

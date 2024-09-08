@@ -10,6 +10,13 @@ public class HeroSelectionRotator : MonoBehaviour
     private int currentSquareHeroIndex = 0;         //Aktuelle Position des Square Helden in der Liste
     private int currentDiamondHeroIndex = 0;        //Aktuelle Position des Diamond Helden in der Liste
 
+    [SerializeField] private HeroUIUpdater squareHeroUIUpdater;
+    [SerializeField] private HeroUIUpdater diamondHeroUIUpdater;
+    [SerializeField] private EnergyBar squareEnergyBar;
+    [SerializeField] private EnergyBar diamondEnergyBar;
+    private Hero currentSquareHero;
+    private Hero currentDiamondHero;
+
     [SerializeField]
     private Transform squareHeroSpawnPoint;     //Position, an der der Square-Held erscheinen soll
     [SerializeField]
@@ -68,19 +75,37 @@ public class HeroSelectionRotator : MonoBehaviour
 
             //Instanziere den neuen Square-Held an der vorgesehenen Position
             activeSquareHero = Instantiate(availableHeroes[currentSquareHeroIndex], squareHeroSpawnPoint.position, squareHeroSpawnPoint.rotation);
-            Debug.Log("Square Hero: " + availableHeroes[currentSquareHeroIndex].name + " wurde ausgewählt.");
+            //Debug.Log("Square Hero: " + availableHeroes[currentSquareHeroIndex].name + " wurde ausgewählt.");
+
+            currentSquareHero = activeSquareHero.GetComponent<Hero>();
+            //Debug.LogWarning("current Square Hero: " + currentSquareHero);
+            if (currentSquareHero != null)
+            {
+                squareHeroUIUpdater.UpdateHeroDisplay(currentSquareHero);
+                squareEnergyBar.UpdateEnergieDisplay(0, currentSquareHero.getMaxEnergy());
+                currentSquareHero.setEnergyBar(squareEnergyBar);
+            }
         }
         else if (heroType == "Diamond")
         {
             //Lösche den aktuellen Diamond-Held, wenn einer existiert
-            if (activeSquareHero != null)
+            if (activeDiamondHero != null)
             {
                 Destroy(activeDiamondHero);
             }
 
             //Instanziere den neuen Square-Held an der vorgesehenen Position
             activeDiamondHero = Instantiate(availableHeroes[currentDiamondHeroIndex], diamondHeroSpawnPoint.position, diamondHeroSpawnPoint.rotation);
-            Debug.Log("Diamond Hero: " + availableHeroes[currentDiamondHeroIndex].name + " wurde ausgewählt.");
+            //Debug.Log("Diamond Hero: " + availableHeroes[currentDiamondHeroIndex].name + " wurde ausgewählt.");
+
+            currentDiamondHero = activeDiamondHero.GetComponent<Hero>();
+            //Debug.LogWarning("current Diamond Hero: " + currentDiamondHero);
+            if (currentDiamondHero != null)
+            {
+                diamondHeroUIUpdater.UpdateHeroDisplay(currentDiamondHero);
+                diamondEnergyBar.UpdateEnergieDisplay(0, currentDiamondHero.getMaxEnergy());
+                currentDiamondHero.setEnergyBar(diamondEnergyBar);
+            }
         }
     }
 }
