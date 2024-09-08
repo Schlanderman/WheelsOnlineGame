@@ -13,6 +13,7 @@ public class WheelSpin : MonoBehaviour
     public bool hasStopped = false;     //Ob das Rad angehalten hat
     public bool isLocked = false;       //Ob das Rad gesperrt ist
     private bool clampLock = false;
+    private bool initialClampLock = true;
 
     [SerializeField]
     private int wheelIndex;     //Welches Rad ist das? (0-4)
@@ -79,11 +80,18 @@ public class WheelSpin : MonoBehaviour
                 clampLock = true;
             }
         }
+
+        initialClampLock = false;
     }
 
     //Methode um das Rad zu sperren oder zu entsperren
     public void ToggleLock()
     {
+        if (initialClampLock)
+        {
+            return;
+        }
+
         if (!clampLock)
         {
             isLocked = !isLocked;
@@ -126,6 +134,10 @@ public class WheelSpin : MonoBehaviour
         //Debug.Log(this + " stoppt bei Winkel: " + finalRotation);
         //Hole das Symbol, das oben liegt
         Symbol topSymbol = wheelManager.GetTopSymbol(wheelIndex, finalRotation);
+
+        isLocked = true;
+        clampLock = true;
+        clampedActivator.ToggleClamps(isLocked);    //Klammeranimation triggern
 
         //Verarbeite das Symbol
         Debug.Log("Rad " + wheelIndex + " Symbol: " + topSymbol);

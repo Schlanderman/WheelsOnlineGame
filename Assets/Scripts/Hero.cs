@@ -5,18 +5,16 @@ using UnityEngine;
 
 public class Hero : MonoBehaviour
 {
-    [SerializeField]
-    private string heroName;     //Name des Helden (z.B. Archer, Engineer)
-    [SerializeField]
-    private int energy;          //Enerhie, die der Held benötigt zum Agieren
-    [SerializeField]
-    private int xp = 0;          //Aktuelle XP des Helden
-    [SerializeField]
-    private int rank = 1;        //Rang des Helden
-    [SerializeField]
-    private int crownDamage;     //Schaden, den der Held der Krone zufügen kann
-    [SerializeField]
-    private int bulwarkDamage;   //Schaden, den der Held dem Bulwark zufügen kann
+    public HeroType heroType;
+    public HeroRank heroRank = HeroRank.Bronze;
+
+    private HeroStats currentStats;
+    private int xp = 0;
+
+    private void Start()
+    {
+        UpdateHeroStats();
+    }
 
     //Methode, um XP hinzuzufügen und den Rang zu erhöhen
     public void AddXP(int amount)
@@ -32,18 +30,29 @@ public class Hero : MonoBehaviour
     private void RankUp()
     {
         xp = 0;
-        rank++;
-        if (rank > 3)
+        if (heroRank == HeroRank.Gold)
         {
-            rank = 3;       //Maximaler Rang ist Gold
-            SendBomb();     // Sende Bombe bei Gold
+            SendBomb();     //Sende Bombe bei Gold
         }
+        else
+        {
+            heroRank++;
+            UpdateHeroStats();
+        }
+    }
+
+    private void UpdateHeroStats()
+    {
+        currentStats = HeroManager.heroData[(heroType, heroRank)];
+        Debug.Log($"{heroType} auf {heroRank} hat {currentStats.energyToAct} Energie, {currentStats.crownDamage} KronenSchaden, {currentStats.bulwarkDamage} Bulwarkschaden, {currentStats.delayAdding} Delay, {currentStats.healingAdding} Healing und {currentStats.energyAdding} Energiezufuhr.");
     }
 
     // Beispiel für das Senden einer Bombe
     private void SendBomb()
     {
-        Debug.Log(heroName + " hat eine Bombe geschickt!");
+        Debug.Log(heroType + " hat eine Bombe geschickt!");
         // TODO
     }
+
+    //Methode, um Energie hinzuzufügen
 }
