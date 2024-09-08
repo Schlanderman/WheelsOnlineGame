@@ -15,7 +15,7 @@ public class ClampActivator : MonoBehaviour
     private Vector3 lockedState = new Vector3(0f, 0f, 0f);              //Position für bede Klammern geschlossen
 
     [SerializeField]
-    private float animationDuration = .2f;       //Dauer der Animation
+    private float animationDuration = 0.2f;     //Dauer der Animation
     private Quaternion targetRotationUpper;     //Zielrotation der oberen Klammer
     private Quaternion targetRotationLower;     //Zielrotation der unteren Klammer
     private Quaternion startRotationUpper;      //Startrotation der oberen Klammer

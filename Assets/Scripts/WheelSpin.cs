@@ -12,9 +12,24 @@ public class WheelSpin : MonoBehaviour
     private float currentSpinSpeed;
     public bool hasStopped = false;     //Ob das Rad angehalten hat
     public bool isLocked = false;       //Ob das Rad gesperrt ist
+    private bool clampLock = false;
+
+    [SerializeField]
+    private int wheelIndex;     //Welches Rad ist das? (0-4)
+    private float finalRotation;
+
+    private WheelManager wheelManager;
 
     [SerializeField]
     private ClampActivator clampedActivator;
+
+    public delegate void OnWheelStopped();
+    public event OnWheelStopped wheelStoppedEvent;
+
+    private void Start()
+    {
+        wheelManager = FindObjectOfType<WheelManager>();
+    }
 
     private void Update()
     {
@@ -27,13 +42,19 @@ public class WheelSpin : MonoBehaviour
             currentSpinSpeed = Mathf.Lerp(currentSpinSpeed, 0f, Time.deltaTime * slowDownRate);
 
             //Wenn die Geschwindigkeit fast 0 erreicht, stoppe das Rad
-            if (currentSpinSpeed < 1f)
+            if (currentSpinSpeed < 10f)
             {
                 currentSpinSpeed = 0f;
                 isSpinning = false;
                 SnapToNearestSymbol();
                 hasStopped = true;
-                Debug.Log("Rad ist gestoppt! Rotation: " + transform.eulerAngles.z);
+                //Debug.Log("Rad ist gestoppt! Rotation: " + transform.eulerAngles.x);
+
+                //Benachrichtige den WheelManager, dass dieses Rad gestoppt hat
+                if (wheelStoppedEvent != null)
+                {
+                    wheelStoppedEvent.Invoke();
+                }
             }
         }
     }
@@ -47,15 +68,28 @@ public class WheelSpin : MonoBehaviour
             isSpinning = true;
             hasStopped = false;
             slowDownRate = Random.Range(1f, 2f);
+            spinSpeed = Random.Range(400f, 600f);
+        }
+        else if (isLocked)
+        {
+            //Benachrichtige den WheelManager, dass dieses Rad gelocked ist
+            if (wheelStoppedEvent != null)
+            {
+                wheelStoppedEvent.Invoke();
+                clampLock = true;
+            }
         }
     }
 
     //Methode um das Rad zu sperren oder zu entsperren
     public void ToggleLock()
     {
-        isLocked = !isLocked;
-        clampedActivator.ToggleClamps(isLocked);    //Klammeranimation triggern
-        Debug.Log("Rad " + (isLocked ? "gesperrt" : "entsperrt"));
+        if (!clampLock)
+        {
+            isLocked = !isLocked;
+            clampedActivator.ToggleClamps(isLocked);    //Klammeranimation triggern
+            Debug.Log("Rad " + (isLocked ? "gesperrt" : "entsperrt"));
+        }
     }
 
     //Diese Methode wird aufgerufen, wenn das Rad angeklickt wird
@@ -64,32 +98,86 @@ public class WheelSpin : MonoBehaviour
         ToggleLock();   //Entsperre oder sperre das Rad beim Klick
     }
 
-    //Methode, um das Ergebnis basierend auf der Rotation zu analysieren
-    public int GetResult()
-    {
-        if (hasStopped)
-        {
-            float xRotation = transform.eulerAngles.x;
-            //Berechne das angezeigte Symbol basierend auf der z-Rotation
-            //Jedes Segment des Rades ist 45 Grad (360/8 Symbole)
-            int symbolindex = Mathf.FloorToInt(xRotation / (360f / 8f)) % 8;
-            return symbolindex;     //Gib den Index des Symbols zurück
-        }
-
-        return -1;      //Wenn das Rad noch nicht gestoppt hat
-    }
-
     void SnapToNearestSymbol()
     {
-        //Aktuelle X-Rotation abrufen
+        //Berechne die X-Rotation konsistent mit Atan2
+        //float currentXRotation = GetXRotationConsistent(transform);
+
+        // Aktuelle Z-Rotation abrufen
         float currentXRotation = transform.eulerAngles.x;
 
         //Die nächste Symbolposition berechnen (vielfaches von 45°)
         float snappedRotation = Mathf.Round(currentXRotation / 45f) * 45f;
+        finalRotation = Mathf.Round(GetXRotationConsistent(transform) / 45) * 45;
+        Debug.Log(this + " war " + currentXRotation + " und ist gesnapped auf: " + snappedRotation);
 
         //Setze die Rotation des Rads auf diese genaue Symbolpsoition
-        transform.eulerAngles = new Vector3(snappedRotation, transform.eulerAngles.y, transform.eulerAngles.z);
+        //transform.eulerAngles = new Vector3(snappedRotation, transform.eulerAngles.y, transform.eulerAngles.z);
 
-        Debug.Log("Gesnapped auf: " + snappedRotation);
+        //Starte die Coroutine für die sanfte Rotation
+        StartCoroutine(SmoothSnapRotation(snappedRotation));
+    }
+
+    public void StopWheel()
+    {
+        //Berechne die X-Rotation, wo das Rad gestoppt hat, konsistent mit Atan2
+        //float currentXRotation = GetXRotationConsistent(transform);
+
+        //Debug.Log(this + " stoppt bei Winkel: " + finalRotation);
+        //Hole das Symbol, das oben liegt
+        Symbol topSymbol = wheelManager.GetTopSymbol(wheelIndex, finalRotation);
+
+        //Verarbeite das Symbol
+        Debug.Log("Rad " + wheelIndex + " Symbol: " + topSymbol);
+    }
+
+    public bool HasStopped()
+    {
+        return hasStopped;
+    }
+
+    float GetXRotationConsistent(Transform targetTransform)
+    {
+        // Berechne den up-Vektor der lokalen Rotation des Objekts
+        Vector3 up = targetTransform.up;
+
+        // Berechne den Winkel in der Y-Z-Ebene (x-Rotation)
+        float xRotation = Mathf.Atan2(up.z, up.y) * Mathf.Rad2Deg;
+        xRotation *= -1f;
+
+        // Stelle sicher, dass der Winkel im Bereich 0 bis 360 Grad liegt
+        if (xRotation < 0)
+        {
+            xRotation += 360;
+        }
+
+        return xRotation;
+    }
+
+    private IEnumerator SmoothSnapRotation(float targetXRotation)
+    {
+        //Dauer der Animation
+        float duration = 0.5f;
+        float timeElapsed = 0f;
+
+        //Die aktuelle Rotation in Quaternion speichern
+        Quaternion initialRotation = transform.rotation;
+
+        //Zielrotation in Quaternion berechnen, um eine sanfte Imterpolation durchzuführen
+        Quaternion targetRotation = Quaternion.Euler(targetXRotation, transform.eulerAngles.y, transform.eulerAngles.z);
+
+        //Führe die Interpolation über die Zeit durch
+        while (timeElapsed < duration)
+        {
+            //Linear interpolieren zwischen der Startrotation und der Zielrotation
+            transform.rotation = Quaternion.Lerp(initialRotation, targetRotation, timeElapsed / duration);
+
+            //Erhöhe die verstrichene Zeit
+            timeElapsed += Time.deltaTime;
+            //Warte bis zum nächsten Frame
+            yield return null;
+        }
+
+        transform.rotation = targetRotation;
     }
 }

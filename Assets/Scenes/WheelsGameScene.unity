@@ -298,6 +298,10 @@ PrefabInstance:
     m_TransformParent: {fileID: 457775499}
     m_Modifications:
     - target: {fileID: 5136468495200765091, guid: 0f81c15deea35b749ba4afda31687874, type: 3}
+      propertyPath: spinSpeed
+      value: 500
+      objectReference: {fileID: 0}
+    - target: {fileID: 5136468495200765091, guid: 0f81c15deea35b749ba4afda31687874, type: 3}
       propertyPath: slowDownRate
       value: 2
       objectReference: {fileID: 0}
@@ -327,11 +331,11 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 5942924460238412389, guid: 0f81c15deea35b749ba4afda31687874, type: 3}
       propertyPath: m_LocalRotation.y
-      value: -0
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 5942924460238412389, guid: 0f81c15deea35b749ba4afda31687874, type: 3}
       propertyPath: m_LocalRotation.z
-      value: -0
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 5942924460238412389, guid: 0f81c15deea35b749ba4afda31687874, type: 3}
       propertyPath: m_LocalEulerAnglesHint.x
@@ -347,7 +351,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 6427290756776313055, guid: 0f81c15deea35b749ba4afda31687874, type: 3}
       propertyPath: m_Name
-      value: RotatorSymbole
+      value: RotatorSymbole1
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
@@ -826,6 +830,10 @@ PrefabInstance:
     m_TransformParent: {fileID: 1670137201}
     m_Modifications:
     - target: {fileID: 5136468495200765091, guid: 0f81c15deea35b749ba4afda31687874, type: 3}
+      propertyPath: wheelIndex
+      value: 4
+      objectReference: {fileID: 0}
+    - target: {fileID: 5136468495200765091, guid: 0f81c15deea35b749ba4afda31687874, type: 3}
       propertyPath: clampedActivator
       value: 
       objectReference: {fileID: 1816010710}
@@ -871,7 +879,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 6427290756776313055, guid: 0f81c15deea35b749ba4afda31687874, type: 3}
       propertyPath: m_Name
-      value: RotatorSymbole
+      value: RotatorSymbole5
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
@@ -2312,6 +2320,10 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 457775499}
     m_Modifications:
+    - target: {fileID: -5348378664547925866, guid: 2ffd0109b20f78d45b0a4ec9e8a132c4, type: 3}
+      propertyPath: animationDuration
+      value: 0.2
+      objectReference: {fileID: 0}
     - target: {fileID: 440996528259826371, guid: 2ffd0109b20f78d45b0a4ec9e8a132c4, type: 3}
       propertyPath: m_LocalPosition.x
       value: 0
@@ -2564,6 +2576,10 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 443508851}
     m_Modifications:
+    - target: {fileID: -5348378664547925866, guid: 2ffd0109b20f78d45b0a4ec9e8a132c4, type: 3}
+      propertyPath: animationDuration
+      value: 0.2
+      objectReference: {fileID: 0}
     - target: {fileID: 440996528259826371, guid: 2ffd0109b20f78d45b0a4ec9e8a132c4, type: 3}
       propertyPath: m_LocalPosition.x
       value: 0
@@ -3239,6 +3255,10 @@ PrefabInstance:
     m_TransformParent: {fileID: 443508851}
     m_Modifications:
     - target: {fileID: 5136468495200765091, guid: 0f81c15deea35b749ba4afda31687874, type: 3}
+      propertyPath: wheelIndex
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 5136468495200765091, guid: 0f81c15deea35b749ba4afda31687874, type: 3}
       propertyPath: clampedActivator
       value: 
       objectReference: {fileID: 883741902}
@@ -3284,7 +3304,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 6427290756776313055, guid: 0f81c15deea35b749ba4afda31687874, type: 3}
       propertyPath: m_Name
-      value: RotatorSymbole
+      value: RotatorSymbole2
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
@@ -3673,6 +3693,10 @@ PrefabInstance:
     m_TransformParent: {fileID: 4818099}
     m_Modifications:
     - target: {fileID: 5136468495200765091, guid: 0f81c15deea35b749ba4afda31687874, type: 3}
+      propertyPath: wheelIndex
+      value: 3
+      objectReference: {fileID: 0}
+    - target: {fileID: 5136468495200765091, guid: 0f81c15deea35b749ba4afda31687874, type: 3}
       propertyPath: clampedActivator
       value: 
       objectReference: {fileID: 1615106526}
@@ -3718,7 +3742,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 6427290756776313055, guid: 0f81c15deea35b749ba4afda31687874, type: 3}
       propertyPath: m_Name
-      value: RotatorSymbole
+      value: RotatorSymbole4
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
@@ -4412,10 +4436,22 @@ MonoBehaviour:
   - {fileID: 1881301351}
   - {fileID: 1384507055}
   - {fileID: 259289727}
+  materialOfSymbols:
+  - {fileID: 2100000, guid: addf08a79639ea8489395ec680a363e7, type: 2}
+  - {fileID: 2100000, guid: 114cdf86ced395149a2668b836bfbae4, type: 2}
+  - {fileID: 2100000, guid: 82a91c6ff3fa23f4894ed4e8852e857b, type: 2}
+  - {fileID: 2100000, guid: faf58b7d11c3e294e82d0b036cfdd946, type: 2}
+  - {fileID: 2100000, guid: 2a79e14ea81730743a5563ef8404d169, type: 2}
+  - {fileID: 2100000, guid: a781d6beffba8d449af883fb679f42dc, type: 2}
+  - {fileID: 2100000, guid: 429c58663cd6a7b4d86f19e29773739a, type: 2}
+  - {fileID: 2100000, guid: 91fc926fd0bc4424a8faa14ae2787a2e, type: 2}
+  - {fileID: 2100000, guid: feafcc7849151244288390045f31d308, type: 2}
+  - {fileID: 2100000, guid: d03fa288d4a75c64583039284e9afb5e, type: 2}
+  stoppedWheels: 0
   spinLamps:
-  - {fileID: 117226312}
-  - {fileID: 1096044495}
-  - {fileID: 1125368006}
+  - {fileID: 117226314}
+  - {fileID: 1096044497}
+  - {fileID: 1125368008}
   inactiveColor: {r: 0.4509804, g: 0.4509804, b: 0.4509804, a: 1}
   activeColor: {r: 0, g: 1, b: 0.96862745, a: 1}
 --- !u!4 &1475954099
@@ -4889,6 +4925,10 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 4818099}
     m_Modifications:
+    - target: {fileID: -5348378664547925866, guid: 2ffd0109b20f78d45b0a4ec9e8a132c4, type: 3}
+      propertyPath: animationDuration
+      value: 0.2
+      objectReference: {fileID: 0}
     - target: {fileID: 440996528259826371, guid: 2ffd0109b20f78d45b0a4ec9e8a132c4, type: 3}
       propertyPath: m_LocalPosition.x
       value: 0
@@ -5383,6 +5423,10 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 1670137201}
     m_Modifications:
+    - target: {fileID: -5348378664547925866, guid: 2ffd0109b20f78d45b0a4ec9e8a132c4, type: 3}
+      propertyPath: animationDuration
+      value: 0.2
+      objectReference: {fileID: 0}
     - target: {fileID: 440996528259826371, guid: 2ffd0109b20f78d45b0a4ec9e8a132c4, type: 3}
       propertyPath: m_LocalPosition.x
       value: 0
@@ -5651,6 +5695,10 @@ PrefabInstance:
     m_TransformParent: {fileID: 809772835}
     m_Modifications:
     - target: {fileID: 5136468495200765091, guid: 0f81c15deea35b749ba4afda31687874, type: 3}
+      propertyPath: wheelIndex
+      value: 2
+      objectReference: {fileID: 0}
+    - target: {fileID: 5136468495200765091, guid: 0f81c15deea35b749ba4afda31687874, type: 3}
       propertyPath: clampedActivator
       value: 
       objectReference: {fileID: 1908054021}
@@ -5696,7 +5744,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 6427290756776313055, guid: 0f81c15deea35b749ba4afda31687874, type: 3}
       propertyPath: m_Name
-      value: RotatorSymbole
+      value: RotatorSymbole3
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
@@ -5792,6 +5840,10 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 809772835}
     m_Modifications:
+    - target: {fileID: -5348378664547925866, guid: 2ffd0109b20f78d45b0a4ec9e8a132c4, type: 3}
+      propertyPath: animationDuration
+      value: 0.2
+      objectReference: {fileID: 0}
     - target: {fileID: 440996528259826371, guid: 2ffd0109b20f78d45b0a4ec9e8a132c4, type: 3}
       propertyPath: m_LocalPosition.x
       value: 0
