@@ -14,6 +14,8 @@ public class HeroSelectionRotator : MonoBehaviour
     [SerializeField] private HeroUIUpdater diamondHeroUIUpdater;
     [SerializeField] private EnergyBar squareEnergyBar;
     [SerializeField] private EnergyBar diamondEnergyBar;
+    [SerializeField] private XPLightManager squareXPLightManager;
+    [SerializeField] private XPLightManager diamondXPLightManager;
     private Hero currentSquareHero;
     private Hero currentDiamondHero;
 
@@ -90,6 +92,7 @@ public class HeroSelectionRotator : MonoBehaviour
                 squareHeroUIUpdater.UpdateHeroDisplay(currentSquareHero);
                 squareEnergyBar.UpdateEnergieDisplay(0, currentSquareHero.getMaxEnergy());
                 currentSquareHero.setEnergyBar(squareEnergyBar);
+                currentSquareHero.setXPLightManager(squareXPLightManager);
             }
         }
         else if (heroType == "Diamond")
@@ -112,6 +115,7 @@ public class HeroSelectionRotator : MonoBehaviour
                 diamondHeroUIUpdater.UpdateHeroDisplay(currentDiamondHero);
                 diamondEnergyBar.UpdateEnergieDisplay(0, currentDiamondHero.getMaxEnergy());
                 currentDiamondHero.setEnergyBar(diamondEnergyBar);
+                currentDiamondHero.setXPLightManager(diamondXPLightManager);
             }
         }
     }

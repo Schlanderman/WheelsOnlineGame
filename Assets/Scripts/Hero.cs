@@ -14,6 +14,7 @@ public class Hero : MonoBehaviour
     private int currentEnergy = 0;  //Aktuelle Energie des Helden
 
     private EnergyBar energyBar;
+    private XPLightManager xpLightManager;
 
     private void Awake()
     {
@@ -28,6 +29,7 @@ public class Hero : MonoBehaviour
         {
             RankUp();
         }
+        xpLightManager.UpdateXPLamps(xp);
     }
 
     //Methode für den Rangaufstieg
@@ -72,7 +74,6 @@ public class Hero : MonoBehaviour
         int maxEnergy = getMaxEnergy();
         if (currentEnergy >= maxEnergy)
         {
-            currentEnergy = 0;
             ActivateAction(heroType);
         }
 
@@ -82,6 +83,7 @@ public class Hero : MonoBehaviour
     private void ActivateAction(HeroType type)
     {
         Debug.Log(type + " führt seine Aktion aus!");
+        currentEnergy = 0;
         //TODO
     }
 
@@ -124,5 +126,10 @@ public class Hero : MonoBehaviour
     public void setEnergyBar(EnergyBar bar)
     {
         energyBar = bar;
+    }
+
+    public void setXPLightManager(XPLightManager light)
+    {
+        xpLightManager = light;
     }
 }
