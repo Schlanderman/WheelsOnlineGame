@@ -13,6 +13,7 @@ public class WheelSpin : MonoBehaviour
     public bool hasStopped = false;     //Ob das Rad angehalten hat
     public bool isLocked = false;       //Ob das Rad gesperrt ist
     private bool clampLock = false;
+    private bool turnClampLock = false;
     private bool initialClampLock = true;
 
     [SerializeField]
@@ -49,6 +50,7 @@ public class WheelSpin : MonoBehaviour
                 isSpinning = false;
                 SnapToNearestSymbol();
                 hasStopped = true;
+                turnClampLock = false;
                 //Debug.Log("Rad ist gestoppt! Rotation: " + transform.eulerAngles.x);
 
                 //Benachrichtige den WheelManager, dass dieses Rad gestoppt hat
@@ -68,6 +70,7 @@ public class WheelSpin : MonoBehaviour
             currentSpinSpeed = spinSpeed;
             isSpinning = true;
             hasStopped = false;
+            turnClampLock = true;
             slowDownRate = Random.Range(1f, 2f);
             spinSpeed = Random.Range(400f, 900f);
         }
@@ -92,7 +95,7 @@ public class WheelSpin : MonoBehaviour
             return;
         }
 
-        if (!clampLock)
+        if (!clampLock && !turnClampLock)
         {
             isLocked = !isLocked;
             clampedActivator.ToggleClamps(isLocked);    //Klammeranimation triggern

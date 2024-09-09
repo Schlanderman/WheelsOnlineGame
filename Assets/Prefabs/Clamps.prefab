@@ -112,7 +112,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   upperClamp: {fileID: 6179748283906616755}
   lowerClamp: {fileID: 7827091208000053242}
-  animationDuration: 1
+  animationDuration: 0.2
 --- !u!1001 &3095042328937833173
 PrefabInstance:
   m_ObjectHideFlags: 0

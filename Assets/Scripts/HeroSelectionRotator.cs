@@ -27,10 +27,7 @@ public class HeroSelectionRotator : MonoBehaviour
     private GameObject activeSquareHero;    //Referenz zum Object des Square-Helden
     private GameObject activeDiamondHero;   //Referenz zum Object des Diamond-Helden
 
-    [SerializeField] private GameObject btnSelectSquareLeft;
-    [SerializeField] private GameObject btnSelectSquareRight;
-    [SerializeField] private GameObject btnSelectDiamondLeft;
-    [SerializeField] private GameObject btnSelectDiamondRight;
+    [SerializeField] private GameObject[] selectButtons;
 
     //Initialisierung
     private void Start()
@@ -123,9 +120,14 @@ public class HeroSelectionRotator : MonoBehaviour
     //Methode um die Hero-Selektion zu deaktivieren
     public void DeactivateSelection()
     {
-        btnSelectSquareLeft.SetActive(false);
-        btnSelectSquareRight.SetActive(false);
-        btnSelectDiamondLeft.SetActive(false);
-        btnSelectDiamondRight.SetActive(false);
+        //btnSelectSquareLeft.SetActive(false);
+        //btnSelectSquareRight.SetActive(false);
+        //btnSelectDiamondLeft.SetActive(false);
+        //btnSelectDiamondRight.SetActive(false);
+
+        foreach (var selectButton in selectButtons)
+        {
+            selectButton.SetActive(false);
+        }
     }
 }
