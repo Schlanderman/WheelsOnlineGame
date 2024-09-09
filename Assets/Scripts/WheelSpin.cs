@@ -69,7 +69,7 @@ public class WheelSpin : MonoBehaviour
             isSpinning = true;
             hasStopped = false;
             slowDownRate = Random.Range(1f, 2f);
-            spinSpeed = Random.Range(400f, 600f);
+            spinSpeed = Random.Range(400f, 900f);
         }
         else if (isLocked)
         {
@@ -96,8 +96,13 @@ public class WheelSpin : MonoBehaviour
         {
             isLocked = !isLocked;
             clampedActivator.ToggleClamps(isLocked);    //Klammeranimation triggern
-            Debug.Log("Rad " + (isLocked ? "gesperrt" : "entsperrt"));
+            //Debug.Log("Rad " + (isLocked ? "gesperrt" : "entsperrt"));
         }
+    }
+
+    public void LockAnimationStart()
+    {
+        clampedActivator.ToggleClamps(isLocked);    //Klammeranimation triggern
     }
 
     //Diese Methode wird aufgerufen, wenn das Rad angeklickt wird
@@ -117,7 +122,7 @@ public class WheelSpin : MonoBehaviour
         //Die nächste Symbolposition berechnen (vielfaches von 45°)
         float snappedRotation = Mathf.Round(currentXRotation / 45f) * 45f;
         finalRotation = Mathf.Round(GetXRotationConsistent(transform) / 45) * 45;
-        Debug.Log(this + " war " + currentXRotation + " und ist gesnapped auf: " + snappedRotation);
+        //Debug.Log(this + " war " + currentXRotation + " und ist gesnapped auf: " + snappedRotation);
 
         //Setze die Rotation des Rads auf diese genaue Symbolpsoition
         //transform.eulerAngles = new Vector3(snappedRotation, transform.eulerAngles.y, transform.eulerAngles.z);
@@ -140,7 +145,7 @@ public class WheelSpin : MonoBehaviour
         clampedActivator.ToggleClamps(isLocked);    //Klammeranimation triggern
 
         //Verarbeite das Symbol
-        Debug.Log("Rad " + wheelIndex + " Symbol: " + topSymbol);
+        //Debug.Log("Rad " + wheelIndex + " Symbol: " + topSymbol);
     }
 
     public bool HasStopped()
@@ -164,6 +169,11 @@ public class WheelSpin : MonoBehaviour
         }
 
         return xRotation;
+    }
+
+    public Symbol getCurrentSymbol()
+    {
+        return wheelManager.GetTopSymbol(wheelIndex, finalRotation);
     }
 
     private IEnumerator SmoothSnapRotation(float targetXRotation)
@@ -191,5 +201,11 @@ public class WheelSpin : MonoBehaviour
         }
 
         transform.rotation = targetRotation;
+    }
+
+    public void setClampLock(bool overalLLock, bool initialLock)
+    {
+        clampLock = overalLLock;
+        initialClampLock = initialLock;
     }
 }

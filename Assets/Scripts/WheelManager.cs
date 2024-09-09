@@ -9,12 +9,15 @@ public class WheelManager : MonoBehaviour
     private WheelSpin[] wheels;     //Eine Liste mit allen Rädern
     [SerializeField]
     private Material[] materialOfSymbols;   //Eine Liste mit allen Radvariationen (anhand von Materialien)
-    private int symbolMaterialIndex = 2;    //Index des Materials
+    private readonly int symbolMaterialIndex = 2;    //Index des Materials
 
-    private int maxSpins = 3;       //Maximale Anzahl an Spins
-    private int spinCount = 0;      //Zähler für die Anzahl der Spins
-    public int stoppedWheels = 0;   //Anzahl der Räder, die sich nicht mehr drehen
+    [SerializeField] private HeroSelectionRotator heroSelectionRotator;
+
+    private readonly int maxSpins = 3;  //Maximale Anzahl an Spins
+    private int spinCount = 0;          //Zähler für die Anzahl der Spins
+    public int stoppedWheels = 0;       //Anzahl der Räder, die sich nicht mehr drehen
     private bool canSpin = true;
+    private bool firstSpin = true;
 
     [SerializeField]
     private Image[] spinLamps;      //Array von UI-Images für die Lampen
@@ -22,6 +25,13 @@ public class WheelManager : MonoBehaviour
     private Color inactiveColor;
     [SerializeField]
     private Color activeColor;
+
+    [SerializeField] private GameObject squareHeroSpawn;    //Spawn des Square-Helden
+    [SerializeField] private GameObject diamondHeroSpawn;   //Spawn des Diamond-Helden
+    [SerializeField] private BulwarkMover bulwarkMover;
+
+    private Hero squareHero;    // Held, der Energie von Square-Symbolen erhält
+    private Hero diamondHero;   // Held, der Energie von Diamond-Symbolen erhält
 
     //Definiere ein Dictionary für jedes Rad und dessen Symbolreihenfolge
     private Dictionary<int, Symbol[]> wheelSymbols = new Dictionary<int, Symbol[]>
@@ -138,6 +148,14 @@ public class WheelManager : MonoBehaviour
                 EndRound();
             }
         }
+
+        if (firstSpin)
+        {
+            heroSelectionRotator.DeactivateSelection();
+            AssignHeros();
+            Debug.Log("Square Hero: " + squareHero + ", Diamond Hero: " + diamondHero);
+            firstSpin = false;
+        }
     }
 
     //Aktualisiere die Lampen je nach Anzahl der Spins
@@ -190,6 +208,12 @@ public class WheelManager : MonoBehaviour
         }
     }
 
+    private void AssignHeros()
+    {
+        squareHero = squareHeroSpawn.GetComponentInChildren<Hero>();
+        diamondHero = diamondHeroSpawn.GetComponentInChildren<Hero>();
+    }
+
     //Funktion zum beenden der Runde
     void EndRound()
     {
@@ -198,6 +222,137 @@ public class WheelManager : MonoBehaviour
         foreach (var wheel in wheels)
         {
             wheel.StopWheel();
+        }
+        EvaluateSymbols();
+    }
+
+    //Auswerten der Räder
+    private void EvaluateSymbols()
+    {
+        //Zähler für die Symbole
+        int squareCount = 0;
+        int diamondCount = 0;
+        int hammerCount = 0;
+        int xpSquareCount = 0;
+        int xpDiamondCount = 0;
+
+        //Symbole auf den Rädern auswerten
+        foreach (var wheel in wheels)
+        {
+            Symbol topSymbol = wheel.getCurrentSymbol();
+
+            switch (topSymbol)
+            {
+                case Symbol.Square:
+                    squareCount++;
+                    break;
+
+                case Symbol.SquarePlus:
+                    squareCount++;
+                    xpSquareCount++;
+                    break;
+
+                case Symbol.SquareSquare:
+                    squareCount += 2;
+                    break;
+
+                case Symbol.SquareSquarePlus:
+                    squareCount += 2;
+                    xpSquareCount++;
+                    break;
+
+                case Symbol.Diamond:
+                    diamondCount++;
+                    break;
+
+                case Symbol.DiamondPlus:
+                    diamondCount++;
+                    xpDiamondCount++;
+                    break;
+
+                case Symbol.DiamondDiamond:
+                    diamondCount += 2;
+                    break;
+
+                case Symbol.DiamondDiamondPlus:
+                    diamondCount += 2;
+                    xpDiamondCount++;
+                    break;
+
+                case Symbol.Hammer:
+                    hammerCount++;
+                    break;
+
+                case Symbol.HammerHammer:
+                    hammerCount += 2;
+                    break;
+
+                case Symbol.HammerHammerHammer:
+                    hammerCount += 3;
+                    break;
+
+                case Symbol.Empty:
+                    break;
+
+                default:
+                    Debug.LogError("Das Symbol " + topSymbol + " ist in diesem Kontext nicht vorhanden!");
+                    break;
+            }
+        }
+
+        //Berechne die Energie für die Square- und Diamant-Helden
+        UpdateHeroEnergy(squareHero, squareCount, xpSquareCount);
+        UpdateHeroEnergy(diamondHero, diamondCount, xpDiamondCount);
+
+        //Bulwark-Level erhöhen, wenn genügend Hämmer gerollt wurden
+        UpdateBulwark(hammerCount);
+    }
+
+    private void UpdateHeroEnergy(Hero hero, int symbolCount, int gainedXP)
+    {
+        if (gainedXP > 0)
+        {
+            hero.AddXP(gainedXP);
+        }
+
+        if (symbolCount >= 3)
+        {
+            //Energieberechnung: Ziehe 2 von der Anzahl der Symbole ab
+            int energyGained = symbolCount - 2;
+            hero.AddEnergy(energyGained);
+            Debug.Log(hero + " hat " + gainedXP + " XP, und " + (symbolCount - 2) + " Energie erhalten");
+        }
+    }
+
+    private void UpdateBulwark(int hammerCount)
+    {
+        if (hammerCount >= 3)
+        {
+            //Bulwark wird um die Anzahl der Hämmer - 2 erhöht
+            int bulwarkIncrease = hammerCount - 2;
+            bulwarkMover.increaseBulwark(bulwarkIncrease);
+            Debug.Log("Das Bulwark ist " + (hammerCount - 2) + " Stufen größer geworden.");
+        }
+    }
+
+    public void ResetRound()
+    {
+        if (spinCount == 3)
+        {
+            spinCount = 0;
+            stoppedWheels = 0;
+            canSpin = true;
+
+            foreach (var wheel in wheels)
+            {
+                wheel.isLocked = false;
+                wheel.LockAnimationStart();
+                wheel.setClampLock(false, true);
+            }
+            foreach (var lamp in spinLamps)
+            {
+                lamp.color = inactiveColor;
+            }
         }
     }
 }

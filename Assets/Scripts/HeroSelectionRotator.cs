@@ -25,6 +25,11 @@ public class HeroSelectionRotator : MonoBehaviour
     private GameObject activeSquareHero;    //Referenz zum Object des Square-Helden
     private GameObject activeDiamondHero;   //Referenz zum Object des Diamond-Helden
 
+    [SerializeField] private GameObject btnSelectSquareLeft;
+    [SerializeField] private GameObject btnSelectSquareRight;
+    [SerializeField] private GameObject btnSelectDiamondLeft;
+    [SerializeField] private GameObject btnSelectDiamondRight;
+
     //Initialisierung
     private void Start()
     {
@@ -76,6 +81,7 @@ public class HeroSelectionRotator : MonoBehaviour
             //Instanziere den neuen Square-Held an der vorgesehenen Position
             activeSquareHero = Instantiate(availableHeroes[currentSquareHeroIndex], squareHeroSpawnPoint.position, squareHeroSpawnPoint.rotation);
             //Debug.Log("Square Hero: " + availableHeroes[currentSquareHeroIndex].name + " wurde ausgewählt.");
+            activeSquareHero.transform.SetParent(squareHeroSpawnPoint, true);
 
             currentSquareHero = activeSquareHero.GetComponent<Hero>();
             //Debug.LogWarning("current Square Hero: " + currentSquareHero);
@@ -97,6 +103,7 @@ public class HeroSelectionRotator : MonoBehaviour
             //Instanziere den neuen Square-Held an der vorgesehenen Position
             activeDiamondHero = Instantiate(availableHeroes[currentDiamondHeroIndex], diamondHeroSpawnPoint.position, diamondHeroSpawnPoint.rotation);
             //Debug.Log("Diamond Hero: " + availableHeroes[currentDiamondHeroIndex].name + " wurde ausgewählt.");
+            activeDiamondHero.transform.SetParent(diamondHeroSpawnPoint, true);
 
             currentDiamondHero = activeDiamondHero.GetComponent<Hero>();
             //Debug.LogWarning("current Diamond Hero: " + currentDiamondHero);
@@ -107,5 +114,14 @@ public class HeroSelectionRotator : MonoBehaviour
                 currentDiamondHero.setEnergyBar(diamondEnergyBar);
             }
         }
+    }
+
+    //Methode um die Hero-Selektion zu deaktivieren
+    public void DeactivateSelection()
+    {
+        btnSelectSquareLeft.SetActive(false);
+        btnSelectSquareRight.SetActive(false);
+        btnSelectDiamondLeft.SetActive(false);
+        btnSelectDiamondRight.SetActive(false);
     }
 }

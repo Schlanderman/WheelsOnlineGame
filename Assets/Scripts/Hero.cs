@@ -70,12 +70,19 @@ public class Hero : MonoBehaviour
     {
         currentEnergy += amount;
         int maxEnergy = getMaxEnergy();
-        if (currentEnergy > maxEnergy)
+        if (currentEnergy >= maxEnergy)
         {
             currentEnergy = 0;
+            ActivateAction(heroType);
         }
 
         energyBar.UpdateEnergieDisplay(currentEnergy, maxEnergy);
+    }
+
+    private void ActivateAction(HeroType type)
+    {
+        Debug.Log(type + " führt seine Aktion aus!");
+        //TODO
     }
 
     //Methoden um die Werte auszulesen

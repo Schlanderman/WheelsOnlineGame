@@ -25,7 +25,7 @@ public class ClampActivator : MonoBehaviour
 
     public void ToggleClamps(bool isLocked)
     {
-        Debug.Log("Clamp " + this + " wurde aktiviert.");
+        //Debug.Log("Clamp " + this + " wurde aktiviert.");
 
         // setze die Zielrotation basierend auf dem Lock-Status
         targetRotationUpper = isLocked ? Quaternion.Euler(lockedState) : Quaternion.Euler(upperUnlockedState);

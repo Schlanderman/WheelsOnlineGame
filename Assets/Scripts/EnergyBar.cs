@@ -6,9 +6,7 @@ public class EnergyBar : MonoBehaviour
 {
     [SerializeField] private Transform energyBar;       //Das Objekt, das die Stange darstellt
     [SerializeField] private float startYPosition = 0f; //Die Startposition der Stange
-    [SerializeField] private float stepSize = .12f;       //Die Größe jedes Schritts (Verschiebung pro Energieeinheit)
-
-    private int maximumEnergy;  //Maximal mögliche Energie
+    [SerializeField] private float stepSize = .12f;     //Die Größe jedes Schritts (Verschiebung pro Energieeinheit)
 
     //Methode, um die Energieanzeige zu aktualisieren
     public void UpdateEnergieDisplay(int currentEnergy, int maxEnergy)
