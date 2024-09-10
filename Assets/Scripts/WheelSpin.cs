@@ -141,7 +141,7 @@ public class WheelSpin : MonoBehaviour
 
         //Debug.Log(this + " stoppt bei Winkel: " + finalRotation);
         //Hole das Symbol, das oben liegt
-        Symbol topSymbol = wheelManager.GetTopSymbol(wheelIndex, finalRotation);
+        //Symbol topSymbol = wheelManager.GetTopSymbol(wheelIndex, finalRotation);
 
         isLocked = true;
         clampLock = true;

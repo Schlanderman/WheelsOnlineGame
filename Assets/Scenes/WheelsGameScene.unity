@@ -1185,6 +1185,10 @@ PrefabInstance:
     m_TransformParent: {fileID: 520380366}
     m_Modifications:
     - target: {fileID: 5136468495200765091, guid: 0f81c15deea35b749ba4afda31687874, type: 3}
+      propertyPath: wheelIndex
+      value: 4
+      objectReference: {fileID: 0}
+    - target: {fileID: 5136468495200765091, guid: 0f81c15deea35b749ba4afda31687874, type: 3}
       propertyPath: clampedActivator
       value: 
       objectReference: {fileID: 1103175469}
@@ -3022,8 +3026,8 @@ MonoBehaviour:
   - {fileID: 552026850}
   - {fileID: 361706837}
   - {fileID: 1898442552}
-  inactiveColor: {r: 0.4509804, g: 0.4509804, b: 0.4509804, a: 0}
-  activeColor: {r: 0, g: 1, b: 0.96862745, a: 0}
+  inactiveColor: {r: 0.4509804, g: 0.4509804, b: 0.4509804, a: 1}
+  activeColor: {r: 0, g: 1, b: 0.96862745, a: 1}
   squareHeroSpawn: {fileID: 1081895618}
   diamondHeroSpawn: {fileID: 1222632715}
   bulwarkMover: {fileID: 1128566637}
@@ -3296,6 +3300,10 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 323160686}
     m_Modifications:
+    - target: {fileID: 5136468495200765091, guid: 0f81c15deea35b749ba4afda31687874, type: 3}
+      propertyPath: wheelIndex
+      value: 1
+      objectReference: {fileID: 0}
     - target: {fileID: 5136468495200765091, guid: 0f81c15deea35b749ba4afda31687874, type: 3}
       propertyPath: clampedActivator
       value: 
@@ -5165,6 +5173,10 @@ PrefabInstance:
     m_TransformParent: {fileID: 1664947344}
     m_Modifications:
     - target: {fileID: 5136468495200765091, guid: 0f81c15deea35b749ba4afda31687874, type: 3}
+      propertyPath: wheelIndex
+      value: 3
+      objectReference: {fileID: 0}
+    - target: {fileID: 5136468495200765091, guid: 0f81c15deea35b749ba4afda31687874, type: 3}
       propertyPath: clampedActivator
       value: 
       objectReference: {fileID: 833146199}
@@ -5582,6 +5594,10 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 1692424857}
     m_Modifications:
+    - target: {fileID: 5136468495200765091, guid: 0f81c15deea35b749ba4afda31687874, type: 3}
+      propertyPath: wheelIndex
+      value: 2
+      objectReference: {fileID: 0}
     - target: {fileID: 5136468495200765091, guid: 0f81c15deea35b749ba4afda31687874, type: 3}
       propertyPath: clampedActivator
       value: 

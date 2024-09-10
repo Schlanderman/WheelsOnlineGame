@@ -187,8 +187,8 @@ public class WheelManager : MonoBehaviour
             symbolIndex = 7;
         }
         else { symbolIndex--; }
-        //Debug.Log("Rad " + wheelIndex + " hat den Winkel: " + rotationAngle);
-        //Debug.Log("Rad " + wheelIndex + " zeigt das Symbol: " + symbolIndex);
+        Debug.Log("Rad " + wheelIndex + " hat den Winkel: " + rotationAngle);
+        //Debug.Log("Rad " + wheelIndex + " zeigt das Symbol: " + wheelSymbols[wheelIndex][symbolIndex]);
         return wheelSymbols[wheelIndex][symbolIndex];       //Gib das Symbol zurück
     }
 
@@ -240,6 +240,7 @@ public class WheelManager : MonoBehaviour
         foreach (var wheel in wheels)
         {
             Symbol topSymbol = wheel.getCurrentSymbol();
+            Debug.Log(wheel + " zeigt das Symbol: " + topSymbol);
 
             switch (topSymbol)
             {
@@ -315,13 +316,16 @@ public class WheelManager : MonoBehaviour
             hero.AddXP(gainedXP);
         }
 
+        int energyGained = 0;
+
         if (symbolCount >= 3)
         {
             //Energieberechnung: Ziehe 2 von der Anzahl der Symbole ab
-            int energyGained = symbolCount - 2;
+            energyGained = symbolCount - 2;
             hero.AddEnergy(energyGained);
-            Debug.Log(hero + " hat " + gainedXP + " XP, und " + (symbolCount - 2) + " Energie erhalten");
         }
+
+        Debug.Log(hero + " hat " + gainedXP + " XP, und " + energyGained + " Energie erhalten");
     }
 
     private void UpdateBulwark(int hammerCount)
