@@ -75,4 +75,9 @@ public class BulwarkMover : MonoBehaviour
 
         bulwark.localPosition = finalPosition;
     }
+
+    public int GetBulwarkLevel()
+    {
+        return bulwarkLevel;
+    }
 }

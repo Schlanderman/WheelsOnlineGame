@@ -10,8 +10,9 @@ public class ParticleMover : MonoBehaviour
     [SerializeField] private GameObject star;       //Star Objekt
     [SerializeField] private GameObject square;     //Square Objekt
     [SerializeField] private GameObject diamond;    //Diamond Objekt
+    [SerializeField] private GameObject hammer;     //Hammer Objekt
 
-    [SerializeField] private float duration = 1f; //Zeit, um den gesamten Pfad zu durchlaufen
+    [SerializeField] private float duration = 1f; //Zeit, um den gesamten Pfad zu durchlaufen (Standard 0.8 Sekunden)
     private float timeElapsed = 0f;     //Zeit, die seit dem Start vergangen ist
 
     private bool active = false;
@@ -21,6 +22,7 @@ public class ParticleMover : MonoBehaviour
         star.SetActive(false);
         square.SetActive(false);
         diamond.SetActive(false);
+        hammer.SetActive(false);
     }
 
     private void Update()
@@ -43,6 +45,7 @@ public class ParticleMover : MonoBehaviour
                 star.SetActive(false);
                 square.SetActive(false);
                 diamond.SetActive(false);
+                hammer.SetActive(false);
             }
         }
     }
@@ -60,6 +63,10 @@ public class ParticleMover : MonoBehaviour
         else if (symbol == "Diamond")
         {
             diamond.SetActive(true);
+        }
+        else if (symbol == "Hammer")
+        {
+            hammer.SetActive(true);
         }
         else
         {

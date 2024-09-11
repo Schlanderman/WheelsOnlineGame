@@ -38,5 +38,28 @@ public class TurnManager : MonoBehaviour
         enemyWheelManager.ResetRound();
     }
 
+    //Methoden für Heldenaktionen mit Animation
+    // 1) Panel XP, Level ups
+    private IEnumerator ApplyPanelXPAndLevelUps(WheelManager wheels)
+    {
+        wheels.EvaluateXPGained();
 
+        yield return new WaitForSeconds(0.8f);
+    }
+
+    // 2) Hammer panels added
+    private IEnumerator ApplyHammerPanels(WheelManager wheels)
+    {
+        wheels.EvaluateHammerCount();
+
+        yield return new WaitForSeconds(0.8f);
+    }
+
+    // 3) Energy panels added
+    private IEnumerator ApplyEnergyPanels(WheelManager wheels)
+    {
+        wheels.EvaluateEnergyCount();
+
+        yield return new WaitForSeconds(0.8f);
+    }
 }

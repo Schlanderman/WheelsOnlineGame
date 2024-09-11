@@ -114,6 +114,18 @@ public class Hero : MonoBehaviour
         energyBar.UpdateEnergieDisplay(currentEnergy, maxEnergy);
     }
 
+    //Methode um Energie abzuziehen
+    public void DecreaseEnergy(int amount)
+    {
+        currentEnergy -= amount;
+        if (currentEnergy < 0)
+        {
+            currentEnergy = 0;
+        }
+
+        energyBar.UpdateEnergieDisplay(currentEnergy, getMaxEnergy());
+    }
+
     private void ActivateAction(HeroType type)
     {
         Debug.Log(type + " führt seine Aktion aus!");
@@ -179,5 +191,15 @@ public class Hero : MonoBehaviour
         bool makeAction = canMakeAction;
         canMakeAction = false;
         return makeAction;
+    }
+
+    public HeroType getHeroType()
+    {
+        return heroType;
+    }
+
+    public int getCurrentEnergy()
+    {
+        return currentEnergy;
     }
 }
