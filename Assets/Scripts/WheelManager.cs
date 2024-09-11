@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -223,7 +224,10 @@ public class WheelManager : MonoBehaviour
         {
             wheel.StopWheel();
         }
-        EvaluateSymbols();
+        //EvaluateSymbols();
+
+        //TODO
+        //Hier übergeben, dass der Spieler bereit ist
     }
 
     //Auswerten der Räder
@@ -309,6 +313,128 @@ public class WheelManager : MonoBehaviour
         UpdateBulwark(hammerCount);
     }
 
+    public void EvaluateXPGained()
+    {
+        int xpSquareCount = 0;
+        int xpDiamondCount = 0;
+
+        foreach (var wheel in wheels)
+        {
+            Symbol topSymbol = wheel.getCurrentSymbol();
+
+            if (!Enum.IsDefined(typeof(Symbol), topSymbol))
+            {
+                Debug.LogWarning("Das Symbol " + topSymbol + " von " + wheel + " ist nicht in diesem Kontext vorhanden!");
+                break;
+            }
+
+            switch (topSymbol)
+            {
+                case Symbol.SquarePlus:
+                case Symbol.SquareSquarePlus:
+                    xpSquareCount++;
+                    break;
+
+                case Symbol.DiamondPlus:
+                case Symbol.DiamondDiamondPlus:
+                    xpDiamondCount++;
+                    break;
+
+                default:
+                    break;
+            }
+        }
+
+        //Berechne die XP für die Square- und Diamant-Helden
+        UpdateHeroEnergy(squareHero, 0, xpSquareCount);
+        UpdateHeroEnergy(diamondHero, 0, xpDiamondCount);
+    }
+
+    public void EvaluateHammerCount()
+    {
+        int hammerCount = 0;
+
+        foreach (var wheel in wheels)
+        {
+            Symbol topSymbol = wheel.getCurrentSymbol();
+
+            if (!Enum.IsDefined(typeof(Symbol), topSymbol))
+            {
+                Debug.LogWarning("Das Symbol " + topSymbol + " von " + wheel + " ist nicht in diesem Kontext vorhanden!");
+                break;
+            }
+
+            switch (topSymbol)
+            {
+                case Symbol.Hammer:
+                    hammerCount++;
+                    break;
+
+                case Symbol.HammerHammer:
+                    hammerCount += 2;
+                    break;
+
+                case Symbol.HammerHammerHammer:
+                    hammerCount += 3;
+                    break;
+
+                default:
+                    break;
+            }
+        }
+
+        //Bulwark-Level erhöhen, wenn genügend Hämmer gerollt wurden
+        UpdateBulwark(hammerCount);
+    }
+
+    public void EvaluateEnergyCount()
+    {
+        //Zähler für die Symbole
+        int squareCount = 0;
+        int diamondCount = 0;
+
+        foreach (var wheel in wheels)
+        {
+            Symbol topSymbol = wheel.getCurrentSymbol();
+
+            if (!Enum.IsDefined(typeof(Symbol), topSymbol))
+            {
+                Debug.LogWarning("Das Symbol " + topSymbol + " von " + wheel + " ist nicht in diesem Kontext vorhanden!");
+                break;
+            }
+
+            switch (topSymbol)
+            {
+                case Symbol.Square:
+                case Symbol.SquarePlus:
+                    squareCount++;
+                    break;
+
+                case Symbol.SquareSquare:
+                case Symbol.SquareSquarePlus:
+                    squareCount += 2;
+                    break;
+
+                case Symbol.Diamond:
+                case Symbol.DiamondPlus:
+                    diamondCount++;
+                    break;
+
+                case Symbol.DiamondDiamond:
+                case Symbol.DiamondDiamondPlus:
+                    diamondCount += 2;
+                    break;
+
+                default:
+                    break;
+            }
+        }
+
+        //Berechne die Energie für die Square- und Diamant-Helden
+        UpdateHeroEnergy(squareHero, squareCount, 0);
+        UpdateHeroEnergy(diamondHero, diamondCount, 0);
+    }
+
     private void UpdateHeroEnergy(Hero hero, int symbolCount, int gainedXP)
     {
         if (gainedXP > 0)
@@ -358,5 +484,11 @@ public class WheelManager : MonoBehaviour
                 lamp.color = inactiveColor;
             }
         }
+    }
+
+    //Angeben, dass dieser Spieler seine Runden abgeschlossen hat
+    private void SetStatusFinished()
+    {
+        //TODO
     }
 }

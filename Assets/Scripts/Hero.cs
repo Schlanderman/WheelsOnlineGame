@@ -9,12 +9,19 @@ public class Hero : MonoBehaviour
     public HeroType heroType;
     public HeroRank heroRank = HeroRank.Bronze;
 
+    [SerializeField] Material bronzeMaterial;
+    [SerializeField] Material silverMaterial;
+    [SerializeField] Material goldMaterial;
+
     private HeroStats currentStats;
     private int xp = 0;
     private int currentEnergy = 0;  //Aktuelle Energie des Helden
 
     private EnergyBar energyBar;
     private XPLightManager xpLightManager;
+
+    private bool canSendBomb = false;
+    private bool canMakeAction = false;
 
     private void Awake()
     {
@@ -44,6 +51,7 @@ public class Hero : MonoBehaviour
         {
             heroRank++;
             UpdateHeroStats();
+            UpdateHeroAppearence();
         }
     }
 
@@ -60,8 +68,34 @@ public class Hero : MonoBehaviour
         //Debug.Log($"{heroType} auf {heroRank} hat {currentStats.energyToAct} Energie, {currentStats.crownDamage} KronenSchaden, {currentStats.bulwarkDamage} Bulwarkschaden, {currentStats.delayAdding} Delay, {currentStats.healingAdding} Healing und {currentStats.energyAdding} Energiezufuhr.");
     }
 
+    private void UpdateHeroAppearence()
+    {
+        MeshRenderer renderer = this.GetComponent<MeshRenderer>();
+        if (renderer != null)
+        {
+            switch (heroRank)
+            {
+                case HeroRank.Bronze:
+                    renderer.material = bronzeMaterial;
+                    break;
+
+                case HeroRank.Silver:
+                    renderer.material = silverMaterial;
+                    break;
+
+                case HeroRank.Gold:
+                    renderer.material = goldMaterial;
+                    break;
+
+                default:
+                    Debug.LogError("Heldenrang " + heroRank + "ist nicht verfügbar!");
+                    break;
+            }
+        }
+    }
+
     // Beispiel für das Senden einer Bombe
-    private void SendBomb()
+    public void SendBomb()
     {
         Debug.Log(heroType + " hat eine Bombe geschickt!");
         // TODO
@@ -74,7 +108,7 @@ public class Hero : MonoBehaviour
         int maxEnergy = getMaxEnergy();
         if (currentEnergy >= maxEnergy)
         {
-            ActivateAction(heroType);
+            canMakeAction = true;
         }
 
         energyBar.UpdateEnergieDisplay(currentEnergy, maxEnergy);
@@ -131,5 +165,19 @@ public class Hero : MonoBehaviour
     public void setXPLightManager(XPLightManager light)
     {
         xpLightManager = light;
+    }
+
+    public bool getCanSendBomb()
+    {
+        bool sendBomb = canSendBomb;
+        canSendBomb = false;
+        return sendBomb;
+    }
+
+    public bool getCanMakeAction()
+    {
+        bool makeAction = canMakeAction;
+        canMakeAction = false;
+        return makeAction;
     }
 }
