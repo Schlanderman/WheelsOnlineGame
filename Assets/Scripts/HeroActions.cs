@@ -75,6 +75,7 @@ public class HeroActions : MonoBehaviour
         if (enemyBulwark.GetBulwarkLevel() >= 1)
         {
             //Animation
+            yield return null;
 
             //Schaden am Bulwark
             enemyBulwark.decreaseBulwark(selfThisHero.getBulwarkDamage());
@@ -82,6 +83,7 @@ public class HeroActions : MonoBehaviour
         else
         {
             //Animation
+            yield return null;
 
             //Schaden an der Krone
             enemyCrown.DecreaseHP(selfThisHero.getCrownDamage());
@@ -95,6 +97,7 @@ public class HeroActions : MonoBehaviour
         if (enemyBulwark.GetBulwarkLevel() >= 1)
         {
             //Animation
+            yield return null;
 
             //Schaden am Bulwark
             enemyBulwark.decreaseBulwark(selfThisHero.getBulwarkDamage());
@@ -102,6 +105,7 @@ public class HeroActions : MonoBehaviour
         else
         {
             //Animation
+            yield return null;
 
             //Schaden an der Krone
             enemyCrown.DecreaseHP(selfThisHero.getCrownDamage());
@@ -109,6 +113,7 @@ public class HeroActions : MonoBehaviour
 
         //Zweiter Angriff
         //Animation
+        yield return null;
 
         //Schaden an der Krone
         enemyCrown.DecreaseHP(selfThisHero.getCrownDamage());
@@ -120,12 +125,17 @@ public class HeroActions : MonoBehaviour
         if (enemyBulwark.GetBulwarkLevel() >= 3)
         {
             //Animation
+            yield return null;
 
             //Schaden am Bulwark
             enemyBulwark.decreaseBulwark(selfThisHero.getBulwarkDamage());
         }
         else
         {
+            //Animation
+            yield return null;
+
+            //Schaden an der Krone
             enemyCrown.DecreaseHP(selfThisHero.getCrownDamage());
         }
     }
@@ -137,6 +147,7 @@ public class HeroActions : MonoBehaviour
         if (enemyBulwark.GetBulwarkLevel() >= 1)
         {
             //Animation
+            yield return null;
 
             //Schaden am Bulwark
             enemyBulwark.decreaseBulwark(selfThisHero.getBulwarkDamage());
@@ -144,6 +155,7 @@ public class HeroActions : MonoBehaviour
         else
         {
             //Animation
+            yield return null;
 
             //Schaden an der Krone
             enemyCrown.DecreaseHP(selfThisHero.getCrownDamage());
@@ -151,6 +163,7 @@ public class HeroActions : MonoBehaviour
 
         //Zweite Aktion
         //Animation
+        yield return null;
 
         //Spieler Bulwark erhöhen
         playerBulwark.increaseBulwark(2);
@@ -163,6 +176,7 @@ public class HeroActions : MonoBehaviour
         if (enemySquareHero.getCurrentEnergy() > enemyDiamondHero.getCurrentEnergy())
         {
             //Animation
+            yield return null;
 
             //Square Held Energie abziehen
             enemySquareHero.DecreaseEnergy(selfThisHero.getDelayAdding());
@@ -170,6 +184,7 @@ public class HeroActions : MonoBehaviour
         else
         {
             //Animation
+            yield return null;
 
             //Diamond Held Energie abziehen
             enemyDiamondHero.DecreaseEnergy(selfThisHero.getDelayAdding());
@@ -177,6 +192,7 @@ public class HeroActions : MonoBehaviour
 
         //Zweite Aktion
         //Animation
+        yield return null;
 
         //Schaden an der Krone
         enemyCrown.DecreaseHP(selfThisHero.getCrownDamage());
@@ -187,12 +203,14 @@ public class HeroActions : MonoBehaviour
     {
         //Erste Aktion
         //Animation
+        yield return null;
 
         //Spieler-Krone heilen
         playerCrown.IncreaseHP(selfThisHero.getHealingAdding());
 
         //Zweite Aktion
         //Animation
+        yield return null;
 
         //Anderen Helden Energie geben
         selfOtherHero.AddEnergy(selfThisHero.getEnergyAdding());
