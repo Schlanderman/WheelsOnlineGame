@@ -6,6 +6,7 @@ public class ActionRodSprites : MonoBehaviour
 {
     [SerializeField] private GameObject arrow;
     [SerializeField] private GameObject book;
+    [SerializeField] private GameObject bomb;
     [SerializeField] private GameObject dagger;
     [SerializeField] private GameObject fireball;
     [SerializeField] private GameObject hammer;
@@ -38,6 +39,11 @@ public class ActionRodSprites : MonoBehaviour
         arrow.SetActive(true);
     }
 
+    public void ActivateBomb()
+    {
+        bomb.SetActive(true);
+    }
+
     public void ActivateBook()
     {
         book.SetActive(true);
@@ -67,6 +73,7 @@ public class ActionRodSprites : MonoBehaviour
     public void DeactivateAll()
     {
         arrow.SetActive(false);
+        bomb.SetActive(false);
         book.SetActive(false);
         dagger.SetActive(false);
         fireball.SetActive(false);

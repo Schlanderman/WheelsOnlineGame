@@ -23,6 +23,8 @@ public class Hero : MonoBehaviour
     private bool canSendBomb = false;
     private bool canMakeAction = false;
 
+    private HeroActions heroActions;
+
     private void Awake()
     {
         InitialUpdateHeroStats();
@@ -68,6 +70,11 @@ public class Hero : MonoBehaviour
         //Debug.Log($"{heroType} auf {heroRank} hat {currentStats.energyToAct} Energie, {currentStats.crownDamage} KronenSchaden, {currentStats.bulwarkDamage} Bulwarkschaden, {currentStats.delayAdding} Delay, {currentStats.healingAdding} Healing und {currentStats.energyAdding} Energiezufuhr.");
     }
 
+    public void SetHeroActions(HeroActions actions)
+    {
+        heroActions = actions;
+    }
+
     private void UpdateHeroAppearence()
     {
         MeshRenderer renderer = this.GetComponent<MeshRenderer>();
@@ -94,11 +101,11 @@ public class Hero : MonoBehaviour
         }
     }
 
-    // Beispiel für das Senden einer Bombe
-    public void SendBomb()
+    //Bombe Senden
+    public IEnumerator SendBomb()
     {
         Debug.Log(heroType + " hat eine Bombe geschickt!");
-        // TODO
+        yield return StartCoroutine(heroActions.SendBomb(this));
     }
 
     //Methode zur Energieerfassung
@@ -126,11 +133,17 @@ public class Hero : MonoBehaviour
         energyBar.UpdateEnergieDisplay(currentEnergy, getMaxEnergy());
     }
 
-    private void ActivateAction(HeroType type)
+    public IEnumerator ActivateAction(HeroType type)
     {
         Debug.Log(type + " führt seine Aktion aus!");
         currentEnergy = 0;
-        //TODO
+        yield return StartCoroutine(heroActions.ActivateHeroAction(this));
+    }
+
+    public IEnumerator ActivateSecondPriest(HeroType type)
+    {
+        Debug.Log(type + " führt seine zweite Aktion aus!");
+        yield return StartCoroutine(heroActions.PriestSecondAction());
     }
 
     //Methoden um die Werte auszulesen
@@ -193,6 +206,11 @@ public class Hero : MonoBehaviour
         return makeAction;
     }
 
+    public bool priestChecksAction()
+    {
+        return canMakeAction;
+    }
+
     public HeroType getHeroType()
     {
         return heroType;
@@ -201,5 +219,10 @@ public class Hero : MonoBehaviour
     public int getCurrentEnergy()
     {
         return currentEnergy;
+    }
+
+    public bool getPriestBoosted()
+    {
+        return heroActions.GetPriestBoosted();
     }
 }

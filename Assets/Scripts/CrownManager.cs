@@ -89,4 +89,10 @@ public class CrownManager : MonoBehaviour
         oneWheel.rotation = targetRotationOnes;
         tenWheel.rotation = targetRotationTens;
     }
+
+    //Methode zum auslesen der HP
+    public int GetCurrentHP()
+    {
+        return currentHP;
+    }
 }

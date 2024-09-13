@@ -33,6 +33,8 @@ public class WheelManager : MonoBehaviour
 
     [SerializeField] private ParticleManager particleManager;
 
+    [SerializeField] private TurnManager turnManager;
+
     private Hero squareHero;    // Held, der Energie von Square-Symbolen erhält
     private Hero diamondHero;   // Held, der Energie von Diamond-Symbolen erhält
     private HeroAnimationManager heroAnimationManager;      //Zumzuweisen der Animatoren
@@ -41,6 +43,8 @@ public class WheelManager : MonoBehaviour
     private HeroActions selfDiamondActions;     //Aktionssktipt für Player-Diamond-Helden
     private HeroActions enemySquareActions;     //Aktionsskript für Gegner-Square-Helden
     private HeroActions enemyDiamondActions;    //Aktionsskript für Gegner-Diamond-Helden
+
+    private bool statusFinished = false;        //Check, ob der Spieler 3 mal gedreht hat
 
     //Definiere ein Dictionary für jedes Rad und dessen Symbolreihenfolge
     private Dictionary<int, Symbol[]> wheelSymbols = new Dictionary<int, Symbol[]>
@@ -223,12 +227,20 @@ public class WheelManager : MonoBehaviour
         squareHero = squareHeroSpawn.GetComponentInChildren<Hero>();
         diamondHero = diamondHeroSpawn.GetComponentInChildren<Hero>();
 
+        //Actionsskripte erhalten
+        selfSquareActions = squareHeroSpawn.GetComponent<HeroActions>();
+        selfDiamondActions = diamondHeroSpawn.GetComponent<HeroActions>();
+
         //Animator zuweisen
         heroAnimationManager.SetAnimators(squareHero, diamondHero);
 
         //Aktionsskripte zuweisen
         selfSquareActions.SetPlayerHeroes(squareHero, diamondHero);
+        selfSquareActions.SetSquareSideMain();
+        squareHero.SetHeroActions(selfSquareActions);
         selfDiamondActions.SetPlayerHeroes(diamondHero, squareHero);
+        selfDiamondActions.SetDiamondSideMain();
+        diamondHero.SetHeroActions(selfDiamondActions);
 
         enemySquareActions.SetEnemyHeroes(squareHero, diamondHero);
         enemyDiamondActions.SetEnemyHeroes(squareHero, diamondHero);
@@ -245,8 +257,9 @@ public class WheelManager : MonoBehaviour
         }
         //EvaluateSymbols();
 
-        //TODO
         //Hier übergeben, dass der Spieler bereit ist
+        statusFinished = true;
+        turnManager.TestForReadyness();
     }
 
     //Auswerten der Räder
@@ -546,8 +559,14 @@ public class WheelManager : MonoBehaviour
     }
 
     //Angeben, dass dieser Spieler seine Runden abgeschlossen hat
-    private void SetStatusFinished()
+    public bool GetStatusFinished()
     {
-        //TODO
+        return statusFinished;
+    }
+
+    //Reset wenn die Animationen beginnen
+    public void ResetStatusFinshed()
+    {
+        statusFinished = false;
     }
 }
