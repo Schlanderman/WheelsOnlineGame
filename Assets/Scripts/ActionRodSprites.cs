@@ -12,23 +12,8 @@ public class ActionRodSprites : MonoBehaviour
     [SerializeField] private GameObject hammer;
     [SerializeField] private GameObject sword;
 
-    //private SpriteRenderer arrowSprite;
-    //private SpriteRenderer bookSprite;
-    //private SpriteRenderer daggerSprite;
-    //private SpriteRenderer fireballSprite;
-    //private SpriteRenderer hammerSprite;
-    //private SpriteRenderer swordSprite;
-
     private void Start()
     {
-        //Sprites von Gameobjects holen
-        //arrowSprite = arrow.GetComponent<SpriteRenderer>();
-        //bookSprite = book.GetComponent<SpriteRenderer>();
-        //daggerSprite = dagger.GetComponent<SpriteRenderer>();
-        //fireballSprite = fireball.GetComponent<SpriteRenderer>();
-        //hammerSprite = hammer.GetComponent<SpriteRenderer>();
-        //swordSprite = sword.GetComponent<SpriteRenderer>();
-
         //Alles erstmal deaktivieren
         DeactivateAll();
     }

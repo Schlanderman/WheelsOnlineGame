@@ -13,10 +13,10 @@ public class HeroActions : MonoBehaviour
     [SerializeField] private ActionRodAnimManager rodAnimations;        //Spieleranimationen
     [SerializeField] private ActionRodAnimManager enemyRodAnimations;   //Gegneranimationen
 
-    private Hero selfThisHero;          //Der Aktive Held
-    private Hero selfOtherHero;         //Der andere Held auf Spielerseite
-    private Hero enemySquareHero;       //Square Held auf Gegnerseite
-    private Hero enemyDiamondHero;      //Diamond Held auf Gegnerseite
+    [SerializeField] private Hero selfThisHero;          //Der Aktive Held
+    [SerializeField] private Hero selfOtherHero;         //Der andere Held auf Spielerseite
+    [SerializeField] private Hero enemySquareHero;       //Square Held auf Gegnerseite
+    [SerializeField] private Hero enemyDiamondHero;      //Diamond Held auf Gegnerseite
 
     private HeroAnimationManager heroAnimationManager;      //Der Animationsmanager des Helden
 
@@ -31,7 +31,8 @@ public class HeroActions : MonoBehaviour
         selfThisHero = thisHero;
         selfOtherHero = otherHero;
 
-        heroAnimationManager = selfThisHero.GetComponent<HeroAnimationManager>();
+        heroAnimationManager = this.GetComponent<HeroAnimationManager>();
+        //Debug.Log("AnimationManager in " + this + " ist " + heroAnimationManager);
     }
 
     //Methode um die Gegnerhelden zuzuweisen
@@ -58,6 +59,7 @@ public class HeroActions : MonoBehaviour
     public IEnumerator ActivateHeroAction(Hero hero)
     {
         HeroType hType = hero.getHeroType();
+        Debug.Log(hero + " führt seine Aktion aus in HeroActions und ist Type: " + hType);
 
         switch (hType)
         {
@@ -95,7 +97,7 @@ public class HeroActions : MonoBehaviour
         hero.AddXP(2);
     }
 
-    public IEnumerator SendBomb(Hero hero)
+    public IEnumerator SendBomb()
     {
         //Auswerten, wo die Animation Stattfinden soll (Standard ist Square)
         int rodNumber = 1;
@@ -147,6 +149,7 @@ public class HeroActions : MonoBehaviour
     //Mage
     private IEnumerator MageAction()
     {
+        Debug.Log("MageAction wird ausgeführt!");
         //Auswerten, wo die Animation Stattfinden soll (Standard ist Square)
         int rodNumber = 0;
         string attackSideBulwark = "AttackRightBulwark";
@@ -164,6 +167,7 @@ public class HeroActions : MonoBehaviour
         if (enemyBulwark.GetBulwarkLevel() >= 1)
         {
             //Animation
+            Debug.Log("Erster Angriff mit Bulwarklevel: " + enemyBulwark);
             heroAnimationManager.TriggerHeroAction(thisHeroSide);
             yield return StartCoroutine(rodAnimations.ActivateRodAnimation(rodNumber, "Fireball", attackSideBulwark));
 
@@ -173,6 +177,7 @@ public class HeroActions : MonoBehaviour
         else
         {
             //Animation
+            Debug.Log("Erster Angriff ohne Bulwark");
             heroAnimationManager.TriggerHeroAction(thisHeroSide);
             yield return StartCoroutine(rodAnimations.ActivateRodAnimation(rodNumber, "Fireball", attackSideCrown));
 
@@ -182,6 +187,7 @@ public class HeroActions : MonoBehaviour
 
         //Zweiter Angriff
         //Animation
+        Debug.Log("Zweiter Angriff!");
         heroAnimationManager.TriggerHeroAction(thisHeroSide);
         yield return StartCoroutine(rodAnimations.ActivateRodAnimation(rodNumber, "Fireball", attackSideCrownHigh));
 

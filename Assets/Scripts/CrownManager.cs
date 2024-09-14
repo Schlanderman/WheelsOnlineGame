@@ -31,7 +31,6 @@ public class CrownManager : MonoBehaviour
         if (currentHP < 0)
         {
             currentHP = 0;      //Sicherstellen, dass HP nicht negativ wird
-            //Lose-Condition
         }
         UpdateHPDisplay();
     }

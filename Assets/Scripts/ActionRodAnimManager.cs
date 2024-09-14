@@ -8,16 +8,17 @@ public class ActionRodAnimManager : MonoBehaviour
     [SerializeField] private GameObject[] actionRod;
 
     //Sprite Skripte
-    private ActionRodSprites[] rodSprite;
+    private ActionRodSprites[] rodSprite = new ActionRodSprites[4];
 
     //Animators
-    private Animator[] rodAnimator;
+    private Animator[] rodAnimator = new Animator[4];
 
     //Alles zuweisen
     private void Start()
     {
         for (int i = 0; i < actionRod.Length; i++)
         {
+            //Debug.Log("An Posotion " + i + " ist das Element: " + actionRod[i] + ", was das Element " + actionRod[i].GetComponentInChildren<ActionRodSprites>() + " enthält und nun in " + rodSprite[i] + " einfügt.");
             rodSprite[i] = actionRod[i].GetComponentInChildren<ActionRodSprites>();
             rodAnimator[i] = actionRod[i].GetComponent<Animator>();
         }

@@ -4,8 +4,11 @@ using UnityEngine;
 
 public class TurnManager : MonoBehaviour
 {
-    [SerializeField] private Hero[] playerHeroes;   //Helden des Spielers
-    [SerializeField] private Hero[] enemyHeroes;    //Helden des Gegners
+    [SerializeField] GameObject[] playerHeroSpawns;
+    [SerializeField] GameObject[] enemyHeroSpawns;
+
+    private Hero[] playerHeroes = new Hero[2];   //Helden des Spielers
+    private Hero[] enemyHeroes = new Hero[2];    //Helden des Gegners
 
     [SerializeField] private WheelManager playerWheelManager;   //WheelManager des Spielers
     [SerializeField] private WheelManager enemyWheelManager;    //WheelManager des Gegners
@@ -23,15 +26,26 @@ public class TurnManager : MonoBehaviour
 
     private int currentTurnStep = 1;
 
-    //Schauen, ob die Spieler bereit sind
-    //private bool playerReady = false;
-    //private bool enemyReady = false;
-
     private void Start()
     {
         WinScreen.SetActive(false);
         LoseScreen.SetActive(false);
         DrawScreen.SetActive(false);
+    }
+
+    public void SetHeroesFromSpawn()
+    {
+        //Player Heldenzuweisung
+        for (int i = 0; i < playerHeroSpawns.Length; i++)
+        {
+            playerHeroes[i] = playerHeroSpawns[i].GetComponentInChildren<Hero>();
+        }
+
+        //Enemy Herozuweisung
+        for (int i = 0; i < enemyHeroSpawns.Length; i++)
+        {
+            enemyHeroes[i] = enemyHeroSpawns[i].GetComponentInChildren<Hero>();
+        }
     }
 
     public void TestForReadyness()
@@ -265,7 +279,7 @@ public class TurnManager : MonoBehaviour
         {
             foreach (var held in heroes)
             {
-                if ((held != hero) && !hero.getPriestBoosted())
+                if ((held != hero) && !hero.getPriestBoosted() && (hero.getHeroType() == HeroType.Priest))
                 {
                     yield return StartCoroutine(hero.ActivateSecondPriest(hero.getHeroType()));
                 }
@@ -312,7 +326,7 @@ public class TurnManager : MonoBehaviour
         {
             WinScreen.SetActive(true);
         }
-        else
+        else if (playerCrownManager.GetCurrentHP() == 0)
         {
             LoseScreen.SetActive(true);
         }

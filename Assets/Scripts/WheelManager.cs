@@ -29,11 +29,15 @@ public class WheelManager : MonoBehaviour
 
     [SerializeField] private GameObject squareHeroSpawn;    //Spawn des Square-Helden
     [SerializeField] private GameObject diamondHeroSpawn;   //Spawn des Diamond-Helden
+    [SerializeField] private GameObject enemySquareHeroSpawn;   //Spawn des gegnerischen Square Helden
+    [SerializeField] private GameObject enemyDiamondHeroSpawn;  //Spawn des gegnerischen Diamond Helden
     [SerializeField] private BulwarkMover bulwarkMover;
 
     [SerializeField] private ParticleManager particleManager;
 
     [SerializeField] private TurnManager turnManager;
+
+    [SerializeField] private InitialHeroSetting initialHeroSetting;
 
     private Hero squareHero;    // Held, der Energie von Square-Symbolen erhält
     private Hero diamondHero;   // Held, der Energie von Diamond-Symbolen erhält
@@ -165,8 +169,8 @@ public class WheelManager : MonoBehaviour
         if (firstSpin)
         {
             heroSelectionRotator.DeactivateSelection();
-            AssignHeros();
-            Debug.Log("Square Hero: " + squareHero + ", Diamond Hero: " + diamondHero);
+            InitiateHeroAssignment();
+            //Debug.Log("Square Hero: " + squareHero + ", Diamond Hero: " + diamondHero);
             firstSpin = false;
         }
     }
@@ -200,7 +204,7 @@ public class WheelManager : MonoBehaviour
             symbolIndex = 7;
         }
         else { symbolIndex--; }
-        Debug.Log("Rad " + wheelIndex + " hat den Winkel: " + rotationAngle);
+        //Debug.Log("Rad " + wheelIndex + " hat den Winkel: " + rotationAngle);
         //Debug.Log("Rad " + wheelIndex + " zeigt das Symbol: " + wheelSymbols[wheelIndex][symbolIndex]);
         return wheelSymbols[wheelIndex][symbolIndex];       //Gib das Symbol zurück
     }
@@ -221,29 +225,36 @@ public class WheelManager : MonoBehaviour
         }
     }
 
-    private void AssignHeros()
+    private void InitiateHeroAssignment()
     {
-        //Heldenskripte erhalten
-        squareHero = squareHeroSpawn.GetComponentInChildren<Hero>();
-        diamondHero = diamondHeroSpawn.GetComponentInChildren<Hero>();
+        initialHeroSetting.SetAllAssignments(this);
 
-        //Actionsskripte erhalten
-        selfSquareActions = squareHeroSpawn.GetComponent<HeroActions>();
-        selfDiamondActions = diamondHeroSpawn.GetComponent<HeroActions>();
+        ////Heldenskripte erhalten
+        //squareHero = squareHeroSpawn.GetComponentInChildren<Hero>();
+        //diamondHero = diamondHeroSpawn.GetComponentInChildren<Hero>();
 
-        //Animator zuweisen
-        heroAnimationManager.SetAnimators(squareHero, diamondHero);
+        ////Actionsskripte erhalten
+        //selfSquareActions = squareHeroSpawn.GetComponent<HeroActions>();
+        //selfDiamondActions = diamondHeroSpawn.GetComponent<HeroActions>();
+        //enemySquareActions = enemySquareHeroSpawn.GetComponent<HeroActions>();
+        //enemyDiamondActions = enemyDiamondHeroSpawn.GetComponent<HeroActions>();
 
-        //Aktionsskripte zuweisen
-        selfSquareActions.SetPlayerHeroes(squareHero, diamondHero);
-        selfSquareActions.SetSquareSideMain();
-        squareHero.SetHeroActions(selfSquareActions);
-        selfDiamondActions.SetPlayerHeroes(diamondHero, squareHero);
-        selfDiamondActions.SetDiamondSideMain();
-        diamondHero.SetHeroActions(selfDiamondActions);
+        ////Animator zuweisen
+        //heroAnimationManager = squareHeroSpawn.GetComponent<HeroAnimationManager>();
+        //heroAnimationManager.SetAnimators(squareHeroSpawn, diamondHeroSpawn);
 
-        enemySquareActions.SetEnemyHeroes(squareHero, diamondHero);
-        enemyDiamondActions.SetEnemyHeroes(squareHero, diamondHero);
+        ////Aktionsskripte zuweisen
+        //selfSquareActions.SetPlayerHeroes(squareHero, diamondHero);
+        //selfSquareActions.SetSquareSideMain();
+        //squareHero.SetHeroActions(selfSquareActions);
+        //selfDiamondActions.SetPlayerHeroes(diamondHero, squareHero);
+        //selfDiamondActions.SetDiamondSideMain();
+        //diamondHero.SetHeroActions(selfDiamondActions);
+
+        //enemySquareActions.SetEnemyHeroes(squareHero, diamondHero);
+        //enemyDiamondActions.SetEnemyHeroes(squareHero, diamondHero);
+
+        //turnManager.SetHeroesFromSpawn();
     }
 
     //Funktion zum beenden der Runde
@@ -262,7 +273,7 @@ public class WheelManager : MonoBehaviour
         turnManager.TestForReadyness();
     }
 
-    //Auswerten der Räder
+    //Auswerten der Räder (alt)
     private void EvaluateSymbols()
     {
         //Zähler für die Symbole
@@ -338,11 +349,11 @@ public class WheelManager : MonoBehaviour
         }
 
         //Berechne die Energie für die Square- und Diamant-Helden
-        UpdateHeroEnergy(squareHero, squareCount, xpSquareCount);
-        UpdateHeroEnergy(diamondHero, diamondCount, xpDiamondCount);
+        //UpdateHeroEnergy(squareHero, squareCount, xpSquareCount);
+        //UpdateHeroEnergy(diamondHero, diamondCount, xpDiamondCount);
 
         //Bulwark-Level erhöhen, wenn genügend Hämmer gerollt wurden
-        UpdateBulwark(hammerCount);
+        //UpdateBulwark(hammerCount);
     }
 
     public void EvaluateXPGained()
@@ -350,6 +361,8 @@ public class WheelManager : MonoBehaviour
         int xpSquareCount = 0;
         int xpDiamondCount = 0;
         int wheelNumber = 0;
+        bool[] wheelsActivateAnimationSquare = new bool[5] { false, false, false, false, false };
+        bool[] wheelsActivateAnimationDiamond = new bool[5] { false, false, false, false, false };
 
         foreach (var wheel in wheels)
         {
@@ -367,16 +380,18 @@ public class WheelManager : MonoBehaviour
                 case Symbol.SquareSquarePlus:
                     xpSquareCount++;
 
-                    //Partikelanimation starten
-                    particleManager.ActivateParticleMove(wheelNumber, "SquareStar");
+                    //Partikelanimation vorbereiten
+                    //particleManager.ActivateParticleMove(wheelNumber, "SquareStar");
+                    wheelsActivateAnimationSquare[wheelNumber] = true;
                     break;
 
                 case Symbol.DiamondPlus:
                 case Symbol.DiamondDiamondPlus:
                     xpDiamondCount++;
 
-                    //Partikelanimation Starten
-                    particleManager.ActivateParticleMove(wheelNumber, "DiamondStar");
+                    //Partikelanimation vorbereiten
+                    //particleManager.ActivateParticleMove(wheelNumber, "DiamondStar");
+                    wheelsActivateAnimationDiamond[wheelNumber] = true;
                     break;
 
                 default:
@@ -387,14 +402,15 @@ public class WheelManager : MonoBehaviour
         }
 
         //Berechne die XP für die Square- und Diamant-Helden
-        StartCoroutine(UpdateHeroEnergy(squareHero, 0, xpSquareCount));
-        StartCoroutine(UpdateHeroEnergy(diamondHero, 0, xpDiamondCount));
+        StartCoroutine(UpdateHeroEnergy(squareHero, 0, xpSquareCount, wheelsActivateAnimationSquare));
+        StartCoroutine(UpdateHeroEnergy(diamondHero, 0, xpDiamondCount, wheelsActivateAnimationDiamond));
     }
 
     public void EvaluateHammerCount()
     {
         int hammerCount = 0;
         int wheelNumber = 0;
+        bool[] wheelsActivateAnimation = new bool[5] { false, false, false, false, false };
 
         foreach (var wheel in wheels)
         {
@@ -411,22 +427,25 @@ public class WheelManager : MonoBehaviour
                 case Symbol.Hammer:
                     hammerCount++;
 
-                    //Partikelanimation starten
-                    particleManager.ActivateParticleMove(wheelNumber, "Hammer");
+                    //Partikelanimation vorbereiten
+                    //particleManager.ActivateParticleMove(wheelNumber, "Hammer");
+                    wheelsActivateAnimation[wheelNumber] = true;
                     break;
 
                 case Symbol.HammerHammer:
                     hammerCount += 2;
 
-                    //Partikelanimation starten
-                    particleManager.ActivateParticleMove(wheelNumber, "Hammer");
+                    //Partikelanimation vorbereiten
+                    //particleManager.ActivateParticleMove(wheelNumber, "Hammer");
+                    wheelsActivateAnimation[wheelNumber] = true;
                     break;
 
                 case Symbol.HammerHammerHammer:
                     hammerCount += 3;
 
-                    //Partikelanimation starten
-                    particleManager.ActivateParticleMove(wheelNumber, "Hammer");
+                    //Partikelanimation vorbereiten
+                    //particleManager.ActivateParticleMove(wheelNumber, "Hammer");
+                    wheelsActivateAnimation[wheelNumber] = true;
                     break;
 
                 default:
@@ -437,7 +456,7 @@ public class WheelManager : MonoBehaviour
         }
 
         //Bulwark-Level erhöhen, wenn genügend Hämmer gerollt wurden
-        StartCoroutine(UpdateBulwark(hammerCount));
+        StartCoroutine(UpdateBulwark(hammerCount, wheelsActivateAnimation));
     }
 
     public void EvaluateEnergyCount()
@@ -446,6 +465,8 @@ public class WheelManager : MonoBehaviour
         int squareCount = 0;
         int diamondCount = 0;
         int wheelNumber = 0;
+        bool[] wheelsActivateAnimationSquare = new bool[5] { false, false, false, false, false };
+        bool[] wheelsActivateAnimationDiamond = new bool[5] { false, false, false, false, false };
 
         foreach (var wheel in wheels)
         {
@@ -463,32 +484,36 @@ public class WheelManager : MonoBehaviour
                 case Symbol.SquarePlus:
                     squareCount++;
 
-                    //Partikelanimation starten
-                    particleManager.ActivateParticleMove(wheelNumber, "Square");
+                    //Partikelanimation vorbereiten
+                    //particleManager.ActivateParticleMove(wheelNumber, "Square");
+                    wheelsActivateAnimationSquare[wheelNumber] = true;
                     break;
 
                 case Symbol.SquareSquare:
                 case Symbol.SquareSquarePlus:
                     squareCount += 2;
 
-                    //Partikelanimation starten
-                    particleManager.ActivateParticleMove(wheelNumber, "Square");
+                    //Partikelanimation vorbereiten
+                    //particleManager.ActivateParticleMove(wheelNumber, "Square");
+                    wheelsActivateAnimationSquare[wheelNumber] = true;
                     break;
 
                 case Symbol.Diamond:
                 case Symbol.DiamondPlus:
                     diamondCount++;
 
-                    //Partikelanimation starten
-                    particleManager.ActivateParticleMove(wheelNumber, "Diamond");
+                    //Partikelanimation vorbereiten
+                    //particleManager.ActivateParticleMove(wheelNumber, "Diamond");
+                    wheelsActivateAnimationDiamond[wheelNumber] = true;
                     break;
 
                 case Symbol.DiamondDiamond:
                 case Symbol.DiamondDiamondPlus:
                     diamondCount += 2;
 
-                    //Partikelanimation starten
-                    particleManager.ActivateParticleMove(wheelNumber, "Diamond");
+                    //Partikelanimation vorbereiten
+                    //particleManager.ActivateParticleMove(wheelNumber, "Diamond");
+                    wheelsActivateAnimationDiamond[wheelNumber] = true;
                     break;
 
                 default:
@@ -499,42 +524,93 @@ public class WheelManager : MonoBehaviour
         }
 
         //Berechne die Energie für die Square- und Diamant-Helden
-        StartCoroutine(UpdateHeroEnergy(squareHero, squareCount, 0));
-        StartCoroutine(UpdateHeroEnergy(diamondHero, diamondCount, 0));
+        StartCoroutine(UpdateHeroEnergy(squareHero, squareCount, 0, wheelsActivateAnimationSquare));
+        StartCoroutine(UpdateHeroEnergy(diamondHero, diamondCount, 0, wheelsActivateAnimationDiamond));
     }
 
-    private IEnumerator UpdateHeroEnergy(Hero hero, int symbolCount, int gainedXP)
+    private IEnumerator UpdateHeroEnergy(Hero hero, int symbolCount, int gainedXP, bool[] whatWheels)
     {
-        yield return new WaitForSeconds(0.8f);
-
-        if (gainedXP > 0)
-        {
-            hero.AddXP(gainedXP);
-        }
-
         int energyGained = 0;
-
         if (symbolCount >= 3)
         {
             //Energieberechnung: Ziehe 2 von der Anzahl der Symbole ab
             energyGained = symbolCount - 2;
+        }
+
+        string toWhatHeroXP = "SquareStar";
+        string toWhatHeroSymbol = "Square";
+        if (hero = diamondHero)
+        {
+            toWhatHeroXP = "DiamondStar";
+            toWhatHeroSymbol = "Diamond";
+        }
+
+        //XP Animation
+        if (gainedXP >= 1)
+        {
+            for (int i = 0; i < whatWheels.Length; i++)
+            {
+                if (whatWheels[i])
+                {
+                    particleManager.ActivateParticleMove(i, toWhatHeroXP);
+                }
+            }
+        }
+
+        //Symbol Animation
+        if (symbolCount >= 1)
+        {
+            if (energyGained >= 1)
+            {
+                for (int i = 0; i < whatWheels.Length; i++)
+                {
+                    if (whatWheels[i])
+                    {
+                        particleManager.ActivateParticleMove(i, toWhatHeroSymbol);
+                    }
+                }
+            }
+        }
+
+        yield return new WaitForSeconds(0.8f);
+
+        if (gainedXP >= 1)
+        {
+            hero.AddXP(gainedXP);
+        }
+
+        if (energyGained >= 1)
+        {
             hero.AddEnergy(energyGained);
         }
 
         Debug.Log(hero + " hat " + gainedXP + " XP, und " + energyGained + " Energie erhalten");
     }
 
-    private IEnumerator UpdateBulwark(int hammerCount)
+    private IEnumerator UpdateBulwark(int hammerCount, bool[] whatWheels)
     {
-        yield return new WaitForSeconds(0.8f);
-
+        int bulwarkIncrease = 0;
         if (hammerCount >= 3)
         {
             //Bulwark wird um die Anzahl der Hämmer - 2 erhöht
-            int bulwarkIncrease = hammerCount - 2;
-            bulwarkMover.increaseBulwark(bulwarkIncrease);
-            Debug.Log("Das Bulwark ist " + (hammerCount - 2) + " Stufen größer geworden.");
+            bulwarkIncrease = hammerCount - 2;
+            //Debug.Log("Das Bulwark ist " + (hammerCount - 2) + " Stufen größer geworden.");
         }
+
+        if (bulwarkIncrease >= 0)
+        {
+            for (int i = 0; i < whatWheels.Length; i++)
+            {
+                if (whatWheels[i])
+                {
+                    particleManager.ActivateParticleMove(i, "Hammer");
+                }
+            }
+        }
+
+        yield return new WaitForSeconds(0.8f);
+
+        bulwarkMover.increaseBulwark(bulwarkIncrease);
     }
 
     public void ResetRound()
@@ -568,5 +644,42 @@ public class WheelManager : MonoBehaviour
     public void ResetStatusFinshed()
     {
         statusFinished = false;
+    }
+
+    //public bool GetHeroesAreSet()
+    //{
+    //    bool temp = heroesAreSet;
+    //    heroesAreSet = false;
+    //    return temp;
+    //}
+
+    public void SetHeroAssignments()
+    {
+        //Heldenskripte erhalten
+        squareHero = squareHeroSpawn.GetComponentInChildren<Hero>();
+        diamondHero = diamondHeroSpawn.GetComponentInChildren<Hero>();
+
+        //Actionsskripte erhalten
+        selfSquareActions = squareHeroSpawn.GetComponent<HeroActions>();
+        selfDiamondActions = diamondHeroSpawn.GetComponent<HeroActions>();
+        enemySquareActions = enemySquareHeroSpawn.GetComponent<HeroActions>();
+        enemyDiamondActions = enemyDiamondHeroSpawn.GetComponent<HeroActions>();
+
+        //Animator zuweisen
+        heroAnimationManager = squareHeroSpawn.GetComponent<HeroAnimationManager>();
+        heroAnimationManager.SetAnimators(squareHeroSpawn, diamondHeroSpawn);
+
+        //Aktionsskripte zuweisen
+        selfSquareActions.SetPlayerHeroes(squareHero, diamondHero);
+        selfSquareActions.SetSquareSideMain();
+        squareHero.SetHeroActions(selfSquareActions);
+        selfDiamondActions.SetPlayerHeroes(diamondHero, squareHero);
+        selfDiamondActions.SetDiamondSideMain();
+        diamondHero.SetHeroActions(selfDiamondActions);
+
+        enemySquareActions.SetEnemyHeroes(squareHero, diamondHero);
+        enemyDiamondActions.SetEnemyHeroes(squareHero, diamondHero);
+
+        turnManager.SetHeroesFromSpawn();
     }
 }

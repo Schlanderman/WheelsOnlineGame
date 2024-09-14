@@ -47,7 +47,8 @@ public class Hero : MonoBehaviour
         xp = 0;
         if (heroRank == HeroRank.Gold)
         {
-            SendBomb();     //Sende Bombe bei Gold
+            //SendBomb();     //Sende Bombe bei Gold
+            canSendBomb = true;
         }
         else
         {
@@ -105,7 +106,7 @@ public class Hero : MonoBehaviour
     public IEnumerator SendBomb()
     {
         Debug.Log(heroType + " hat eine Bombe geschickt!");
-        yield return StartCoroutine(heroActions.SendBomb(this));
+        yield return StartCoroutine(heroActions.SendBomb());
     }
 
     //Methode zur Energieerfassung

@@ -4,22 +4,15 @@ using UnityEngine;
 
 public class HeroAnimationManager : MonoBehaviour
 {
-    private Hero squareHero;
-    private Hero diamondHero;
-
     private Animator squareAnimator;
     private Animator diamondAnimator;
 
     //Methode um die Helden und Animatoren zuzuweisen
-    public void SetAnimators(Hero square, Hero diamond)
+    public void SetAnimators(GameObject square, GameObject diamond)
     {
-        //Heldenzuweiseung
-        squareHero = square;
-        diamondHero = diamond;
-
         //Animatorzuweisung
-        squareAnimator = square.GetComponent<Animator>();
-        diamondAnimator = diamond.GetComponent<Animator>();
+        squareAnimator = square.GetComponentInChildren<Animator>();
+        diamondAnimator = diamond.GetComponentInChildren<Animator>();
     }
 
     public void TriggerHeroAction(string stand)
