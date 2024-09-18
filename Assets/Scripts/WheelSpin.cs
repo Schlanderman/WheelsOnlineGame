@@ -4,10 +4,8 @@ using UnityEngine;
 
 public class WheelSpin : MonoBehaviour
 {
-    [SerializeField]
-    private float spinSpeed = 500f;     //Anfängliche Geschwindigkeit der Rotation
-    [SerializeField]
-    private float slowDownRate = 2f;    //Rate, mit der das Rad langsamer wird
+    [SerializeField] private float spinSpeed = 500f;     //Anfängliche Geschwindigkeit der Rotation
+    [SerializeField] private float slowDownRate = 2f;    //Rate, mit der das Rad langsamer wird
     private bool isSpinning = false;
     private float currentSpinSpeed;
     public bool hasStopped = false;     //Ob das Rad angehalten hat
@@ -16,21 +14,19 @@ public class WheelSpin : MonoBehaviour
     private bool turnClampLock = false;
     private bool initialClampLock = true;
 
-    [SerializeField]
-    private int wheelIndex;     //Welches Rad ist das? (0-4)
+    [SerializeField] private int wheelIndex;     //Welches Rad ist das? (0-4)
     private float finalRotation;
 
-    private WheelManager wheelManager;
+    [SerializeField] private WheelManager wheelManager;
 
-    [SerializeField]
-    private ClampActivator clampedActivator;
+    [SerializeField] private ClampActivator clampedActivator;
 
     public delegate void OnWheelStopped();
-    public event OnWheelStopped wheelStoppedEvent;
+    public event OnWheelStopped WheelStoppedEvent;
 
     private void Start()
     {
-        wheelManager = FindObjectOfType<WheelManager>();
+        //wheelManager = FindObjectOfType<WheelManager>();
     }
 
     private void Update()
@@ -54,9 +50,9 @@ public class WheelSpin : MonoBehaviour
                 //Debug.Log("Rad ist gestoppt! Rotation: " + transform.eulerAngles.x);
 
                 //Benachrichtige den WheelManager, dass dieses Rad gestoppt hat
-                if (wheelStoppedEvent != null)
+                if (WheelStoppedEvent != null)
                 {
-                    wheelStoppedEvent.Invoke();
+                    WheelStoppedEvent.Invoke();
                 }
             }
         }
@@ -72,14 +68,14 @@ public class WheelSpin : MonoBehaviour
             hasStopped = false;
             turnClampLock = true;
             slowDownRate = Random.Range(1f, 2f);
-            spinSpeed = Random.Range(400f, 900f);
+            spinSpeed = Random.Range(400f, 1200f);
         }
         else if (isLocked)
         {
             //Benachrichtige den WheelManager, dass dieses Rad gelocked ist
-            if (wheelStoppedEvent != null)
+            if (WheelStoppedEvent != null)
             {
-                wheelStoppedEvent.Invoke();
+                WheelStoppedEvent.Invoke();
                 clampLock = true;
             }
         }
@@ -116,9 +112,6 @@ public class WheelSpin : MonoBehaviour
 
     void SnapToNearestSymbol()
     {
-        //Berechne die X-Rotation konsistent mit Atan2
-        //float currentXRotation = GetXRotationConsistent(transform);
-
         // Aktuelle Z-Rotation abrufen
         float currentXRotation = transform.eulerAngles.x;
 
@@ -127,28 +120,15 @@ public class WheelSpin : MonoBehaviour
         finalRotation = Mathf.Round(GetXRotationConsistent(transform) / 45) * 45;
         //Debug.Log(this + " war " + currentXRotation + " und ist gesnapped auf: " + snappedRotation);
 
-        //Setze die Rotation des Rads auf diese genaue Symbolpsoition
-        //transform.eulerAngles = new Vector3(snappedRotation, transform.eulerAngles.y, transform.eulerAngles.z);
-
         //Starte die Coroutine für die sanfte Rotation
         StartCoroutine(SmoothSnapRotation(snappedRotation));
     }
 
     public void StopWheel()
     {
-        //Berechne die X-Rotation, wo das Rad gestoppt hat, konsistent mit Atan2
-        //float currentXRotation = GetXRotationConsistent(transform);
-
-        //Debug.Log(this + " stoppt bei Winkel: " + finalRotation);
-        //Hole das Symbol, das oben liegt
-        //Symbol topSymbol = wheelManager.GetTopSymbol(wheelIndex, finalRotation);
-
         isLocked = true;
         clampLock = true;
         clampedActivator.ToggleClamps(isLocked);    //Klammeranimation triggern
-
-        //Verarbeite das Symbol
-        //Debug.Log("Rad " + wheelIndex + " Symbol: " + topSymbol);
     }
 
     public bool HasStopped()
@@ -174,7 +154,7 @@ public class WheelSpin : MonoBehaviour
         return xRotation;
     }
 
-    public Symbol getCurrentSymbol()
+    public Symbol GetCurrentSymbol()
     {
         return wheelManager.GetTopSymbol(wheelIndex, finalRotation);
     }
@@ -206,9 +186,9 @@ public class WheelSpin : MonoBehaviour
         transform.rotation = targetRotation;
     }
 
-    public void setClampLock(bool overalLLock, bool initialLock)
+    public void SetClampLock(bool overallLock, bool initialLock)
     {
-        clampLock = overalLLock;
+        clampLock = overallLock;
         initialClampLock = initialLock;
     }
 }

@@ -34,7 +34,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: 037b28286113a184aac3ba1db930fcfb, type: 3}
       propertyPath: m_LocalRotation.w
-      value: 1
+      value: 0.9396927
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: 037b28286113a184aac3ba1db930fcfb, type: 3}
       propertyPath: m_LocalRotation.x
@@ -42,11 +42,11 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: 037b28286113a184aac3ba1db930fcfb, type: 3}
       propertyPath: m_LocalRotation.y
-      value: -0
+      value: 0.3420201
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: 037b28286113a184aac3ba1db930fcfb, type: 3}
       propertyPath: m_LocalRotation.z
-      value: -0
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: 037b28286113a184aac3ba1db930fcfb, type: 3}
       propertyPath: m_LocalEulerAnglesHint.x
@@ -54,7 +54,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: 037b28286113a184aac3ba1db930fcfb, type: 3}
       propertyPath: m_LocalEulerAnglesHint.y
-      value: 0
+      value: 40
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: 037b28286113a184aac3ba1db930fcfb, type: 3}
       propertyPath: m_LocalEulerAnglesHint.z
@@ -78,36 +78,19 @@ PrefabInstance:
     m_AddedComponents:
     - targetCorrespondingSourceObject: {fileID: 919132149155446097, guid: 037b28286113a184aac3ba1db930fcfb, type: 3}
       insertIndex: -1
-      addedObject: {fileID: 7779874143358603149}
-    - targetCorrespondingSourceObject: {fileID: 919132149155446097, guid: 037b28286113a184aac3ba1db930fcfb, type: 3}
-      insertIndex: -1
       addedObject: {fileID: -1048848101699079248}
     - targetCorrespondingSourceObject: {fileID: 919132149155446097, guid: 037b28286113a184aac3ba1db930fcfb, type: 3}
       insertIndex: -1
-      addedObject: {fileID: -8594016380474567208}
+      addedObject: {fileID: 6604484374842271054}
+    - targetCorrespondingSourceObject: {fileID: 919132149155446097, guid: 037b28286113a184aac3ba1db930fcfb, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 2515839477920356943}
   m_SourcePrefab: {fileID: 100100000, guid: 037b28286113a184aac3ba1db930fcfb, type: 3}
 --- !u!1 &210579314880244994 stripped
 GameObject:
   m_CorrespondingSourceObject: {fileID: 919132149155446097, guid: 037b28286113a184aac3ba1db930fcfb, type: 3}
   m_PrefabInstance: {fileID: 1021553043020599379}
   m_PrefabAsset: {fileID: 0}
---- !u!114 &7779874143358603149
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 210579314880244994}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: faa8c5a900a84d6469dd68410e25bf60, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  heroType: 1
-  heroRank: 1
-  bronzeMaterial: {fileID: 2100000, guid: 91f924a58a2cea24e88b89a33c961a0c, type: 2}
-  silverMaterial: {fileID: 2100000, guid: 1e4531cc5d710144fbccde51bb89be79, type: 2}
-  goldMaterial: {fileID: 2100000, guid: 66055d8930eac4b4dbad21fe1902027f, type: 2}
 --- !u!95 &-1048848101699079248
 Animator:
   serializedVersion: 5
@@ -129,7 +112,24 @@ Animator:
   m_AllowConstantClipSamplingOptimization: 1
   m_KeepAnimatorStateOnDisable: 0
   m_WriteDefaultValuesOnDisable: 0
---- !u!114 &-8594016380474567208
+--- !u!114 &6604484374842271054
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 210579314880244994}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: faa8c5a900a84d6469dd68410e25bf60, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  heroType: 1
+  heroRank: 1
+  bronzeMaterial: {fileID: 2100000, guid: 91f924a58a2cea24e88b89a33c961a0c, type: 2}
+  silverMaterial: {fileID: 2100000, guid: 1e4531cc5d710144fbccde51bb89be79, type: 2}
+  goldMaterial: {fileID: 2100000, guid: 66055d8930eac4b4dbad21fe1902027f, type: 2}
+--- !u!114 &2515839477920356943
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -141,3 +141,4 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 950f84fd698eba640bb4c90862727390, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  Animator: {fileID: -1048848101699079248}

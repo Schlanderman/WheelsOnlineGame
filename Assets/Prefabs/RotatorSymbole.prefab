@@ -62,33 +62,16 @@ PrefabInstance:
     m_AddedComponents:
     - targetCorrespondingSourceObject: {fileID: 919132149155446097, guid: e3aa6d76aaad68f4293c99a70c5d8ba3, type: 3}
       insertIndex: -1
-      addedObject: {fileID: 5136468495200765091}
+      addedObject: {fileID: -4994690063152162828}
     - targetCorrespondingSourceObject: {fileID: 919132149155446097, guid: e3aa6d76aaad68f4293c99a70c5d8ba3, type: 3}
       insertIndex: -1
-      addedObject: {fileID: -4994690063152162828}
+      addedObject: {fileID: 8744762728220286726}
   m_SourcePrefab: {fileID: 100100000, guid: e3aa6d76aaad68f4293c99a70c5d8ba3, type: 3}
 --- !u!1 &6427290756776313055 stripped
 GameObject:
   m_CorrespondingSourceObject: {fileID: 919132149155446097, guid: e3aa6d76aaad68f4293c99a70c5d8ba3, type: 3}
   m_PrefabInstance: {fileID: 6193358999535025550}
   m_PrefabAsset: {fileID: 0}
---- !u!114 &5136468495200765091
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 6427290756776313055}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 64cce6a0d4804f74396a2342ebd40914, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  spinSpeed: 500
-  slowDownRate: 2
-  hasStopped: 0
-  isLocked: 0
-  clampedActivator: {fileID: 0}
 --- !u!65 &-4994690063152162828
 BoxCollider:
   m_ObjectHideFlags: 0
@@ -110,3 +93,22 @@ BoxCollider:
   serializedVersion: 3
   m_Size: {x: 0.27598476, y: 0.55, z: 0.55}
   m_Center: {x: 0, y: 0, z: 0}
+--- !u!114 &8744762728220286726
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6427290756776313055}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 64cce6a0d4804f74396a2342ebd40914, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  spinSpeed: 500
+  slowDownRate: 2
+  hasStopped: 0
+  isLocked: 0
+  wheelIndex: 0
+  wheelManager: {fileID: 0}
+  clampedActivator: {fileID: 0}

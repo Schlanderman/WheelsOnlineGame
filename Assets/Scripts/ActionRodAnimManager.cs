@@ -65,8 +65,19 @@ public class ActionRodAnimManager : MonoBehaviour
         yield return StartCoroutine(AnimationMaker(rodNumber, animation));
     }
 
-    //Animation ausführen (mit Zeitrückgabe)
-    public float ActivateRodAnimationTime(int rodNumber, string sprite, string animation)
+    private IEnumerator AnimationMaker(int rodNumber, string animation)
+    {
+        //Animation triggern
+        rodAnimator[rodNumber].SetTrigger(animation);
+
+        //Warte, bis die Animation fertig ist
+        yield return new WaitForSeconds(rodAnimator[rodNumber].GetCurrentAnimatorStateInfo(0).length);
+
+        yield return new WaitForSeconds(0.5f);
+        rodSprite[rodNumber].DeactivateAll();
+    }
+
+    public void TestActivateRodAnimation(int rodNumber, string sprite, string animation)
     {
         switch (sprite)
         {
@@ -104,17 +115,5 @@ public class ActionRodAnimManager : MonoBehaviour
         }
 
         StartCoroutine(AnimationMaker(rodNumber, animation));
-        return rodAnimator[rodNumber].GetCurrentAnimatorStateInfo(0).length;
-    }
-
-    private IEnumerator AnimationMaker(int rodNumber, string animation)
-    {
-        //Animation triggern
-        rodAnimator[rodNumber].SetTrigger(animation);
-
-        //Warte, bis die Animation fertig ist
-        yield return new WaitForSeconds(rodAnimator[rodNumber].GetCurrentAnimatorStateInfo(0).length);
-
-        rodSprite[rodNumber].DeactivateAll();
     }
 }

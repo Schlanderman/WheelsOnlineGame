@@ -4,12 +4,6 @@ using UnityEngine;
 
 public class TurnManager : MonoBehaviour
 {
-    [SerializeField] GameObject[] playerHeroSpawns;
-    [SerializeField] GameObject[] enemyHeroSpawns;
-
-    private Hero[] playerHeroes = new Hero[2];   //Helden des Spielers
-    private Hero[] enemyHeroes = new Hero[2];    //Helden des Gegners
-
     [SerializeField] private WheelManager playerWheelManager;   //WheelManager des Spielers
     [SerializeField] private WheelManager enemyWheelManager;    //WheelManager des Gegners
 
@@ -19,10 +13,16 @@ public class TurnManager : MonoBehaviour
     [SerializeField] private BulwarkMover playerBulwarkMover;   //BulwarkManager des Spielers
     [SerializeField] private BulwarkMover enemyBulwarkMover;    //BulwarkManager des Gegners
 
+    [SerializeField] private EvaluationManager playerEvaluationManager;     //EvaluationManager des Spielers
+    [SerializeField] private EvaluationManager enemyEvaluationManager;      //EvaluationManager des Gegners
+
     //Anzeigen für Gewinnen / Verlieren / Unentschienden
     [SerializeField] private GameObject WinScreen;
     [SerializeField] private GameObject LoseScreen;
     [SerializeField] private GameObject DrawScreen;
+
+    private readonly Hero[] playerHeroes = new Hero[2];     //Helden des Spielers
+    private readonly Hero[] enemyHeroes = new Hero[2];      //Helden des Gegners
 
     private int currentTurnStep = 1;
 
@@ -33,19 +33,13 @@ public class TurnManager : MonoBehaviour
         DrawScreen.SetActive(false);
     }
 
-    public void SetHeroesFromSpawn()
+    public void SetHeroes(Hero playerSquare, Hero playerDiamond, Hero enemySquare, Hero enemyDiamond)
     {
-        //Player Heldenzuweisung
-        for (int i = 0; i < playerHeroSpawns.Length; i++)
-        {
-            playerHeroes[i] = playerHeroSpawns[i].GetComponentInChildren<Hero>();
-        }
+        playerHeroes[0] = playerSquare;
+        playerHeroes[1] = playerDiamond;
 
-        //Enemy Herozuweisung
-        for (int i = 0; i < enemyHeroSpawns.Length; i++)
-        {
-            enemyHeroes[i] = enemyHeroSpawns[i].GetComponentInChildren<Hero>();
-        }
+        enemyHeroes[0] = enemySquare;
+        enemyHeroes[1] = enemyDiamond;
     }
 
     public void TestForReadyness()
@@ -71,20 +65,20 @@ public class TurnManager : MonoBehaviour
         {
             case 1:
                 //XP Panel, Level ups
-                yield return StartCoroutine(ApplyPanelXPAndLevelUps(playerWheelManager));
-                yield return StartCoroutine(ApplyPanelXPAndLevelUps(enemyWheelManager));
+                yield return StartCoroutine(ApplyPanelXPAndLevelUps(playerWheelManager, playerEvaluationManager));
+                yield return StartCoroutine(ApplyPanelXPAndLevelUps(enemyWheelManager, enemyEvaluationManager));
                 break;
 
             case 2:
                 //Hammer panels added
-                yield return StartCoroutine(ApplyHammerPanels(playerWheelManager));
-                yield return StartCoroutine(ApplyHammerPanels(enemyWheelManager));
+                yield return StartCoroutine(ApplyHammerPanels(playerWheelManager, playerEvaluationManager));
+                yield return StartCoroutine(ApplyHammerPanels(enemyWheelManager, enemyEvaluationManager));
                 break;
 
             case 3:
                 //Energy panels added
-                yield return StartCoroutine(ApplyEnergyPanels(playerWheelManager));
-                yield return StartCoroutine(ApplyEnergyPanels(enemyWheelManager));
+                yield return StartCoroutine(ApplyEnergyPanels(playerWheelManager, playerEvaluationManager));
+                yield return StartCoroutine(ApplyEnergyPanels(enemyWheelManager, enemyEvaluationManager));
                 break;
 
             case 4:
@@ -166,25 +160,25 @@ public class TurnManager : MonoBehaviour
 
     //Methoden für Heldenaktionen mit Animation
     // 1) Panel XP, Level ups
-    private IEnumerator ApplyPanelXPAndLevelUps(WheelManager wheels)
+    private IEnumerator ApplyPanelXPAndLevelUps(WheelManager wheels, EvaluationManager evalManager)
     {
-        wheels.EvaluateXPGained();
+        evalManager.EvaluateXPGained(wheels.GetWheels());
 
         yield return new WaitForSeconds(0.8f);
     }
 
     // 2) Hammer panels added
-    private IEnumerator ApplyHammerPanels(WheelManager wheels)
+    private IEnumerator ApplyHammerPanels(WheelManager wheels, EvaluationManager evalManager)
     {
-        wheels.EvaluateHammerCount();
+        evalManager.EvaluateHammerCount(wheels.GetWheels());
 
         yield return new WaitForSeconds(0.8f);
     }
 
     // 3) Energy panels added
-    private IEnumerator ApplyEnergyPanels(WheelManager wheels)
+    private IEnumerator ApplyEnergyPanels(WheelManager wheels, EvaluationManager evalManager)
     {
-        wheels.EvaluateEnergyCount();
+        evalManager.EvaluateEnergyCount(wheels.GetWheels());
 
         yield return new WaitForSeconds(0.8f);
     }
@@ -194,11 +188,11 @@ public class TurnManager : MonoBehaviour
     {
         foreach (var hero in heros)
         {
-            if (hero.getHeroType() == HeroType.Assassin)
+            if (hero.GetHeroType() == HeroType.Assassin)
             {
-                if (hero.getCanMakeAction())
+                if (hero.GetCanMakeAction())
                 {
-                    yield return StartCoroutine(hero.ActivateAction(hero.getHeroType()));
+                    yield return StartCoroutine(hero.ActivateAction(hero.GetHeroType()));
                 }
                 else { yield return null; }
             }
@@ -211,11 +205,11 @@ public class TurnManager : MonoBehaviour
     {
         foreach (var hero in heroes)
         {
-            if (hero.getHeroType() == HeroType.Priest)
+            if (hero.GetHeroType() == HeroType.Priest)
             {
-                if (hero.getCanMakeAction())
+                if (hero.GetCanMakeAction())
                 {
-                    yield return StartCoroutine(hero.ActivateAction(hero.getHeroType()));
+                    yield return StartCoroutine(hero.ActivateAction(hero.GetHeroType()));
                 }
                 else { yield return null; }
             }
@@ -228,11 +222,11 @@ public class TurnManager : MonoBehaviour
     {
         foreach (var hero in heroes)
         {
-            if (hero.getHeroType() == HeroType.Engineer)
+            if (hero.GetHeroType() == HeroType.Engineer)
             {
-                if (hero.getCanMakeAction())
+                if (hero.GetCanMakeAction())
                 {
-                    yield return StartCoroutine(hero.ActivateAction(hero.getHeroType()));
+                    yield return StartCoroutine(hero.ActivateAction(hero.GetHeroType()));
                 }
                 else { yield return null; }
             }
@@ -245,7 +239,7 @@ public class TurnManager : MonoBehaviour
     {
         foreach (var hero in heroes)
         {
-            if (hero.getCanSendBomb())
+            if (hero.GetCanSendBomb())
             {
                 yield return StartCoroutine(hero.SendBomb());
             }
@@ -260,13 +254,13 @@ public class TurnManager : MonoBehaviour
         {
             //Test ob der Held schon dran war
             bool validHero = true;
-            if (hero.getHeroType() == HeroType.Assassin) { validHero = false; }
-            else if (hero.getHeroType() == HeroType.Priest) { validHero = false; }
-            else if (hero.getHeroType() == HeroType.Engineer) { validHero = false; }
+            if (hero.GetHeroType() == HeroType.Assassin) { validHero = false; }
+            else if (hero.GetHeroType() == HeroType.Priest) { validHero = false; }
+            else if (hero.GetHeroType() == HeroType.Engineer) { validHero = false; }
 
-            if (validHero && hero.getCanMakeAction())
+            if (validHero && hero.GetCanMakeAction())
             {
-                yield return StartCoroutine(hero.ActivateAction(hero.getHeroType()));
+                yield return StartCoroutine(hero.ActivateAction(hero.GetHeroType()));
             }
             else { yield return null; }
         }
@@ -275,15 +269,20 @@ public class TurnManager : MonoBehaviour
     // 9) (If the second hero had enough energy from energy panels to act: Priest grants energy)
     private IEnumerator ActingPriest2(Hero[] heroes)
     {
+        //Debug.Log("Das hier sind die Heroes, die angekommen sind: " + heroes);
         foreach (var hero in heroes)
         {
+            //Debug.Log("Das ist der Hero der aus " + heroes + " kommt: " + hero);
             foreach (var held in heroes)
             {
-                if ((held != hero) && !hero.getPriestBoosted() && (hero.getHeroType() == HeroType.Priest))
+                if (hero.GetHeroType() == HeroType.Priest)
                 {
-                    yield return StartCoroutine(hero.ActivateSecondPriest(hero.getHeroType()));
+                    if ((held != hero) && !hero.GetPriestBoosted())
+                    {
+                        yield return StartCoroutine(hero.ActivateSecondPriest(hero.GetHeroType()));
+                    }
+                    else { yield return null; }
                 }
-                else { yield return null; }
             }
         }
     }
@@ -293,9 +292,9 @@ public class TurnManager : MonoBehaviour
     {
         foreach (var hero in heroes)
         {
-            if (hero.getCanMakeAction())
+            if (hero.GetCanMakeAction())
             {
-                yield return StartCoroutine(hero.ActivateAction(hero.getHeroType()));
+                yield return StartCoroutine(hero.ActivateAction(hero.GetHeroType()));
             }
             else { yield return null; }
         }
@@ -306,7 +305,7 @@ public class TurnManager : MonoBehaviour
     {
         foreach (var hero in heroes)
         {
-            if (hero.getCanSendBomb())
+            if (hero.GetCanSendBomb())
             {
                 yield return StartCoroutine(hero.SendBomb());
             }

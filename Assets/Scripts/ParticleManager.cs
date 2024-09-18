@@ -23,7 +23,7 @@ public class ParticleManager : MonoBehaviour
                         break;
 
                     case "Diamond":
-                        squareParticles[i].ActivateMovment("Diamond");
+                        diamondParticles[i].ActivateMovment("Diamond");
                         break;
 
                     case "Hammer":
