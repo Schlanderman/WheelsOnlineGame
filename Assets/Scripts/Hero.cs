@@ -67,7 +67,7 @@ public class Hero : MonoBehaviour
     private void UpdateHeroStats()
     {
         currentStats = HeroManager.heroData[(heroType, heroRank)];
-        energyBar.UpdateEnergieDisplay(currentEnergy, getMaxEnergy());
+        energyBar.UpdateEnergieDisplay(currentEnergy, GetMaxEnergy());
         //Debug.Log($"{heroType} auf {heroRank} hat {currentStats.energyToAct} Energie, {currentStats.crownDamage} KronenSchaden, {currentStats.bulwarkDamage} Bulwarkschaden, {currentStats.delayAdding} Delay, {currentStats.healingAdding} Healing und {currentStats.energyAdding} Energiezufuhr.");
     }
 
@@ -113,9 +113,10 @@ public class Hero : MonoBehaviour
     public void AddEnergy(int amount)
     {
         currentEnergy += amount;
-        int maxEnergy = getMaxEnergy();
+        int maxEnergy = GetMaxEnergy();
         if (currentEnergy >= maxEnergy)
         {
+            currentEnergy = maxEnergy;
             canMakeAction = true;
         }
 
@@ -131,13 +132,18 @@ public class Hero : MonoBehaviour
             currentEnergy = 0;
         }
 
-        energyBar.UpdateEnergieDisplay(currentEnergy, getMaxEnergy());
+        energyBar.UpdateEnergieDisplay(currentEnergy, GetMaxEnergy());
     }
 
     public IEnumerator ActivateAction(HeroType type)
     {
         Debug.Log(type + " führt seine Aktion aus!");
+
+        //Vielleicht mit extra Coroutine
         currentEnergy = 0;
+        energyBar.UpdateEnergieDisplay(currentEnergy, GetMaxEnergy());
+
+        //Debug.Log("Hier wird " + this + " an " + heroActions + " weitergegeben.");
         yield return StartCoroutine(heroActions.ActivateHeroAction(this));
     }
 
@@ -148,81 +154,81 @@ public class Hero : MonoBehaviour
     }
 
     //Methoden um die Werte auszulesen
-    public int getCrownDamage()
+    public int GetCrownDamage()
     {
         return currentStats.crownDamage;
     }
 
-    public int getBulwarkDamage()
+    public int GetBulwarkDamage()
     {
         return currentStats.bulwarkDamage;
     }
 
-    public int getDelayAdding()
+    public int GetDelayAdding()
     {
         return currentStats.delayAdding;
     }
 
-    public int getHealingAdding()
+    public int GetHealingAdding()
     {
         return currentStats.healingAdding;
     }
 
-    public int getEnergyAdding()
+    public int GetEnergyAdding()
     {
         return currentStats.energyAdding;
     }
 
-    public string getHeroName()
+    public string GetHeroName()
     {
         return heroType.ToString();
     }
 
-    public int getMaxEnergy()
+    public int GetMaxEnergy()
     {
         return currentStats.energyToAct;
     }
 
-    public void setEnergyBar(EnergyBar bar)
+    public void SetEnergyBar(EnergyBar bar)
     {
         energyBar = bar;
     }
 
-    public void setXPLightManager(XPLightManager light)
+    public void SetXPLightManager(XPLightManager light)
     {
         xpLightManager = light;
     }
 
-    public bool getCanSendBomb()
+    public bool GetCanSendBomb()
     {
         bool sendBomb = canSendBomb;
         canSendBomb = false;
         return sendBomb;
     }
 
-    public bool getCanMakeAction()
+    public bool GetCanMakeAction()
     {
         bool makeAction = canMakeAction;
         canMakeAction = false;
         return makeAction;
     }
 
-    public bool priestChecksAction()
+    public bool PriestChecksAction()
     {
         return canMakeAction;
     }
 
-    public HeroType getHeroType()
+    public HeroType GetHeroType()
     {
         return heroType;
     }
 
-    public int getCurrentEnergy()
+    public int GetCurrentEnergy()
     {
         return currentEnergy;
     }
 
-    public bool getPriestBoosted()
+    public bool GetPriestBoosted()
     {
         return heroActions.GetPriestBoosted();
     }

@@ -32,52 +32,52 @@ public class HeroUIUpdater : MonoBehaviour
             Material[] materials1 = renderer1.materials;
             Material[] materials2 = renderer2.materials;
 
-            switch (hero.getHeroName())
+            switch (hero.GetHeroName())
             {
                 case "Warrior":
                     materials1[1] = crownDamageMaterial;
                     materials2[1] = bulwarkDamageMaterial;
-                    firstStat = hero.getCrownDamage();
-                    secondStat = hero.getBulwarkDamage();
+                    firstStat = hero.GetCrownDamage();
+                    secondStat = hero.GetBulwarkDamage();
                     break;
 
                 case "Mage":
                     materials1[1] = crownDamageMaterial;
                     materials2[1] = bulwarkDamageMaterial;
-                    firstStat = hero.getCrownDamage();
-                    secondStat = hero.getBulwarkDamage();
+                    firstStat = hero.GetCrownDamage();
+                    secondStat = hero.GetBulwarkDamage();
                     break;
 
                 case "Archer":
                     materials1[1] = crownDamageMaterial;
                     materials2[1] = bulwarkDamageMaterial;
-                    firstStat = hero.getCrownDamage();
-                    secondStat = hero.getBulwarkDamage();
+                    firstStat = hero.GetCrownDamage();
+                    secondStat = hero.GetBulwarkDamage();
                     break;
 
                 case "Engineer":
                     materials1[1] = crownDamageMaterial;
                     materials2[1] = bulwarkDamageMaterial;
-                    firstStat = hero.getCrownDamage();
-                    secondStat = hero.getBulwarkDamage();
+                    firstStat = hero.GetCrownDamage();
+                    secondStat = hero.GetBulwarkDamage();
                     break;
 
                 case "Assassin":
                     materials1[1] = delayMaterial;
                     materials2[1] = crownDamageMaterial;
-                    firstStat = hero.getDelayAdding();
-                    secondStat = hero.getCrownDamage();
+                    firstStat = hero.GetDelayAdding();
+                    secondStat = hero.GetCrownDamage();
                     break;
 
                 case "Priest":
                     materials1[1] = healingMaterial;
                     materials2[1] = energyMaterial;
-                    firstStat = hero.getHealingAdding();
-                    secondStat = hero.getEnergyAdding();
+                    firstStat = hero.GetHealingAdding();
+                    secondStat = hero.GetEnergyAdding();
                     break;
 
                 default:
-                    Debug.LogWarning("Der Held: " + hero.getHeroName() + " ist nicht bekannt!");
+                    Debug.LogWarning("Der Held: " + hero.GetHeroName() + " ist nicht bekannt!");
                     break;
             }
 

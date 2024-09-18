@@ -21,9 +21,13 @@ public class HeroActions : MonoBehaviour
     private HeroAnimationManager heroAnimationManager;      //Der Animationsmanager des Helden
 
     private string thisHeroSide = "Square";
-    //private string otherHeroSide = "Diamond";
+    private string thisUserSide = "Player";
 
     private bool priestBoostedOtherHero = false;     //Wert, ob ein Priester den anderen Helden Energie gegeben hat
+
+
+
+
 
     //Methode um Spielerhelden zuzuweisen
     public void SetPlayerHeroes(Hero thisHero, Hero otherHero)
@@ -31,7 +35,7 @@ public class HeroActions : MonoBehaviour
         selfThisHero = thisHero;
         selfOtherHero = otherHero;
 
-        heroAnimationManager = this.GetComponent<HeroAnimationManager>();
+        heroAnimationManager = thisHero.GetComponent<HeroAnimationManager>();
         //Debug.Log("AnimationManager in " + this + " ist " + heroAnimationManager);
     }
 
@@ -42,24 +46,36 @@ public class HeroActions : MonoBehaviour
         enemyDiamondHero = diamond;
     }
 
-    //Methode, um die Seiten zuzuweisen
+    //Methoden, um die Seiten zuzuweisen
     public void SetSquareSideMain()
     {
         thisHeroSide = "Square";
-        //otherHeroSide = "Diamond";
     }
 
     public void SetDiamondSideMain()
     {
         thisHeroSide = "Diamond";
-        //otherHeroSide = "Square";
     }
+
+    //Methoden, um die Userseiten zuzuweisen
+    public void SetPlayerSideMain()
+    {
+        thisUserSide = "Player";
+    }
+
+    public void SetEnemySideMain()
+    {
+        thisUserSide = "Enemy";
+    }
+
+
+
+
 
     //Auswählen, welcher Held die Aktion ausführt
     public IEnumerator ActivateHeroAction(Hero hero)
     {
-        HeroType hType = hero.getHeroType();
-        Debug.Log(hero + " führt seine Aktion aus in HeroActions und ist Type: " + hType);
+        HeroType hType = hero.GetHeroType();
 
         switch (hType)
         {
@@ -107,7 +123,7 @@ public class HeroActions : MonoBehaviour
         }
 
         //Animation
-        heroAnimationManager.TriggerHeroAction(thisHeroSide);
+        heroAnimationManager.TriggerHeroAction();
         yield return StartCoroutine(rodAnimations.ActivateRodAnimation(rodNumber, "Bomb", "PopUp"));
     }
 
@@ -119,7 +135,7 @@ public class HeroActions : MonoBehaviour
         int rodNumber = 0;
         string attackSideBulwark = "AttackRightBulwark";
         string attackSideCrown = "AttackRightCrown";
-        if (thisHeroSide == "Diamond")
+        if ((thisHeroSide == "Diamond" && thisUserSide == "Player") || (thisHeroSide == "Square" && thisUserSide == "Enemy"))
         {
             rodNumber = 3;
             attackSideBulwark = "AttackLeftBulwark";
@@ -129,20 +145,20 @@ public class HeroActions : MonoBehaviour
         if (enemyBulwark.GetBulwarkLevel() >= 1)
         {
             //Animation
-            heroAnimationManager.TriggerHeroAction(thisHeroSide);
+            heroAnimationManager.TriggerHeroAction();
             yield return StartCoroutine(rodAnimations.ActivateRodAnimation(rodNumber, "Sword", attackSideBulwark));
 
             //Schaden am Bulwark
-            enemyBulwark.decreaseBulwark(selfThisHero.getBulwarkDamage());
+            enemyBulwark.decreaseBulwark(selfThisHero.GetBulwarkDamage());
         }
         else
         {
             //Animation
-            heroAnimationManager.TriggerHeroAction(thisHeroSide);
+            heroAnimationManager.TriggerHeroAction();
             yield return StartCoroutine(rodAnimations.ActivateRodAnimation(rodNumber, "Sword", attackSideCrown));
 
             //Schaden an der Krone
-            enemyCrown.DecreaseHP(selfThisHero.getCrownDamage());
+            enemyCrown.DecreaseHP(selfThisHero.GetCrownDamage());
         }
     }
 
@@ -154,13 +170,13 @@ public class HeroActions : MonoBehaviour
         int rodNumber = 0;
         string attackSideBulwark = "AttackRightBulwark";
         string attackSideCrown = "AttackRightCrown";
-        string attackSideCrownHigh = "FireBallRightHigh";
-        if (thisHeroSide == "Diamond")
+        string attackSideCrownHigh = "FireballRightHigh";
+        if ((thisHeroSide == "Diamond" && thisUserSide == "Player") || (thisHeroSide == "Square" && thisUserSide == "Enemy"))
         {
             rodNumber = 3;
             attackSideBulwark = "AttackLeftBulwark";
             attackSideCrown = "AttackLeftCrown";
-            attackSideCrownHigh = "FireBallLeftHigh";
+            attackSideCrownHigh = "FireballLeftHigh";
         }
 
         //Erster Angriff
@@ -168,31 +184,31 @@ public class HeroActions : MonoBehaviour
         {
             //Animation
             Debug.Log("Erster Angriff mit Bulwarklevel: " + enemyBulwark);
-            heroAnimationManager.TriggerHeroAction(thisHeroSide);
+            heroAnimationManager.TriggerHeroAction();
             yield return StartCoroutine(rodAnimations.ActivateRodAnimation(rodNumber, "Fireball", attackSideBulwark));
 
             //Schaden am Bulwark
-            enemyBulwark.decreaseBulwark(selfThisHero.getBulwarkDamage());
+            enemyBulwark.decreaseBulwark(selfThisHero.GetBulwarkDamage());
         }
         else
         {
             //Animation
             Debug.Log("Erster Angriff ohne Bulwark");
-            heroAnimationManager.TriggerHeroAction(thisHeroSide);
+            heroAnimationManager.TriggerHeroAction();
             yield return StartCoroutine(rodAnimations.ActivateRodAnimation(rodNumber, "Fireball", attackSideCrown));
 
             //Schaden an der Krone
-            enemyCrown.DecreaseHP(selfThisHero.getCrownDamage());
+            enemyCrown.DecreaseHP(selfThisHero.GetCrownDamage());
         }
 
         //Zweiter Angriff
         //Animation
         Debug.Log("Zweiter Angriff!");
-        heroAnimationManager.TriggerHeroAction(thisHeroSide);
+        heroAnimationManager.TriggerHeroAction();
         yield return StartCoroutine(rodAnimations.ActivateRodAnimation(rodNumber, "Fireball", attackSideCrownHigh));
 
         //Schaden an der Krone
-        enemyCrown.DecreaseHP(selfThisHero.getCrownDamage());
+        enemyCrown.DecreaseHP(selfThisHero.GetCrownDamage());
     }
 
     //Archer
@@ -202,7 +218,7 @@ public class HeroActions : MonoBehaviour
         int rodNumber = 0;
         string attackSideBulwark = "ArrowRightBulwark";
         string attackSideCrown = "ArrowRightCrown";
-        if (thisHeroSide == "Diamond")
+        if ((thisHeroSide == "Diamond" && thisUserSide == "Player") || (thisHeroSide == "Square" && thisUserSide == "Enemy"))
         {
             rodNumber = 3;
             attackSideBulwark = "ArrowLeftBulwark";
@@ -212,20 +228,20 @@ public class HeroActions : MonoBehaviour
         if (enemyBulwark.GetBulwarkLevel() >= 3)
         {
             //Animation
-            heroAnimationManager.TriggerHeroAction(thisHeroSide);
+            heroAnimationManager.TriggerHeroAction();
             yield return StartCoroutine(rodAnimations.ActivateRodAnimation(rodNumber, "Arrow", attackSideBulwark));
 
             //Schaden am Bulwark
-            enemyBulwark.decreaseBulwark(selfThisHero.getBulwarkDamage());
+            enemyBulwark.decreaseBulwark(selfThisHero.GetBulwarkDamage());
         }
         else
         {
             //Animation
-            heroAnimationManager.TriggerHeroAction(thisHeroSide);
+            heroAnimationManager.TriggerHeroAction();
             yield return StartCoroutine(rodAnimations.ActivateRodAnimation(rodNumber, "Arrow", attackSideCrown));
 
             //Schaden an der Krone
-            enemyCrown.DecreaseHP(selfThisHero.getCrownDamage());
+            enemyCrown.DecreaseHP(selfThisHero.GetCrownDamage());
         }
     }
 
@@ -237,7 +253,7 @@ public class HeroActions : MonoBehaviour
         int repairSide = 1;
         string attackSideBulwark = "AttackRightBulwark";
         string attackSideCrown = "AttackRightCrown";
-        if (thisHeroSide == "Diamond")
+        if ((thisHeroSide == "Diamond" && thisUserSide == "Player") || (thisHeroSide == "Square" && thisUserSide == "Enemy"))
         {
             rodNumber = 3;
             repairSide = 2;
@@ -249,25 +265,25 @@ public class HeroActions : MonoBehaviour
         if (enemyBulwark.GetBulwarkLevel() >= 1)
         {
             //Animation
-            heroAnimationManager.TriggerHeroAction(thisHeroSide);
+            heroAnimationManager.TriggerHeroAction();
             yield return StartCoroutine(rodAnimations.ActivateRodAnimation(rodNumber, "Hammer", attackSideBulwark));
 
             //Schaden am Bulwark
-            enemyBulwark.decreaseBulwark(selfThisHero.getBulwarkDamage());
+            enemyBulwark.decreaseBulwark(selfThisHero.GetBulwarkDamage());
         }
         else
         {
             //Animation
-            heroAnimationManager.TriggerHeroAction(thisHeroSide);
+            heroAnimationManager.TriggerHeroAction();
             yield return StartCoroutine(rodAnimations.ActivateRodAnimation(rodNumber, "Hammer", attackSideCrown));
 
             //Schaden an der Krone
-            enemyCrown.DecreaseHP(selfThisHero.getCrownDamage());
+            enemyCrown.DecreaseHP(selfThisHero.GetCrownDamage());
         }
 
         //Zweite Aktion
         //Animation
-        heroAnimationManager.TriggerHeroAction(thisHeroSide);
+        heroAnimationManager.TriggerHeroAction();
         yield return StartCoroutine(rodAnimations.ActivateRodAnimation(repairSide, "Hammer", "PopUp"));
 
         //Spieler Bulwark erhöhen
@@ -279,38 +295,38 @@ public class HeroActions : MonoBehaviour
     {
         //Auswerten, wo die Animation Stattfinden soll (Standard ist Square)
         int rodNumber = 1;
-        if (thisHeroSide == "Diamond")
+        if ((thisHeroSide == "Diamond" && thisUserSide == "Player") || (thisHeroSide == "Square" && thisUserSide == "Enemy"))
         {
             rodNumber = 2;
         }
 
         //Erste Aktion
-        if (enemySquareHero.getCurrentEnergy() > enemyDiamondHero.getCurrentEnergy())
+        if (enemySquareHero.GetCurrentEnergy() > enemyDiamondHero.GetCurrentEnergy())
         {
             //Animation
-            heroAnimationManager.TriggerHeroAction(thisHeroSide);
+            heroAnimationManager.TriggerHeroAction();
             yield return StartCoroutine(enemyRodAnimations.ActivateRodAnimation(0, "Dagger", "PopUp"));
 
             //Square Held Energie abziehen
-            enemySquareHero.DecreaseEnergy(selfThisHero.getDelayAdding());
+            enemySquareHero.DecreaseEnergy(selfThisHero.GetDelayAdding());
         }
         else
         {
             //Animation
-            heroAnimationManager.TriggerHeroAction(thisHeroSide);
+            heroAnimationManager.TriggerHeroAction();
             yield return StartCoroutine(enemyRodAnimations.ActivateRodAnimation(3, "Dagger", "PopUp"));
 
             //Diamond Held Energie abziehen
-            enemyDiamondHero.DecreaseEnergy(selfThisHero.getDelayAdding());
+            enemyDiamondHero.DecreaseEnergy(selfThisHero.GetDelayAdding());
         }
 
         //Zweite Aktion
         //Animation
-        heroAnimationManager.TriggerHeroAction(thisHeroSide);
+        heroAnimationManager.TriggerHeroAction();
         yield return StartCoroutine(enemyRodAnimations.ActivateRodAnimation(rodNumber, "Dagger", "PopUp"));
 
         //Schaden an der Krone
-        enemyCrown.DecreaseHP(selfThisHero.getCrownDamage());
+        enemyCrown.DecreaseHP(selfThisHero.GetCrownDamage());
     }
 
     //Priest
@@ -319,7 +335,7 @@ public class HeroActions : MonoBehaviour
         //Auswerten, wo die Animation Stattfinden soll (Standard ist Square)
         int rodNumber = 3;
         int crownSide = 1;
-        if (thisHeroSide == "Diamond")
+        if ((thisHeroSide == "Diamond" && thisUserSide == "Player") || (thisHeroSide == "Square" && thisUserSide == "Enemy"))
         {
             rodNumber = 0;
             crownSide = 2;
@@ -327,21 +343,21 @@ public class HeroActions : MonoBehaviour
 
         //Erste Aktion
         //Animation
-        heroAnimationManager.TriggerHeroAction(thisHeroSide);
+        heroAnimationManager.TriggerHeroAction();
         yield return StartCoroutine(rodAnimations.ActivateRodAnimation(crownSide, "Book", "PopUp"));
 
         //Spieler-Krone heilen
-        playerCrown.IncreaseHP(selfThisHero.getHealingAdding());
+        playerCrown.IncreaseHP(selfThisHero.GetHealingAdding());
 
         //Zweite Aktion
-        if (selfOtherHero.priestChecksAction())
+        if (selfOtherHero.PriestChecksAction())
         {
             //Animation
-            heroAnimationManager.TriggerHeroAction(thisHeroSide);
+            heroAnimationManager.TriggerHeroAction();
             yield return StartCoroutine(rodAnimations.ActivateRodAnimation(rodNumber, "Book", "PopUp"));
 
             //Anderen Helden Energie geben
-            selfOtherHero.AddEnergy(selfThisHero.getEnergyAdding());
+            selfOtherHero.AddEnergy(selfThisHero.GetEnergyAdding());
             priestBoostedOtherHero = true;
         }
     }
@@ -351,17 +367,17 @@ public class HeroActions : MonoBehaviour
     {
         //Auswerten, wo die Animation Stattfinden soll (Standard ist Square)
         int rodNumber = 3;
-        if (thisHeroSide == "Diamond")
+        if ((thisHeroSide == "Diamond" && thisUserSide == "Player") || (thisHeroSide == "Square" && thisUserSide == "Enemy"))
         {
             rodNumber = 0;
         }
 
         //Animation
-        heroAnimationManager.TriggerHeroAction(thisHeroSide);
+        heroAnimationManager.TriggerHeroAction();
         yield return StartCoroutine(rodAnimations.ActivateRodAnimation(rodNumber, "Book", "PopUp"));
 
         //Anderen Helden Energie geben
-        selfOtherHero.AddEnergy(selfThisHero.getEnergyAdding());
+        selfOtherHero.AddEnergy(selfThisHero.GetEnergyAdding());
     }
 
     public bool GetPriestBoosted()

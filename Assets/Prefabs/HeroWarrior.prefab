@@ -78,36 +78,19 @@ PrefabInstance:
     m_AddedComponents:
     - targetCorrespondingSourceObject: {fileID: 919132149155446097, guid: f0f4c13ed32ce314c9fa4cdc6ac415df, type: 3}
       insertIndex: -1
-      addedObject: {fileID: -1712046254697090955}
-    - targetCorrespondingSourceObject: {fileID: 919132149155446097, guid: f0f4c13ed32ce314c9fa4cdc6ac415df, type: 3}
-      insertIndex: -1
       addedObject: {fileID: -7353034276191715127}
     - targetCorrespondingSourceObject: {fileID: 919132149155446097, guid: f0f4c13ed32ce314c9fa4cdc6ac415df, type: 3}
       insertIndex: -1
-      addedObject: {fileID: 6948958617033111483}
+      addedObject: {fileID: 4099272487215849709}
+    - targetCorrespondingSourceObject: {fileID: 919132149155446097, guid: f0f4c13ed32ce314c9fa4cdc6ac415df, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 249852257092501719}
   m_SourcePrefab: {fileID: 100100000, guid: f0f4c13ed32ce314c9fa4cdc6ac415df, type: 3}
 --- !u!1 &6006510453213458233 stripped
 GameObject:
   m_CorrespondingSourceObject: {fileID: 919132149155446097, guid: f0f4c13ed32ce314c9fa4cdc6ac415df, type: 3}
   m_PrefabInstance: {fileID: 6888819400547783272}
   m_PrefabAsset: {fileID: 0}
---- !u!114 &-1712046254697090955
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 6006510453213458233}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: faa8c5a900a84d6469dd68410e25bf60, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  heroType: 0
-  heroRank: 1
-  bronzeMaterial: {fileID: 2100000, guid: 91f924a58a2cea24e88b89a33c961a0c, type: 2}
-  silverMaterial: {fileID: 2100000, guid: 1e4531cc5d710144fbccde51bb89be79, type: 2}
-  goldMaterial: {fileID: 2100000, guid: 66055d8930eac4b4dbad21fe1902027f, type: 2}
 --- !u!95 &-7353034276191715127
 Animator:
   serializedVersion: 5
@@ -129,7 +112,24 @@ Animator:
   m_AllowConstantClipSamplingOptimization: 1
   m_KeepAnimatorStateOnDisable: 0
   m_WriteDefaultValuesOnDisable: 0
---- !u!114 &6948958617033111483
+--- !u!114 &4099272487215849709
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6006510453213458233}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: faa8c5a900a84d6469dd68410e25bf60, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  heroType: 0
+  heroRank: 1
+  bronzeMaterial: {fileID: 2100000, guid: 91f924a58a2cea24e88b89a33c961a0c, type: 2}
+  silverMaterial: {fileID: 2100000, guid: 1e4531cc5d710144fbccde51bb89be79, type: 2}
+  goldMaterial: {fileID: 2100000, guid: 66055d8930eac4b4dbad21fe1902027f, type: 2}
+--- !u!114 &249852257092501719
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -141,3 +141,4 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 950f84fd698eba640bb4c90862727390, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  Animator: {fileID: -7353034276191715127}
