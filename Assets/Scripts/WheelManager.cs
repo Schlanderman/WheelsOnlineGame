@@ -37,11 +37,11 @@ public class WheelManager : MonoBehaviour
 
         //Alle 5. Räder
         //Copper
-        { 4, new Symbol[] { Symbol.Square, Symbol.Empty, Symbol.Diamond, Symbol.Square, Symbol.Empty, Symbol.Empty, Symbol.Hammer, Symbol.Diamond } },
+        { 6, new Symbol[] { Symbol.Square, Symbol.Empty, Symbol.Diamond, Symbol.Square, Symbol.Empty, Symbol.Empty, Symbol.Hammer, Symbol.Diamond } },
         //Bronze
         { 5, new Symbol[] { Symbol.Square, Symbol.HammerHammer, Symbol.Diamond, Symbol.Square, Symbol.Empty, Symbol.Empty, Symbol.Hammer, Symbol.Diamond } },
         //Silver
-        { 6, new Symbol[] { Symbol.Square, Symbol.HammerHammer, Symbol.Diamond, Symbol.SquareSquarePlus, Symbol.Diamond, Symbol.Empty, Symbol.Hammer, Symbol.Diamond } },
+        { 4, new Symbol[] { Symbol.Square, Symbol.HammerHammer, Symbol.Diamond, Symbol.SquareSquarePlus, Symbol.Diamond, Symbol.Empty, Symbol.Hammer, Symbol.Diamond } },
         //Gold
         { 7, new Symbol[] { Symbol.Square, Symbol.HammerHammer, Symbol.Diamond, Symbol.SquareSquarePlus, Symbol.Diamond, Symbol.Square, Symbol.Hammer, Symbol.DiamondDiamondPlus } },
         //Diamond
@@ -52,7 +52,7 @@ public class WheelManager : MonoBehaviour
 
     private void Start()
     {
-        //Weisen den Shadern den jeweiligen Rädern zu, indem wir die Wheelspin-Objekte verwenden
+        //Weisen den Shadern den jeweiligen Rädern zu, indem wir die Wheelspin-Objekte verwenden (nur Räder 1 - 4)
         for (int i = 0; i < wheels.Length; i++)
         {
             MeshRenderer renderer = wheels[i].GetComponent<MeshRenderer>();
@@ -67,6 +67,20 @@ public class WheelManager : MonoBehaviour
                 //Setzen das Material-Array zurück
                 renderer.materials = materials;
             }
+        }
+
+        //Rad 5
+        MeshRenderer fifthRenderer = wheels[4].GetComponent<MeshRenderer>();
+        if (fifthRenderer != null && fifthRenderer.materials.Length > symbolMaterialIndex)
+        {
+            //Holen das aktuelle Material-Array des Rads
+            Material[] materials = fifthRenderer.materials;
+
+            //ändern nur das Material an dem angegebenen Index (für die Symbole)
+            materials[symbolMaterialIndex] = materialOfSymbols[6];
+
+            //Setzen das Material-Array zurück
+            fifthRenderer.materials = materials;
         }
 
         foreach (WheelSpin wheel in wheels)

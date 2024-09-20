@@ -18,6 +18,8 @@ public class InitialHeroSetting : MonoBehaviour
 
     [SerializeField] private TurnManager turnManager;
 
+    [SerializeField] private CoverManager coverManager;
+
     [SerializeField] private GameObject[] readyButtons;
     [SerializeField] private GameObject[] playerSelectionButtons;
     [SerializeField] private GameObject[] enemySelectionButtons;
@@ -103,5 +105,8 @@ public class InitialHeroSetting : MonoBehaviour
 
         //Turnmanager befüllen
         turnManager.SetHeroes(playerSquareHero, playerDiamondHero, enemySquareHero, enemyDiamondHero);
+
+        //Cover hochstellen
+        StartCoroutine(coverManager.SetCoverUp());
     }
 }

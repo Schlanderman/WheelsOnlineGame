@@ -141,7 +141,6 @@ public class EvaluationManager : MonoBehaviour
                     squareCount++;
 
                     //Partikelanimation vorbereiten
-                    //particleManager.ActivateParticleMove(wheelNumber, "Square");
                     wheelsActivateAnimationSquare[wheelNumber] = true;
                     break;
 
@@ -150,7 +149,6 @@ public class EvaluationManager : MonoBehaviour
                     squareCount += 2;
 
                     //Partikelanimation vorbereiten
-                    //particleManager.ActivateParticleMove(wheelNumber, "Square");
                     wheelsActivateAnimationSquare[wheelNumber] = true;
                     break;
 
@@ -159,7 +157,6 @@ public class EvaluationManager : MonoBehaviour
                     diamondCount++;
 
                     //Partikelanimation vorbereiten
-                    //particleManager.ActivateParticleMove(wheelNumber, "Diamond");
                     wheelsActivateAnimationDiamond[wheelNumber] = true;
                     break;
 
@@ -168,7 +165,6 @@ public class EvaluationManager : MonoBehaviour
                     diamondCount += 2;
 
                     //Partikelanimation vorbereiten
-                    //particleManager.ActivateParticleMove(wheelNumber, "Diamond");
                     wheelsActivateAnimationDiamond[wheelNumber] = true;
                     break;
 

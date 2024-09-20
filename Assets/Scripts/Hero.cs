@@ -17,6 +17,7 @@ public class Hero : MonoBehaviour
     private int xp = 0;
     private int currentEnergy = 0;  //Aktuelle Energie des Helden
 
+    private HeroUIUpdater uiUpdater;
     private EnergyBar energyBar;
     private XPLightManager xpLightManager;
 
@@ -34,8 +35,10 @@ public class Hero : MonoBehaviour
     public void AddXP(int amount)
     {
         xp += amount;
+        //Debug.Log(heroType + " hat nun " + xp + " xp.");
         if (xp >= 6)
         {
+            Debug.Log(this + " hat ein Level Up!");
             RankUp();
         }
         xpLightManager.UpdateXPLamps(xp);
@@ -68,6 +71,7 @@ public class Hero : MonoBehaviour
     {
         currentStats = HeroManager.heroData[(heroType, heroRank)];
         energyBar.UpdateEnergieDisplay(currentEnergy, GetMaxEnergy());
+        uiUpdater.UpdateHeroDisplay(this);
         //Debug.Log($"{heroType} auf {heroRank} hat {currentStats.energyToAct} Energie, {currentStats.crownDamage} KronenSchaden, {currentStats.bulwarkDamage} Bulwarkschaden, {currentStats.delayAdding} Delay, {currentStats.healingAdding} Healing und {currentStats.energyAdding} Energiezufuhr.");
     }
 
@@ -199,6 +203,11 @@ public class Hero : MonoBehaviour
         xpLightManager = light;
     }
 
+    public void SetUIUpdater(HeroUIUpdater updater)
+    {
+        uiUpdater = updater;
+    }
+
     public bool GetCanSendBomb()
     {
         bool sendBomb = canSendBomb;
@@ -216,6 +225,11 @@ public class Hero : MonoBehaviour
     public bool PriestChecksAction()
     {
         return canMakeAction;
+    }
+
+    public void SetCanMakeAction(bool stateOfAction)
+    {
+        canMakeAction = stateOfAction;
     }
 
     public HeroType GetHeroType()

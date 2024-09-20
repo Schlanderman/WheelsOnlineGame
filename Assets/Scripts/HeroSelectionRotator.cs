@@ -134,6 +134,7 @@ public class HeroSelectionRotator : MonoBehaviour
 
             if (currentPlayerSquareHero != null)
             {
+                currentPlayerSquareHero.SetUIUpdater(playerSquareHeroUIUpdater);
                 playerSquareHeroUIUpdater.UpdateHeroDisplay(currentPlayerSquareHero);
                 currentPlayerSquareHero.SetEnergyBar(playerSquareEnergyBar);
                 playerSquareEnergyBar.UpdateEnergieDisplay(0, currentPlayerSquareHero.GetMaxEnergy());
@@ -158,6 +159,7 @@ public class HeroSelectionRotator : MonoBehaviour
 
             if (currentPlayerDiamondHero != null)
             {
+                currentPlayerDiamondHero.SetUIUpdater(playerDiamondHeroUIUpdater);
                 playerDiamondHeroUIUpdater.UpdateHeroDisplay(currentPlayerDiamondHero);
                 currentPlayerDiamondHero.SetEnergyBar(playerDiamondEnergyBar);
                 playerDiamondEnergyBar.UpdateEnergieDisplay(0, currentPlayerDiamondHero.GetMaxEnergy());
@@ -182,10 +184,11 @@ public class HeroSelectionRotator : MonoBehaviour
 
             if (currentEnemySquareHero != null)
             {
+                currentEnemySquareHero.SetUIUpdater(enemySquareHeroUIUpdater);
                 enemySquareHeroUIUpdater.UpdateHeroDisplay(currentEnemySquareHero);
                 currentEnemySquareHero.SetEnergyBar(enemySquareEnergyBar);
                 enemySquareEnergyBar.UpdateEnergieDisplay(0, currentEnemySquareHero.GetMaxEnergy());
-                currentEnemySquareHero.SetXPLightManager(enemyDiamondXPLightManager);
+                currentEnemySquareHero.SetXPLightManager(enemySquareXPLightManager);
             }
         }
 
@@ -206,6 +209,7 @@ public class HeroSelectionRotator : MonoBehaviour
 
             if(currentEnemyDiamondHero != null)
             {
+                currentEnemyDiamondHero.SetUIUpdater(enemyDiamondHeroUIUpdater);
                 enemyDiamondHeroUIUpdater.UpdateHeroDisplay(currentEnemyDiamondHero);
                 currentEnemyDiamondHero.SetEnergyBar(enemyDiamondEnergyBar);
                 enemyDiamondEnergyBar.UpdateEnergieDisplay(0, currentEnemyDiamondHero.GetMaxEnergy());

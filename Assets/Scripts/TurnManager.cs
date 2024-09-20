@@ -13,6 +13,8 @@ public class TurnManager : MonoBehaviour
     [SerializeField] private BulwarkMover playerBulwarkMover;   //BulwarkManager des Spielers
     [SerializeField] private BulwarkMover enemyBulwarkMover;    //BulwarkManager des Gegners
 
+    [SerializeField] private CoverManager coverManager;         //CoverManager des Gegners
+
     [SerializeField] private EvaluationManager playerEvaluationManager;     //EvaluationManager des Spielers
     [SerializeField] private EvaluationManager enemyEvaluationManager;      //EvaluationManager des Gegners
 
@@ -64,72 +66,80 @@ public class TurnManager : MonoBehaviour
         switch (currentTurnStep)
         {
             case 1:
+                //Kurz warten vor der ersten Aktion
+                yield return new WaitForSeconds(1f);
+
+                //Cover herunterfahren
+                yield return StartCoroutine(coverManager.SetCoverDown());
+                break;
+
+            case 2:
                 //XP Panel, Level ups
                 yield return StartCoroutine(ApplyPanelXPAndLevelUps(playerWheelManager, playerEvaluationManager));
                 yield return StartCoroutine(ApplyPanelXPAndLevelUps(enemyWheelManager, enemyEvaluationManager));
                 break;
 
-            case 2:
+            case 3:
                 //Hammer panels added
                 yield return StartCoroutine(ApplyHammerPanels(playerWheelManager, playerEvaluationManager));
                 yield return StartCoroutine(ApplyHammerPanels(enemyWheelManager, enemyEvaluationManager));
                 break;
 
-            case 3:
+            case 4:
                 //Energy panels added
                 yield return StartCoroutine(ApplyEnergyPanels(playerWheelManager, playerEvaluationManager));
                 yield return StartCoroutine(ApplyEnergyPanels(enemyWheelManager, enemyEvaluationManager));
                 break;
 
-            case 4:
+            case 5:
                 //Assassin acts
                 yield return StartCoroutine(ActingAssassin(playerHeroes));
                 yield return StartCoroutine(ActingAssassin(enemyHeroes));
                 break;
 
-            case 5:
+            case 6:
                 //Priest acts
                 yield return StartCoroutine(ActingPriest1(playerHeroes));
                 yield return StartCoroutine(ActingPriest1(enemyHeroes));
                 break;
 
-            case 6:
+            case 7:
                 //Engineer acts
                 yield return StartCoroutine(ActingEngineer(playerHeroes));
                 yield return StartCoroutine(ActingEngineer(enemyHeroes));
                 break;
 
-            case 7:
+            case 8:
                 //Bombs
                 yield return StartCoroutine(DeplayingBombs(playerHeroes));
                 yield return StartCoroutine(DeplayingBombs(enemyHeroes));
                 break;
 
-            case 8:
+            case 9:
                 //Rest od heroes act
                 yield return StartCoroutine(ActingRestHeroes(playerHeroes));
                 yield return StartCoroutine(ActingRestHeroes(enemyHeroes));
                 break;
 
-            case 9:
+            case 10:
                 //Priest acts again
                 yield return StartCoroutine(ActingPriest2(playerHeroes));
                 yield return StartCoroutine(ActingPriest2(enemyHeroes));
                 break;
 
-            case 10:
+            case 11:
                 //Heroes acting from Priest
                 yield return StartCoroutine(ActingHeroesAgain(playerHeroes));
                 yield return StartCoroutine(ActingHeroesAgain(enemyHeroes));
                 break;
 
-            case 11:
+            case 12:
                 //Bombs again
                 yield return StartCoroutine(DeployingBombsAgain(playerHeroes));
                 yield return StartCoroutine(DeployingBombsAgain(enemyHeroes));
                 break;
 
-            case 12:
+            case 13:
                 //0 HP Crown check
                 yield return StartCoroutine(CheckCrownHP());
                 break;
@@ -141,12 +151,14 @@ public class TurnManager : MonoBehaviour
         }
 
         currentTurnStep++;
-        if (currentTurnStep <= 12)
+        if (currentTurnStep <= 13)
         {
             StartCoroutine(ProcessTurnStep());
         }
         else
         {
+            yield return new WaitForSeconds(2f);
+            yield return StartCoroutine(coverManager.SetCoverUp());
             EndTurn();
         }
     }

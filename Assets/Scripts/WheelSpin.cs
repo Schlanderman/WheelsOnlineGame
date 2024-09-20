@@ -8,7 +8,7 @@ public class WheelSpin : MonoBehaviour
     [SerializeField] private float slowDownRate = 2f;    //Rate, mit der das Rad langsamer wird
     private bool isSpinning = false;
     private float currentSpinSpeed;
-    public bool hasStopped = false;     //Ob das Rad angehalten hat
+    private bool hasStopped = false;    //Ob das Rad angehalten hat
     public bool isLocked = false;       //Ob das Rad gesperrt ist
     private bool clampLock = false;
     private bool turnClampLock = false;
@@ -68,7 +68,7 @@ public class WheelSpin : MonoBehaviour
             hasStopped = false;
             turnClampLock = true;
             slowDownRate = Random.Range(1f, 2f);
-            spinSpeed = Random.Range(400f, 1200f);
+            spinSpeed = Random.Range(400f, 1600f);
         }
         else if (isLocked)
         {

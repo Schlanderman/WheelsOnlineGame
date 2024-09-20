@@ -295,7 +295,7 @@ public class HeroActions : MonoBehaviour
     {
         //Auswerten, wo die Animation Stattfinden soll (Standard ist Square)
         int rodNumber = 1;
-        if ((thisHeroSide == "Diamond" && thisUserSide == "Player") || (thisHeroSide == "Square" && thisUserSide == "Enemy"))
+        if (thisHeroSide == "Diamond")
         {
             rodNumber = 2;
         }
@@ -309,6 +309,7 @@ public class HeroActions : MonoBehaviour
 
             //Square Held Energie abziehen
             enemySquareHero.DecreaseEnergy(selfThisHero.GetDelayAdding());
+            enemySquareHero.SetCanMakeAction(false);
         }
         else
         {
@@ -318,6 +319,7 @@ public class HeroActions : MonoBehaviour
 
             //Diamond Held Energie abziehen
             enemyDiamondHero.DecreaseEnergy(selfThisHero.GetDelayAdding());
+            enemyDiamondHero.SetCanMakeAction(false);
         }
 
         //Zweite Aktion
