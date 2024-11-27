@@ -9,6 +9,9 @@ public class MainMenu : MonoBehaviour
     public GameObject mainMenu;
     public GameObject multiplayerMenu;
     public GameObject lobbyMenu;
+    public GameObject gameBrowser;
+
+    public LobbyManager lobbyManager;
 
     private void Start()
     {
@@ -26,6 +29,7 @@ public class MainMenu : MonoBehaviour
     {
         mainMenu.SetActive(false);
         multiplayerMenu.SetActive(true);
+        gameBrowser.SetActive(false);
     }
 
     //Zurück zum Hauptmenü
@@ -46,25 +50,17 @@ public class MainMenu : MonoBehaviour
     }
 
     //Join Game
-    public void JoinGame()
+    public void OpenGameBrowser()
     {
-        //Startet den Client
-        //TODO
-
-        //Szene zum Lobbymenü wechseln
-        multiplayerMenu.SetActive(false);
-        lobbyMenu.SetActive(true);
+        gameBrowser.SetActive(true);
+        lobbyManager.FetchLobbies();
     }
 
     //Methode für das Verlassen einer Lobby
-    public void LeaveLobby()
+    public void ExitLobbyBrowser()
     {
-        //Networkmanager Code zum Verlassen
-        //TODO
-
-        //Szene zurück zum Multiplayermenü wechseln
-        lobbyMenu.SetActive(false);
-        multiplayerMenu.SetActive(true);
+        //Browser ausblenden
+        gameBrowser.SetActive(false);
     }
 
     //Spiel beenden
