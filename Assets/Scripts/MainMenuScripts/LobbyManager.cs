@@ -29,6 +29,10 @@ public class LobbyManager : MonoBehaviour
     public Lobby joinedLobby { get; private set; }
     private Coroutine pollingCoroutine;
 
+    //Keys
+    string KEY_PLAYER_NAME = "PlayerName";
+    string KEY_START_GAME = "StartGame";
+
     private async void Start()
     {
         //Initialisiere die Unity Services
@@ -50,7 +54,10 @@ public class LobbyManager : MonoBehaviour
             CreateLobbyOptions options = new CreateLobbyOptions();
             options.IsPrivate = false;
             options.Player = GetPlayer();
-            //options.Data = GetData();
+            options.Data = new Dictionary<string, DataObject>
+            {
+                { KEY_START_GAME, new DataObject(DataObject.VisibilityOptions.Member, "0") }
+            };
 
             //Lobby erstellen
             Lobby lobby = await LobbyService.Instance.CreateLobbyAsync(ProfileData.Instance.ProfileName + "'s Lobby", maxPlayers, options);
@@ -121,13 +128,23 @@ public class LobbyManager : MonoBehaviour
     }
 
     //5. Lobby Starten
-    public void StartGame()
+    public async void StartGame()
     {
-        if (joinedLobby.HostId == AuthenticationService.Instance.PlayerId)
+        if (IsLobbyHost())
         {
             //Hier logik für den Spielstart hinzufügen
-            //TODO
             Debug.Log("Starting the Game!");
+
+            //TODO
+            string relayCode = await RelayManager.Instance.CreateRelay();
+
+            Lobby lobby = await LobbyService.Instance.UpdateLobbyAsync(joinedLobby.Id, new UpdateLobbyOptions
+            {
+                Data = new Dictionary<string, DataObject>
+                {
+                    { KEY_START_GAME, new DataObject(DataObject.VisibilityOptions.Member, relayCode) }
+                }
+            });
         }
     }
 
@@ -174,13 +191,13 @@ public class LobbyManager : MonoBehaviour
         foreach (var player in joinedLobby.Players)
         {
             var item = Instantiate(playerListItemPrefab, playerListParent);
-            string playerName = player.Data["PlayerName"].Value;
+            string playerName = player.Data[KEY_PLAYER_NAME].Value;
             //Texture2D playerIcon = ConvertBase64ToTexture(player.Data["PlayerIcon"].Value);
             item.GetComponentInChildren<PlayerSlotItem>().SetPlayerData(playerName, AuthenticationService.Instance.PlayerId);
         }
 
         //"Start Game"-Button nur für den Host aktivieren
-        startGameButton.gameObject.SetActive(joinedLobby.HostId == AuthenticationService.Instance.PlayerId);
+        startGameButton.gameObject.SetActive(IsLobbyHost());
     }
 
     private void UpdateLobbyList(List<Lobby> lobbies)
@@ -270,6 +287,17 @@ public class LobbyManager : MonoBehaviour
             joinedLobby = lobby;
             //Debug.Log("Lobby geupdated!");
 
+            if (joinedLobby.Data[KEY_START_GAME].Value != "0")
+            {
+                //Start Game!
+                if (!IsLobbyHost())     //Lobby Host already joined Relay
+                {
+                    RelayManager.Instance.JoinRelay(joinedLobby.Data[KEY_START_GAME].Value);
+                }
+
+                joinedLobby = null;
+            }
+
             UpdateLobbyUI();
         }
         catch (System.Exception ex)
@@ -289,7 +317,7 @@ public class LobbyManager : MonoBehaviour
         foreach (var player in joinedLobby.Players)
         {
             var item = Instantiate(playerListItemPrefab, playerListParent);
-            string playerName = player.Data["PlayerName"].Value;
+            string playerName = player.Data[KEY_PLAYER_NAME].Value;
             item.GetComponentInChildren<PlayerSlotItem>().SetPlayerData(playerName, AuthenticationService.Instance.PlayerId);
         }
     }
@@ -302,7 +330,7 @@ public class LobbyManager : MonoBehaviour
         {
             Data = new Dictionary<string, PlayerDataObject>
                 {
-                    { "PlayerName", new PlayerDataObject(PlayerDataObject.VisibilityOptions.Public, profileName) },
+                    { KEY_PLAYER_NAME, new PlayerDataObject(PlayerDataObject.VisibilityOptions.Public, profileName) },
                 }
         };
     }
@@ -315,6 +343,11 @@ public class LobbyManager : MonoBehaviour
         {
             { "ProfileIcon", new DataObject(DataObject.VisibilityOptions.Public, profileImageBase64) }
         };
+    }
+
+    private bool IsLobbyHost()
+    {
+        return joinedLobby.HostId == AuthenticationService.Instance.PlayerId;
     }
 
     private string ConvertTextureToBase64(Texture2D texture)
