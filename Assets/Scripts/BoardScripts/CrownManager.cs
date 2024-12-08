@@ -5,7 +5,7 @@ using UnityEngine;
 
 public class CrownManager : MonoBehaviour
 {
-    [SerializeField] private EnemyScriptDebug enemyScript;  //Debug only
+    [SerializeField] private EnemyScript enemyScript;  //Offline only
 
     [SerializeField] private int maxHP = 10;      //Maximaler HP-Wert, mit dem der Spieler beginnt
     private int currentHP;
@@ -96,11 +96,13 @@ public class CrownManager : MonoBehaviour
 
         if (enemyScript != null)
         {
-            PlayerScript.Instance.GetHPScripts().SetCurrentHP(enemyScript.playerId, currentHP);
+            enemyScript.GetHPScriptsSelf().SetCurrentHP(enemyScript.playerId, currentHP);
+            enemyScript.GetHPScriptsEnemy().SetCurrentHP(enemyScript.playerId, currentHP);
         }
         else
         {
-            PlayerScript.Instance.GetHPScripts().SetCurrentHP(PlayerScript.Instance.playerId, currentHP);
+            PlayerScript.Instance.GetHPScriptsSelf().SetCurrentHP(PlayerScript.Instance.playerId, currentHP);
+            PlayerScript.Instance.GetHPScriptsEnemy().SetCurrentHP(PlayerScript.Instance.playerId, currentHP);
         }
     }
 

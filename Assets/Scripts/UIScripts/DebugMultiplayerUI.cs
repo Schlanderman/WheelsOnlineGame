@@ -8,13 +8,21 @@ public class DebugMultiplayerUI : MonoBehaviour
     [SerializeField] private Button startHostButton;
     [SerializeField] private Button startClientButton;
 
-    [SerializeField] private GameObject playerPrefab;
-    [SerializeField] private GameObject enemyPrefab;
-    [SerializeField] private Transform gameBoard;
+    //Spieler Prefabs
+    [SerializeField] private GameObject playerOnePrefab;
+    [SerializeField] private GameObject playerTwoPrefab;
+
+    //Copyer Prefab
+    [SerializeField] private GameObject actionsCopyer;
+
+
+    [SerializeField] private Transform gameBoardPlayerOne;
+    [SerializeField] private Transform gameBoardPlayerTwo;
 
     [SerializeField] private SelfHud selfHud;
     [SerializeField] private EnemyHudDebug enemyHud;
-    [SerializeField] private HPScripts hpScripts;
+    [SerializeField] private HPScripts hpScriptsPlayerOne;
+    [SerializeField] private HPScripts hpScriptsPlayerTwo;
 
     private void Awake()
     {
@@ -36,13 +44,15 @@ public class DebugMultiplayerUI : MonoBehaviour
 
     public void ActivatePlayers()
     {
-        GameObject newPlayer = Instantiate(playerPrefab, gameBoard, true);
-        GameObject newEnemy = Instantiate(enemyPrefab, gameBoard, true);
-        selfHud.SetManagers(newPlayer.GetComponent<PlayerScript>().GetSelectionRotator(), newPlayer.GetComponent<PlayerScript>().GetWheelManager());
-        enemyHud.SetManagers(newEnemy.GetComponent<EnemyScriptDebug>().GetSelectionRotator(), newEnemy.GetComponent<EnemyScriptDebug>().GetWheelManager());
-        enemyHud.SetEnemyScript(newEnemy.GetComponent<EnemyScriptDebug>());
+        //Spielerobjekte Spawnen
+        GameObject newPlayerOne = Instantiate(playerOnePrefab, gameBoardPlayerOne, false);
+        GameObject newPlayerTwo = Instantiate(playerTwoPrefab, gameBoardPlayerTwo, false);
+        selfHud.SetManagers(newPlayerOne.GetComponent<PlayerScript>().GetSelectionRotator(), newPlayerOne.GetComponent<PlayerScript>().GetWheelManager());
+        enemyHud.SetManagers(newPlayerTwo.GetComponent<EnemyScript>().GetSelectionRotator(), newPlayerTwo.GetComponent<EnemyScript>().GetWheelManager());
+        enemyHud.SetEnemyScript(newPlayerTwo.GetComponent<EnemyScript>());
 
-        PlayerScript.Instance.SetHPScripts(hpScripts);
+        newPlayerOne.GetComponent<PlayerScript>().SetHPScripts(hpScriptsPlayerOne, hpScriptsPlayerTwo);
+        newPlayerTwo.GetComponent<EnemyScript>().SetHPScripts(hpScriptsPlayerTwo, hpScriptsPlayerOne);
 
         StartCoroutine(TurnManager.Instance.InitializeReadynessLate());
         StartCoroutine(TurnManager.Instance.InitializeCrownHPLate());

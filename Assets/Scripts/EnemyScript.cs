@@ -1,12 +1,15 @@
 using UnityEngine;
 
-public class EnemyScriptDebug : MonoBehaviour
+public class EnemyScript : MonoBehaviour
 {
     [SerializeField] private HeroActions heroActionsSquare;
     [SerializeField] private HeroActions heroActionsDiamond;
     [SerializeField] private EvaluationManager evaluationManager;
     [SerializeField] private HeroSelectionRotator selectionRotator;
     [SerializeField] private WheelManager wheelManager;
+
+    private HPScripts hpScriptsSelf;
+    private HPScripts hpScriptsEnemy;
 
     public ulong playerId;
 
@@ -33,5 +36,26 @@ public class EnemyScriptDebug : MonoBehaviour
     public WheelManager GetWheelManager()
     {
         return wheelManager;
+    }
+
+    public HPScripts GetHPScriptsSelf()
+    {
+        return hpScriptsSelf;
+    }
+
+    public HPScripts GetHPScriptsEnemy()
+    {
+        return hpScriptsEnemy;
+    }
+
+    public void SetHPScripts(HPScripts scriptSelf, HPScripts scriptEnemy)
+    {
+        hpScriptsSelf = scriptSelf;
+        hpScriptsEnemy = scriptEnemy;
+    }
+
+    public void SetPlayerId(ulong newId)
+    {
+        playerId = newId;
     }
 }

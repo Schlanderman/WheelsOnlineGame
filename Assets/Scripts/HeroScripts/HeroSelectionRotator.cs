@@ -5,7 +5,7 @@ using UnityEngine.UI;
 
 public class HeroSelectionRotator : MonoBehaviour
 {
-    [SerializeField] private EnemyScriptDebug enemyScript;  //Debug only
+    [SerializeField] private EnemyScript enemyScript;  //Offline only
 
     [SerializeField] private GameObject[] availableHeroes;      //Liste der verfügbaren Helden
 

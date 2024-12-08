@@ -4,7 +4,7 @@ using UnityEngine;
 
 public class HeroActions : MonoBehaviour
 {
-    [SerializeField] private EnemyScriptDebug enemyScript;  //Debug only
+    [SerializeField] private EnemyScript enemyScript;  //Offline only
 
     [SerializeField] private CrownManager playerCrown;      //Spielerkrone
     [SerializeField] private CrownManager enemyCrown;       //Gegnerkrone
@@ -62,7 +62,7 @@ public class HeroActions : MonoBehaviour
 
         SetEnemyHeroes(heroThree, heroFour);
         SetEnemyManagers();
-        SetPlayerSideMain();
+        //SetPlayerSideMain();
     }
 
     private void InitialHeroSetting_OnSetEnemyManagers(ulong playerId, CrownManager enemyCM, BulwarkMover enemyBM, ActionRodAnimManager enemyARM)

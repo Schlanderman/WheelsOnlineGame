@@ -3,7 +3,7 @@ using UnityEngine.UI;
 
 public class EnemyHudDebug : MonoBehaviour
 {
-    [SerializeField] private EnemyScriptDebug enemyScript;
+    [SerializeField] private EnemyScript enemyScript;   //Offline only
 
     [SerializeField] private Button figureSquareSelectLeftButton;
     [SerializeField] private Button figureSquareSelectRightButton;
@@ -83,7 +83,7 @@ public class EnemyHudDebug : MonoBehaviour
         wm.SetUIElements(spinButton.gameObject, spinlamps);
     }
 
-    public void SetEnemyScript(EnemyScriptDebug es)
+    public void SetEnemyScript(EnemyScript es)
     {
         enemyScript = es;
     }

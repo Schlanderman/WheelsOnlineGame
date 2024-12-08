@@ -6,7 +6,7 @@ using UnityEngine.UI;
 
 public class WheelManager : MonoBehaviour
 {
-    [SerializeField] private EnemyScriptDebug enemyScript;  //Debug only
+    [SerializeField] private EnemyScript enemyScript;  //Offline only
 
     [SerializeField] private WheelSpin[] wheels;            //Eine Liste mit allen Rädern
     [SerializeField] private Material[] materialOfSymbols;  //Eine Liste mit allen Radvariationen (anhand von Materialien)

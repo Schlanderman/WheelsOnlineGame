@@ -11,7 +11,8 @@ public class PlayerScript : NetworkBehaviour
     [SerializeField] private HeroSelectionRotator selectionRotator;
     [SerializeField] private WheelManager wheelManager;
 
-    private HPScripts hpScripts;
+    private HPScripts hpScriptsSelf;
+    private HPScripts hpScriptsEnemy;
 
     public ulong playerId = 0;
 
@@ -19,11 +20,6 @@ public class PlayerScript : NetworkBehaviour
     {
         Instance = this;
     }
-
-    //public override void OnNetworkSpawn()
-    //{
-    //    playerId = NetworkManager.Singleton.LocalClientId;
-    //}
 
     public HeroActions GetSquareHeroActions()
     {
@@ -50,13 +46,24 @@ public class PlayerScript : NetworkBehaviour
         return wheelManager;
     }
 
-    public HPScripts GetHPScripts()
+    public HPScripts GetHPScriptsSelf()
     {
-        return hpScripts;
+        return hpScriptsSelf;
     }
 
-    public void SetHPScripts(HPScripts script)
+    public HPScripts GetHPScriptsEnemy()
     {
-        hpScripts = script;
+        return hpScriptsEnemy;
+    }
+
+    public void SetHPScripts(HPScripts scriptSelf, HPScripts scriptEnemy)
+    {
+        hpScriptsSelf = scriptSelf;
+        hpScriptsEnemy = scriptEnemy;
+    }
+
+    public void SetPlayerId(ulong newId)
+    {
+        playerId = newId;
     }
 }
