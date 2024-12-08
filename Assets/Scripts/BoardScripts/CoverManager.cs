@@ -12,6 +12,26 @@ public class CoverManager : MonoBehaviour
     private void Start()
     {
         cover.localEulerAngles = new Vector3(startRotation, 0, 0);
+
+        TurnManager.Instance.OnSetCoverUp += TurnManager_OnSetCoverUp;
+        TurnManager.Instance.OnSetCoverDown += TurnManager_OnSetCoverDown;
+        InitialHeroSetting.Instance.OnSetCoverUp += InitialHeroSetting_OnSetCoverUp;
+    }
+
+    //Events
+    private void TurnManager_OnSetCoverUp(object sender, System.EventArgs e)
+    {
+        StartCoroutine(SetCoverUp());
+    }
+
+    private void TurnManager_OnSetCoverDown(object sender, System.EventArgs e)
+    {
+        StartCoroutine(SetCoverDown());
+    }
+
+    private void InitialHeroSetting_OnSetCoverUp(object sender, System.EventArgs e)
+    {
+        StartCoroutine(SetCoverUp());
     }
 
     public IEnumerator SetCoverUp()

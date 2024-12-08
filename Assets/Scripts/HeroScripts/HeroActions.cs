@@ -4,6 +4,8 @@ using UnityEngine;
 
 public class HeroActions : MonoBehaviour
 {
+    [SerializeField] private EnemyScriptDebug enemyScript;  //Debug only
+
     [SerializeField] private CrownManager playerCrown;      //Spielerkrone
     [SerializeField] private CrownManager enemyCrown;       //Gegnerkrone
 
@@ -25,12 +27,71 @@ public class HeroActions : MonoBehaviour
 
     private bool priestBoostedOtherHero = false;     //Wert, ob ein Priester den anderen Helden Energie gegeben hat
 
+    [SerializeField] private bool isSquareSide;
+
+
+    private void Start()
+    {
+        InitialHeroSetting.Instance.OnSetHeroesInitially += InitialHeroSetting_OnSetHeroesInitially;
+        InitialHeroSetting.Instance.OnSetEnemyManagers += InitialHeroSetting_OnSetEnemyManagers;
+    }
+
+    private void InitialHeroSetting_OnSetHeroesInitially(ulong playerId, Hero heroOne, Hero heroTwo, Hero heroThree, Hero heroFour)
+    {
+        //Wenn playerId übereinstimmt, dann werden die Heroes zugewiesen, ansonsten nicht
+        if (enemyScript != null)
+        {
+            if (playerId != enemyScript.playerId) { return; }   //Es wird nichts gemacht, wenn Id nicht übereinstimmt
+        }
+        else
+        {
+            if (playerId != PlayerScript.Instance.playerId) { return; }   //Es wird nichts gemacht, wenn Id nicht übereinstimmt
+        }
+
+        //Testen, ob dies hier de Square Seite ist
+        if (isSquareSide)
+        {
+            SetPlayerHeroes(heroOne, heroTwo);
+            SetSquareSideMain();
+        }
+        else
+        {
+            SetPlayerHeroes(heroTwo, heroOne);
+            SetDiamondSideMain();
+        }
+
+        SetEnemyHeroes(heroThree, heroFour);
+        SetEnemyManagers();
+        SetPlayerSideMain();
+    }
+
+    private void InitialHeroSetting_OnSetEnemyManagers(ulong playerId, CrownManager enemyCM, BulwarkMover enemyBM, ActionRodAnimManager enemyARM)
+    {
+        if (enemyScript != null)
+        {
+            if (playerId == enemyScript.playerId) { return; }
+            //Debug.Log($"Empfange Invoke mit ID {playerId}, Crown {enemyCM.gameObject}, Bulwark {enemyBM.gameObject} und Actionrod {enemyARM.gameObject} bei Spieler: {enemyScript.playerId}");
+
+            enemyCrown = enemyCM;
+            enemyBulwark = enemyBM;
+            enemyRodAnimations = enemyARM;
+        }
+        else
+        {
+            if (playerId == PlayerScript.Instance.playerId) { return; }
+                //Debug.Log($"Empfange Invoke mit ID {playerId}, Crown {enemyCM.gameObject}, Bulwark {enemyBM.gameObject} und Actionrod {enemyARM.gameObject} bei Spieler: {PlayerScript.Instance.playerId}");
+
+            enemyCrown = enemyCM;
+            enemyBulwark = enemyBM;
+            enemyRodAnimations = enemyARM;
+        }
+    }
 
 
 
 
     //Methode um Spielerhelden zuzuweisen
-    public void SetPlayerHeroes(Hero thisHero, Hero otherHero)
+    private void SetPlayerHeroes(Hero thisHero, Hero otherHero)
     {
         selfThisHero = thisHero;
         selfOtherHero = otherHero;
@@ -40,19 +101,19 @@ public class HeroActions : MonoBehaviour
     }
 
     //Methode um die Gegnerhelden zuzuweisen
-    public void SetEnemyHeroes(Hero square, Hero diamond)
+    private void SetEnemyHeroes(Hero square, Hero diamond)
     {
         enemySquareHero = square;
         enemyDiamondHero = diamond;
     }
 
     //Methoden, um die Seiten zuzuweisen
-    public void SetSquareSideMain()
+    private void SetSquareSideMain()
     {
         thisHeroSide = "Square";
     }
 
-    public void SetDiamondSideMain()
+    private void SetDiamondSideMain()
     {
         thisHeroSide = "Diamond";
     }
@@ -60,13 +121,28 @@ public class HeroActions : MonoBehaviour
     //Methoden, um die Userseiten zuzuweisen
     public void SetPlayerSideMain()
     {
-        thisUserSide = "Player";
+        if (enemyScript != null)
+        {
+            thisUserSide = "Enemy";
+        }
+        else
+        {
+            thisUserSide = "Player";
+        }
     }
 
-    public void SetEnemySideMain()
+    private void SetEnemyManagers()
     {
-        thisUserSide = "Enemy";
+        if (enemyScript != null)
+        {
+            InitialHeroSetting.Instance.SetEnemyManagers(enemyScript.playerId, playerCrown, playerBulwark, rodAnimations);
+        }
+        else
+        {
+            InitialHeroSetting.Instance.SetEnemyManagers(PlayerScript.Instance.playerId, playerCrown, playerBulwark, rodAnimations);
+        }
     }
+
 
 
 

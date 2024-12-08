@@ -6,6 +6,8 @@ using UnityEngine.UI;
 
 public class WheelManager : MonoBehaviour
 {
+    [SerializeField] private EnemyScriptDebug enemyScript;  //Debug only
+
     [SerializeField] private WheelSpin[] wheels;            //Eine Liste mit allen Rädern
     [SerializeField] private Material[] materialOfSymbols;  //Eine Liste mit allen Radvariationen (anhand von Materialien)
     private readonly int symbolMaterialIndex = 2;           //Index des Materials
@@ -15,16 +17,11 @@ public class WheelManager : MonoBehaviour
     [SerializeField] private Color activeColor;
     [SerializeField] private GameObject spinButton;
 
-    [SerializeField] private TurnManager turnManager;
-
-    [SerializeField] private HeroSelectionRotator heroSelectionRotator;
-
     private readonly int maxSpins = 3;      //Maximale Anzahl an Spins
     private int spinCount = 0;              //Zähler für die Anzahl der Spins
     public int stoppedWheels = 0;           //Anzahl der Räder, die sich nicht mehr drehen
     private bool canSpin = true;            //Zeigt an, ob man alle Räder drehen darf
     private bool firstSpin = true;          //Zeigt an, ob dies der erste Dreh des Spiels auf einer Seite ist
-    private bool statusFinished = false;    //Check, ob der Spieler 3 mal gedreht hat
 
     //Definiere ein Dictionary für jedes Rad und dessen Symbolreihenfolge
     private Dictionary<int, Symbol[]> wheelSymbols = new Dictionary<int, Symbol[]>
@@ -91,7 +88,50 @@ public class WheelManager : MonoBehaviour
 
         //Zu begin den Drehbutton deaktivieren
         spinButton.SetActive(false);
+
+        TurnManager.Instance.OnResetRound += TurnManager_OnResetRound;
+        TurnManager.Instance.OnInitializePlayerRoundFinished += TurnManager_OnInitializePlayerRoundFinished;
+        InitialHeroSetting.Instance.OnActivateSpinButton += InitialHeroSetting_OnActivateSpinButton;
+        InitialHeroSetting.Instance.OnInitializePlayerReadyness += InitialHeroSetting_OnInitializePlayerReadyness;
     }
+
+    //Events
+    private void TurnManager_OnResetRound(object sender, EventArgs e)
+    {
+        ResetRound();
+    }
+
+    private void TurnManager_OnInitializePlayerRoundFinished(object sender, EventArgs e)
+    {
+        if (enemyScript != null)
+        {
+            TurnManager.Instance.ChangePlayerRoundFinished(enemyScript.playerId, false);
+        }
+        else
+        {
+            TurnManager.Instance.ChangePlayerRoundFinished(PlayerScript.Instance.playerId, false);
+        }
+    }
+
+    private void InitialHeroSetting_OnActivateSpinButton(object sender, EventArgs e)
+    {
+        ActivateSpinButton();
+    }
+
+    private void InitialHeroSetting_OnInitializePlayerReadyness(object sender, EventArgs e)
+    {
+        if (enemyScript != null)
+        {
+            InitialHeroSetting.Instance.ChangePlayerReadynessInitial(enemyScript.playerId, false);
+        }
+        else
+        {
+            InitialHeroSetting.Instance.ChangePlayerReadynessInitial(PlayerScript.Instance.playerId, false);
+        }
+    }
+
+
+
 
     public void SpinAllWheels()
     {
@@ -184,6 +224,7 @@ public class WheelManager : MonoBehaviour
             if (spinCount == 3)
             {
                 EndRound();     //Rufe EndRound auf, wenn der dritte Spin beendet ist
+                return;
             }
             stoppedWheels = 0;
             canSpin = true;
@@ -191,7 +232,7 @@ public class WheelManager : MonoBehaviour
     }
 
     //Funktion zum beenden der Runde
-    void EndRound()
+    public void EndRound()
     {
         Debug.Log("Runde beendet. Alle Spins verbraucht!");
 
@@ -199,14 +240,21 @@ public class WheelManager : MonoBehaviour
         {
             wheel.StopWheel();
         }
-        //EvaluateSymbols();
 
         //Hier übergeben, dass der Spieler bereit ist
-        statusFinished = true;
-        turnManager.TestForReadyness();
+        if (enemyScript != null)
+        {
+            TurnManager.Instance.ChangePlayerRoundFinished(enemyScript.playerId, true);
+        }
+        else
+        {
+            TurnManager.Instance.ChangePlayerRoundFinished(PlayerScript.Instance.playerId, true);
+        }
+
+        TurnManager.Instance.TestForReadyness();
     }
 
-    public void ResetRound()
+    private void ResetRound()
     {
         if (spinCount == 3)
         {
@@ -228,25 +276,19 @@ public class WheelManager : MonoBehaviour
     }
 
     //Die Buttons zum Drehen aktivieren, wenn beide Spieler bereit sind
-    public void ActivateSpinButton()
+    private void ActivateSpinButton()
     {
         spinButton.SetActive(true);
-    }
-
-    //Reset wenn die Animationen beginnen
-    public void ResetStatusFinshed()
-    {
-        statusFinished = false;
-    }
-
-    //Angeben, dass dieser Spieler seine Runden abgeschlossen hat
-    public bool GetStatusFinished()
-    {
-        return statusFinished;
     }
 
     public WheelSpin[] GetWheels()
     {
         return wheels;
+    }
+
+    public void SetUIElements(GameObject spinBtn, Image[] lamps)
+    {
+        spinButton = spinBtn;
+        spinLamps = lamps;
     }
 }

@@ -1,9 +1,12 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
 public class CrownManager : MonoBehaviour
 {
+    [SerializeField] private EnemyScriptDebug enemyScript;  //Debug only
+
     [SerializeField] private int maxHP = 10;      //Maximaler HP-Wert, mit dem der Spieler beginnt
     private int currentHP;
 
@@ -14,6 +17,20 @@ public class CrownManager : MonoBehaviour
     private void Start()
     {
         SetStartStats();
+
+        TurnManager.Instance.OnInitializeCrownHP += TurnManager_OnInitializeCrownHP;
+    }
+
+    private void TurnManager_OnInitializeCrownHP(object sender, EventArgs e)
+    {
+        if (enemyScript != null)
+        {
+            TurnManager.Instance.ChangeCrownHP(enemyScript.playerId, maxHP);
+        }
+        else
+        {
+            TurnManager.Instance.ChangeCrownHP(PlayerScript.Instance.playerId, maxHP);
+        }
     }
 
     //Startwerte Setzen
@@ -21,7 +38,7 @@ public class CrownManager : MonoBehaviour
     {
         currentHP = maxHP;
         UpdateHPDisplay();
-        Debug.Log("Startstats eingegeben für " + this + "!");
+        //Debug.Log("Startstats eingegeben für " + this + "!");
     }
 
     //Methode zum Abziehen von HP
@@ -32,6 +49,16 @@ public class CrownManager : MonoBehaviour
         {
             currentHP = 0;      //Sicherstellen, dass HP nicht negativ wird
         }
+
+        if (enemyScript != null)
+        {
+            TurnManager.Instance.ChangeCrownHP(enemyScript.playerId, currentHP);
+        }
+        else
+        {
+            TurnManager.Instance.ChangeCrownHP(PlayerScript.Instance.playerId, currentHP);
+        }
+
         UpdateHPDisplay();
     }
 
@@ -43,6 +70,16 @@ public class CrownManager : MonoBehaviour
         {
             currentHP = maxHP;      //Sicherstellen, dass HP nicht über maxHP steigt
         }
+
+        if (enemyScript != null)
+        {
+            TurnManager.Instance.ChangeCrownHP(enemyScript.playerId, currentHP);
+        }
+        else
+        {
+            TurnManager.Instance.ChangeCrownHP(PlayerScript.Instance.playerId, currentHP);
+        }
+
         UpdateHPDisplay();
     }
 
@@ -56,6 +93,15 @@ public class CrownManager : MonoBehaviour
         float targetRotationOnes = ones * -36f;
         float targetRotationTens = tens * -36f;
         StartCoroutine(WheelRotator(targetRotationOnes, targetRotationTens));
+
+        if (enemyScript != null)
+        {
+            PlayerScript.Instance.GetHPScripts().SetCurrentHP(enemyScript.playerId, currentHP);
+        }
+        else
+        {
+            PlayerScript.Instance.GetHPScripts().SetCurrentHP(PlayerScript.Instance.playerId, currentHP);
+        }
     }
 
     private IEnumerator WheelRotator(float rotationOnes, float rotationTens)
@@ -87,11 +133,5 @@ public class CrownManager : MonoBehaviour
 
         oneWheel.rotation = targetRotationOnes;
         tenWheel.rotation = targetRotationTens;
-    }
-
-    //Methode zum auslesen der HP
-    public int GetCurrentHP()
-    {
-        return currentHP;
     }
 }

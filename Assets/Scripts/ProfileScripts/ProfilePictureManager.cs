@@ -2,6 +2,7 @@ using SFB;
 using System.Collections;
 using System.IO;
 using UnityEngine;
+using UnityEngine.Networking;
 using UnityEngine.UI;
 
 public class ProfilePictureManager : MonoBehaviour
@@ -71,18 +72,43 @@ public class ProfilePictureManager : MonoBehaviour
         rectTransform.sizeDelta = new Vector2(minSize, minSize);
     }
 
+    //private IEnumerator LoadImage(string path)
+    //{
+    //    var www = new WWW("file:///" + path);
+    //    yield return www;
+    //    Texture2D texture = www.texture;
+    //    profileImage.texture = texture;
+
+    //    //Größe normalisieren
+    //    ApplyCircleMask(profileImage);
+
+    //    //Speichere die Textur lokal und registriere den Pfad
+    //    //SaveProfilePicture(texture);
+    //    ProfileData.Instance.SetProfileImage(texture);
+    //}
+
     private IEnumerator LoadImage(string path)
     {
-        var www = new WWW("file:///" + path);
-        yield return www;
-        Texture2D texture = www.texture;
-        profileImage.texture = texture;
+        using (UnityWebRequest www = UnityWebRequestTexture.GetTexture(path))
+        {
+            yield return www.SendWebRequest();
 
-        //Größe normalisieren
-        ApplyCircleMask(profileImage);
+            if (www.result != UnityWebRequest.Result.Success)
+            {
+                Debug.LogError(www.error);
+            }
+            else
+            {
+                Texture2D texture = DownloadHandlerTexture.GetContent(www);
+                profileImage.texture = texture;
 
-        //Speichere die Textur lokal und registriere den Pfad
-        //SaveProfilePicture(texture);
-        ProfileData.Instance.SetProfileImage(texture);
+                //Größe normalisieren
+                ApplyCircleMask(profileImage);
+
+                //Speichere die Textur lokal und registriere den Pfad
+                //SaveProfilePicture(texture);
+                ProfileData.Instance.SetProfileImage(texture);
+            }
+        }
     }
 }

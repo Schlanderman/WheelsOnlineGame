@@ -1,38 +1,48 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 
 public class TurnManager : MonoBehaviour
 {
-    [SerializeField] private WheelManager playerWheelManager;   //WheelManager des Spielers
-    [SerializeField] private WheelManager enemyWheelManager;    //WheelManager des Gegners
+    public static TurnManager Instance {  get; private set; }
 
-    [SerializeField] private CrownManager playerCrownManager;   //Crownmanager des Spielers
-    [SerializeField] private CrownManager enemyCrownManager;    //CrownManager des Gegners
+    //Overall Events
+    public event EventHandler OnResetRound;
+    public event EventHandler OnSetCoverUp;
+    public event EventHandler OnSetCoverDown;
+    public event EventHandler OnInitializePlayerRoundFinished;
+    public event EventHandler OnInitializeCrownHP;
+    public event Action<bool, ulong> OnSetEndscreen;
 
-    [SerializeField] private BulwarkMover playerBulwarkMover;   //BulwarkManager des Spielers
-    [SerializeField] private BulwarkMover enemyBulwarkMover;    //BulwarkManager des Gegners
+    //Herostuff Events
+    public event EventHandler OnApplyXPandLevelUps;
+    public event EventHandler OnApplyHammerPanels;
+    public event EventHandler OnApplyEnergyPanels;
 
-    [SerializeField] private CoverManager coverManager;         //CoverManager des Gegners
+    //Dictionaries
+    private Dictionary<ulong, bool> playerRoundFinishedDictionary;
+    private Dictionary<ulong, int> crownHPDictionary;
 
-    [SerializeField] private EvaluationManager playerEvaluationManager;     //EvaluationManager des Spielers
-    [SerializeField] private EvaluationManager enemyEvaluationManager;      //EvaluationManager des Gegners
-
-    //Anzeigen für Gewinnen / Verlieren / Unentschienden
-    [SerializeField] private GameObject WinScreen;
-    [SerializeField] private GameObject LoseScreen;
-    [SerializeField] private GameObject DrawScreen;
-
+    //Heldenzuweisung
     private readonly Hero[] playerHeroes = new Hero[2];     //Helden des Spielers
     private readonly Hero[] enemyHeroes = new Hero[2];      //Helden des Gegners
 
     private int currentTurnStep = 1;
 
+    private void Awake()
+    {
+        Instance = this;
+
+        playerRoundFinishedDictionary = new Dictionary<ulong, bool>();
+        crownHPDictionary = new Dictionary<ulong, int>();
+    }
+
     private void Start()
     {
-        WinScreen.SetActive(false);
-        LoseScreen.SetActive(false);
-        DrawScreen.SetActive(false);
+        //StartCoroutine(InitializeReadynessLate());
+        //StartCoroutine(InitializeCrownHPLate());
     }
 
     public void SetHeroes(Hero playerSquare, Hero playerDiamond, Hero enemySquare, Hero enemyDiamond)
@@ -46,12 +56,16 @@ public class TurnManager : MonoBehaviour
 
     public void TestForReadyness()
     {
-        if (playerWheelManager.GetStatusFinished() && enemyWheelManager.GetStatusFinished())
+        foreach (ulong playerId in playerRoundFinishedDictionary.Keys)
         {
-            playerWheelManager.ResetStatusFinshed();
-            enemyWheelManager.ResetStatusFinshed();
-            BeginTurn();
+            if (!playerRoundFinishedDictionary[playerId])
+            {
+                return;
+            }
         }
+
+        BeginTurn();
+        OnInitializePlayerRoundFinished?.Invoke(this, EventArgs.Empty);
     }
 
     public void BeginTurn()
@@ -70,25 +84,23 @@ public class TurnManager : MonoBehaviour
                 yield return new WaitForSeconds(1f);
 
                 //Cover herunterfahren
-                yield return StartCoroutine(coverManager.SetCoverDown());
+                OnSetCoverDown?.Invoke(this, EventArgs.Empty);
+                yield return new WaitForSeconds(1f);
                 break;
 
             case 2:
                 //XP Panel, Level ups
-                yield return StartCoroutine(ApplyPanelXPAndLevelUps(playerWheelManager, playerEvaluationManager));
-                yield return StartCoroutine(ApplyPanelXPAndLevelUps(enemyWheelManager, enemyEvaluationManager));
+                yield return StartCoroutine(ApplyPanelXPAndLevelUps());
                 break;
 
             case 3:
                 //Hammer panels added
-                yield return StartCoroutine(ApplyHammerPanels(playerWheelManager, playerEvaluationManager));
-                yield return StartCoroutine(ApplyHammerPanels(enemyWheelManager, enemyEvaluationManager));
+                yield return StartCoroutine(ApplyHammerPanels());
                 break;
 
             case 4:
                 //Energy panels added
-                yield return StartCoroutine(ApplyEnergyPanels(playerWheelManager, playerEvaluationManager));
-                yield return StartCoroutine(ApplyEnergyPanels(enemyWheelManager, enemyEvaluationManager));
+                yield return StartCoroutine(ApplyEnergyPanels());
                 break;
 
             case 5:
@@ -158,7 +170,8 @@ public class TurnManager : MonoBehaviour
         else
         {
             yield return new WaitForSeconds(2f);
-            yield return StartCoroutine(coverManager.SetCoverUp());
+            OnSetCoverUp?.Invoke(this, EventArgs.Empty);
+            yield return new WaitForSeconds(1f);
             EndTurn();
         }
     }
@@ -166,31 +179,31 @@ public class TurnManager : MonoBehaviour
     private void EndTurn()
     {
         Debug.Log("Runde beendet. Nächste Runde wird vorbereitet!");
-        playerWheelManager.ResetRound();
-        enemyWheelManager.ResetRound();
+
+        OnResetRound?.Invoke(this, EventArgs.Empty);
     }
 
     //Methoden für Heldenaktionen mit Animation
     // 1) Panel XP, Level ups
-    private IEnumerator ApplyPanelXPAndLevelUps(WheelManager wheels, EvaluationManager evalManager)
+    private IEnumerator ApplyPanelXPAndLevelUps()
     {
-        evalManager.EvaluateXPGained(wheels.GetWheels());
+        OnApplyXPandLevelUps?.Invoke(this, EventArgs.Empty);
 
         yield return new WaitForSeconds(0.8f);
     }
 
     // 2) Hammer panels added
-    private IEnumerator ApplyHammerPanels(WheelManager wheels, EvaluationManager evalManager)
+    private IEnumerator ApplyHammerPanels()
     {
-        evalManager.EvaluateHammerCount(wheels.GetWheels());
+        OnApplyHammerPanels?.Invoke(this, EventArgs.Empty);
 
         yield return new WaitForSeconds(0.8f);
     }
 
     // 3) Energy panels added
-    private IEnumerator ApplyEnergyPanels(WheelManager wheels, EvaluationManager evalManager)
+    private IEnumerator ApplyEnergyPanels()
     {
-        evalManager.EvaluateEnergyCount(wheels.GetWheels());
+        OnApplyEnergyPanels?.Invoke(this, EventArgs.Empty);
 
         yield return new WaitForSeconds(0.8f);
     }
@@ -328,20 +341,57 @@ public class TurnManager : MonoBehaviour
     // 12) 0 HP Crown check
     private IEnumerator CheckCrownHP()
     {
+        ulong[] playerId = crownHPDictionary.Keys.ToArray();
+        int[] crownsHp = crownHPDictionary.Values.ToArray();
+
+        Debug.Log($"Spieler {playerId[0]} hat noch {crownsHp[0]} HP!");
+        Debug.Log($"Spieler {playerId[1]} hat noch {crownsHp[1]} HP!");
+
         //Checken, ob beide Seiten verloren haben
-        if ((playerCrownManager.GetCurrentHP() == 0) && (enemyCrownManager.GetCurrentHP() == 0))
+        if ((crownsHp[0] == 0) && (crownsHp[1] == 0))
         {
-            DrawScreen.SetActive(true);
+            //Unentschieden Screen bei beiden aktivieren
+            OnSetEndscreen?.Invoke(true, (ulong)0);
         }
-        else if (enemyCrownManager.GetCurrentHP() == 0)
+        else if (crownsHp[0] == 0)
         {
-            WinScreen.SetActive(true);
+            //Win Screen bei Spieler 1 aktivieren
+            //Lose Screen bei Spieler 0 aktivieren
+            OnSetEndscreen?.Invoke(false, playerId[1]);
         }
-        else if (playerCrownManager.GetCurrentHP() == 0)
+        else if (crownsHp[1] == 0)
         {
-            LoseScreen.SetActive(true);
+            //Lose Screen bei Spieler 1 aktivieren
+            //Win Screen bei Spieler 0 aktivieren
+            OnSetEndscreen?.Invoke(false, playerId[0]);
         }
 
         yield return null;
+    }
+
+    public void ChangePlayerRoundFinished(ulong playerId, bool state)
+    {
+        playerRoundFinishedDictionary[playerId] = state;
+    }
+
+    public void ChangeCrownHP(ulong playerId, int hp)
+    {
+        Debug.Log($"Spieler {playerId} hat nun {hp} HP!");
+
+        crownHPDictionary[playerId] = hp;
+    }
+
+    public IEnumerator InitializeReadynessLate()
+    {
+        yield return new WaitForEndOfFrame();
+
+        OnInitializePlayerRoundFinished?.Invoke(this, EventArgs.Empty);
+    }
+
+    public IEnumerator InitializeCrownHPLate()
+    {
+        yield return new WaitForEndOfFrame();
+
+        OnInitializeCrownHP?.Invoke(this, EventArgs.Empty);
     }
 }

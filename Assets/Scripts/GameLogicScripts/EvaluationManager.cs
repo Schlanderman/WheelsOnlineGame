@@ -9,8 +9,32 @@ public class EvaluationManager : MonoBehaviour
 
     [SerializeField] private ParticleManager particleManager;
 
+    [SerializeField] private WheelManager wheelManager;
+
     private Hero squareHero;    // Held, der Energie von Square-Symbolen erhält
     private Hero diamondHero;   // Held, der Energie von Diamond-Symbolen erhält
+
+    private void Start()
+    {
+        TurnManager.Instance.OnApplyXPandLevelUps += TurnManager_OnApplyXPandLevelUps;
+        TurnManager.Instance.OnApplyHammerPanels += TurnManager_OnApplyHammerPanels;
+        TurnManager.Instance.OnApplyEnergyPanels += TurnManager_OnApplyEnergyPanels;
+    }
+
+    private void TurnManager_OnApplyXPandLevelUps(object sender, EventArgs e)
+    {
+        EvaluateXPGained(wheelManager.GetWheels());
+    }
+
+    private void TurnManager_OnApplyHammerPanels(object sender, EventArgs e)
+    {
+        EvaluateHammerCount(wheelManager.GetWheels());
+    }
+
+    private void TurnManager_OnApplyEnergyPanels(object sender, EventArgs e)
+    {
+        EvaluateEnergyCount(wheelManager.GetWheels());
+    }
 
     public void EvaluateXPGained(WheelSpin[] wheels)
     {
