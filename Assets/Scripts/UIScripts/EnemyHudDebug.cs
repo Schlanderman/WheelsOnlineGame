@@ -47,7 +47,7 @@ public class EnemyHudDebug : MonoBehaviour
         readyButton.onClick.AddListener(() =>
         {
             InitialHeroSetting.Instance.ChangePlayerReadyness(enemyScript.playerId, true);
-            InitialHeroSetting.Instance.CheckReady();
+            InitialHeroSetting.Instance.CheckReadyRpc();
         });
     }
 

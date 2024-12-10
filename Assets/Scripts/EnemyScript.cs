@@ -11,7 +11,9 @@ public class EnemyScript : MonoBehaviour
     private HPScripts hpScriptsSelf;
     private HPScripts hpScriptsEnemy;
 
-    public ulong playerId;
+    [SerializeField] private ulong _playerId = 0;
+
+    public ulong playerId => _playerId;
 
     public HeroActions GetSquareHeroActions()
     {
@@ -56,6 +58,6 @@ public class EnemyScript : MonoBehaviour
 
     public void SetPlayerId(ulong newId)
     {
-        playerId = newId;
+        _playerId = newId;
     }
 }

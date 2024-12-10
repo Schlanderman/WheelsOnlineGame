@@ -34,6 +34,8 @@ public class DebugMultiplayerUI : MonoBehaviour
         startHostButton.onClick.AddListener(() =>
         {
             NetworkManager.Singleton.StartHost();
+            //ActivateHost();
+            Hide();
         });
 
         startClientButton.onClick.AddListener(() =>
@@ -51,6 +53,9 @@ public class DebugMultiplayerUI : MonoBehaviour
         enemyHud.SetManagers(newPlayerTwo.GetComponent<EnemyScript>().GetSelectionRotator(), newPlayerTwo.GetComponent<EnemyScript>().GetWheelManager());
         enemyHud.SetEnemyScript(newPlayerTwo.GetComponent<EnemyScript>());
 
+        selfHud.gameObject.SetActive(true);
+        enemyHud.gameObject.SetActive(true);
+
         newPlayerOne.GetComponent<PlayerScript>().SetHPScripts(hpScriptsPlayerOne, hpScriptsPlayerTwo);
         newPlayerTwo.GetComponent<EnemyScript>().SetHPScripts(hpScriptsPlayerTwo, hpScriptsPlayerOne);
 
@@ -64,5 +69,22 @@ public class DebugMultiplayerUI : MonoBehaviour
 
         newCopyOfPlayerOne.GetComponent<CopyManager>().SetManagersFromOriginal(newPlayerOne);
         newCopyOfPlayerTwo.GetComponent<CopyManager>().SetManagersFromOriginal(newPlayerTwo);
+    }
+
+    public void ActivateHost()
+    {
+        selfHud.SetManagers(PlayerScript.Instance.GetComponent<PlayerScript>().GetSelectionRotator(), PlayerScript.Instance.GetComponent<PlayerScript>().GetWheelManager());
+        //PlayerScript.Instance.GetComponent<PlayerScript>().SetHPScripts(hpScriptsPlayerOne, hpScriptsPlayerTwo);
+    }
+
+    public void ActivateClient()
+    {
+        selfHud.SetManagers(PlayerScript.Instance.GetComponent<PlayerScript>().GetSelectionRotator(), PlayerScript.Instance.GetComponent<PlayerScript>().GetWheelManager());
+        //PlayerScript.Instance.GetComponent<PlayerScript>().SetHPScripts(hpScriptsPlayerOne, hpScriptsPlayerTwo);
+    }
+
+    private void Hide()
+    {
+        gameObject.SetActive(false);
     }
 }

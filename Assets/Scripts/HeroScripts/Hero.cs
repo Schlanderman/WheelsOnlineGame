@@ -3,8 +3,9 @@ using System.Collections.Generic;
 using Unity.VisualScripting;
 using UnityEngine;
 using System;
+using Unity.Netcode;
 
-public class Hero : MonoBehaviour
+public class Hero : NetworkBehaviour
 {
     public HeroType heroType;
     public HeroRank heroRank = HeroRank.Bronze;

@@ -2,11 +2,12 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
+using Unity.Netcode;
 using UnityEngine;
 
-public class TurnManager : MonoBehaviour
+public class TurnManager : NetworkBehaviour
 {
-    public static TurnManager Instance {  get; private set; }
+    public static TurnManager Instance { get; private set; }
 
     //Overall Events
     public event EventHandler OnResetRound;
@@ -31,6 +32,8 @@ public class TurnManager : MonoBehaviour
 
     private int currentTurnStep = 1;
 
+    private bool allClientsConnected = false;
+
     private void Awake()
     {
         Instance = this;
@@ -47,6 +50,8 @@ public class TurnManager : MonoBehaviour
 
     public void SetHeroes(Hero playerSquare, Hero playerDiamond, Hero enemySquare, Hero enemyDiamond)
     {
+        if (!IsServer) { return; }
+
         playerHeroes[0] = playerSquare;
         playerHeroes[1] = playerDiamond;
 
@@ -54,18 +59,25 @@ public class TurnManager : MonoBehaviour
         enemyHeroes[1] = enemyDiamond;
     }
 
-    public void TestForReadyness()
+    [Rpc(SendTo.Server)]
+    public void TestForReadynessRpc()
     {
-        foreach (ulong playerId in playerRoundFinishedDictionary.Keys)
+        bool allCientsReady = true;
+
+        foreach (ulong playerId in NetworkManager.Singleton.ConnectedClientsIds)
         {
-            if (!playerRoundFinishedDictionary[playerId])
+            if (!playerRoundFinishedDictionary.ContainsKey(playerId) || !playerRoundFinishedDictionary[playerId])
             {
-                return;
+                //This client is not ready
+                allCientsReady = false;
             }
         }
 
-        BeginTurn();
-        OnInitializePlayerRoundFinished?.Invoke(this, EventArgs.Empty);
+        if (allCientsReady)
+        {
+            BeginTurn();
+            OnInitializePlayerRoundFinished?.Invoke(this, EventArgs.Empty);
+        }
     }
 
     public void BeginTurn()
@@ -393,5 +405,21 @@ public class TurnManager : MonoBehaviour
         yield return new WaitForEndOfFrame();
 
         OnInitializeCrownHP?.Invoke(this, EventArgs.Empty);
+    }
+
+    public void InitializeReadynessOnline(List<ulong> playerIds)
+    {
+        foreach (ulong playerId in playerIds)
+        {
+            ChangePlayerRoundFinished(playerId, false);
+        }
+    }
+
+    public void InitializeCrownHPOnline(List<ulong> playerIds)
+    {
+        foreach (ulong playerId in playerIds)
+        {
+            ChangeCrownHP(playerId, 10);
+        }
     }
 }

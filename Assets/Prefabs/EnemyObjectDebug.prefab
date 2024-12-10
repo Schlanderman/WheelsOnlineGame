@@ -58,7 +58,7 @@ MonoBehaviour:
   evaluationManager: {fileID: 464292410972655967}
   selectionRotator: {fileID: 5128517747795763533}
   wheelManager: {fileID: 3376276915987766934}
-  playerId: 5678
+  _playerId: 5678
 --- !u!1 &1682893465693756238
 GameObject:
   m_ObjectHideFlags: 0
@@ -745,7 +745,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: fc142c7d6aabc884eac85b5d6f0a3850, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  enemyScript: {fileID: 8028687783414764004}
   bulwarkMover: {fileID: 2815394913919565702}
   particleManager: {fileID: 738383440745340155}
   wheelManager: {fileID: 3376276915987766934}

@@ -264,7 +264,7 @@ public class WheelManager : MonoBehaviour
             wheels[4].GetTopSymbolIndex()
             );
 
-        TurnManager.Instance.TestForReadyness();
+        TurnManager.Instance.TestForReadynessRpc();
     }
 
     private void ResetRound()

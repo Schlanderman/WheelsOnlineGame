@@ -2,9 +2,10 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
+using Unity.Netcode;
 using UnityEngine;
 
-public class InitialHeroSetting : MonoBehaviour
+public class InitialHeroSetting : NetworkBehaviour
 {
     public static InitialHeroSetting Instance { get; private set; }
 
@@ -21,8 +22,8 @@ public class InitialHeroSetting : MonoBehaviour
     [SerializeField] private Hero playerTwoSquareHero;
     [SerializeField] private Hero playerTwoDiamondHero;
 
-    private ulong playerOneId;
-    private ulong playerTwoId;
+    [SerializeField] private ulong playerOneId;
+    [SerializeField] private ulong playerTwoId;
 
     private Dictionary<ulong, bool> playerReadyDictionary;
     private Dictionary<ulong, (HeroActions, HeroActions, EvaluationManager)> playerComponentsDictionary;
@@ -53,11 +54,15 @@ public class InitialHeroSetting : MonoBehaviour
         //StartCoroutine(InitializeReadynessLate());
     }
 
-    public void CheckReady()
+    [Rpc(SendTo.Server)]
+    public void CheckReadyRpc(RpcParams rpcParams = default)
     {
-        foreach (ulong playerId in playerReadyDictionary.Keys)
+        playerReadyDictionary[rpcParams.Receive.SenderClientId] = true;
+
+        foreach (ulong playerId in NetworkManager.Singleton.ConnectedClientsIds)
         {
-            if (!playerReadyDictionary[playerId])
+            Debug.Log($"Spieler {playerId} ist ready: {playerReadyDictionary[playerId]}");
+            if (!playerReadyDictionary.ContainsKey(playerId) || !playerReadyDictionary[playerId])
             {
                 return;
             }
@@ -68,14 +73,15 @@ public class InitialHeroSetting : MonoBehaviour
         OnActivateSpinButton?.Invoke(this, EventArgs.Empty);
 
         //Bestimmen, welcher Spieler welcher ist
-        ulong[] playerIds = playerReadyDictionary.Keys.ToArray();
+        ulong[] playerIds = NetworkManager.Singleton.ConnectedClientsIds.ToArray();
         playerOneId = playerIds[0];
         playerTwoId = playerIds[1];
 
-        InitializeEverything();
+        InitializeEverythingRpc();
     }
 
-    private void InitializeEverything()
+    [Rpc(SendTo.Everyone)]
+    private void InitializeEverythingRpc()
     {
         OnGetPlayerComponents?.Invoke(this, EventArgs.Empty);
         OnGetHeroes?.Invoke(this, EventArgs.Empty);
@@ -117,6 +123,14 @@ public class InitialHeroSetting : MonoBehaviour
         yield return new WaitForEndOfFrame();
 
         OnInitializePlayerReadyness?.Invoke(this, EventArgs.Empty);
+    }
+
+    public void InitializeReadynessOnline(List<ulong> playerIds)
+    {
+        foreach (ulong playerId in playerIds)
+        {
+            playerReadyDictionary[playerId] = false;
+        }
     }
 
     public void SetPlayerHeroes(ulong playerId, Hero square, Hero diamond)

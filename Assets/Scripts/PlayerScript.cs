@@ -1,3 +1,4 @@
+using System;
 using Unity.Netcode;
 using UnityEngine;
 
@@ -11,14 +12,41 @@ public class PlayerScript : NetworkBehaviour
     [SerializeField] private HeroSelectionRotator selectionRotator;
     [SerializeField] private WheelManager wheelManager;
 
+    [SerializeField] private Camera mainCamera;
+    [SerializeField] private Transform playerTwoCameraPosition;
+
     private HPScripts hpScriptsSelf;
     private HPScripts hpScriptsEnemy;
 
-    public ulong playerId = 0;
+    [SerializeField] private ulong _playerId = 0;
+
+    public ulong playerId => _playerId;
 
     private void Awake()
     {
         Instance = this;
+    }
+
+    public override void OnNetworkSpawn()
+    {
+        _playerId = OwnerClientId;
+
+        mainCamera = FindAnyObjectByType<Camera>();
+        playerTwoCameraPosition = GameObject.FindGameObjectWithTag("CameraPositionPlayerTwo").GetComponent<Transform>();
+
+        if (!IsServer)
+        {
+            mainCamera.gameObject.transform.position = playerTwoCameraPosition.position;
+        }
+        MultiplayerGamaManager.Instance.OnGetPlayerScriptWithId += MultiplayerGameManager_OnGetPlayerScriptWithId;
+    }
+
+    private void MultiplayerGameManager_OnGetPlayerScriptWithId(ulong clientId)
+    {
+        if (clientId == playerId)
+        {
+            MultiplayerGamaManager.Instance.SetPlayerScriptFromClientId(playerId, this);
+        }
     }
 
     public HeroActions GetSquareHeroActions()
@@ -64,6 +92,6 @@ public class PlayerScript : NetworkBehaviour
 
     public void SetPlayerId(ulong newId)
     {
-        playerId = newId;
+        _playerId = newId;
     }
 }

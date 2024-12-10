@@ -44,8 +44,8 @@ public class SelfHud : MonoBehaviour
 
         readyButton.onClick.AddListener(() =>
         {
-            InitialHeroSetting.Instance.ChangePlayerReadyness(PlayerScript.Instance.playerId, true);
-            InitialHeroSetting.Instance.CheckReady();
+            //InitialHeroSetting.Instance.ChangePlayerReadyness(PlayerScript.Instance.playerId, true);
+            InitialHeroSetting.Instance.CheckReadyRpc();
         });
     }
 

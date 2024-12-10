@@ -98,16 +98,16 @@ public class CrownManager : MonoBehaviour
         StartCoroutine(WheelRotator(targetRotationOnes, targetRotationTens));
         OnSetNewHPStatus?.Invoke(targetRotationOnes, targetRotationTens);
 
-        if (enemyScript != null)
-        {
-            enemyScript.GetHPScriptsSelf().SetCurrentHP(enemyScript.playerId, currentHP);
-            enemyScript.GetHPScriptsEnemy().SetCurrentHP(enemyScript.playerId, currentHP);
-        }
-        else
-        {
-            PlayerScript.Instance.GetHPScriptsSelf().SetCurrentHP(PlayerScript.Instance.playerId, currentHP);
-            PlayerScript.Instance.GetHPScriptsEnemy().SetCurrentHP(PlayerScript.Instance.playerId, currentHP);
-        }
+        //if (enemyScript != null)
+        //{
+        //    enemyScript.GetHPScriptsSelf().SetCurrentHP(enemyScript.playerId, currentHP);
+        //    enemyScript.GetHPScriptsEnemy().SetCurrentHP(enemyScript.playerId, currentHP);
+        //}
+        //else
+        //{
+        //    PlayerScript.Instance.GetHPScriptsSelf().SetCurrentHP(PlayerScript.Instance.playerId, currentHP);
+        //    PlayerScript.Instance.GetHPScriptsEnemy().SetCurrentHP(PlayerScript.Instance.playerId, currentHP);
+        //}
     }
 
     private IEnumerator WheelRotator(float rotationOnes, float rotationTens)

@@ -1,10 +1,11 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using Unity.Netcode;
 using UnityEngine;
 using UnityEngine.UI;
 
-public class HeroSelectionRotator : MonoBehaviour
+public class HeroSelectionRotator : NetworkBehaviour
 {
     [SerializeField] private EnemyScript enemyScript;  //Offline only
 
@@ -130,6 +131,12 @@ public class HeroSelectionRotator : MonoBehaviour
     {
         OnActivateChangeHero?.Invoke(currentPlayerSquareHeroIndex, currentPlayerDiamondHeroIndex, heroType);
 
+        UpdateHeroRpc(heroType);
+    }
+
+    [Rpc(SendTo.Server, RequireOwnership = false)]
+    private void UpdateHeroRpc(string heroType)
+    {
         if (heroType == "Square")
         {
             //Lösche den aktuellen Spieler-Square-Held, wenn einer existiert
@@ -141,7 +148,10 @@ public class HeroSelectionRotator : MonoBehaviour
             //Instanziere den neuen Spieler-Square-Held an der vorgesehenen Position
             activePlayerSquareHero = Instantiate(availableHeroes[currentPlayerSquareHeroIndex], playerSquareHeroSpawnPoint.position, playerSquareHeroSpawnPoint.rotation);
 
-            activePlayerSquareHero.transform.SetParent(playerSquareHeroSpawnPoint, true);
+            NetworkObject squareHeroNetworkObject = activePlayerSquareHero.GetComponent<NetworkObject>();
+            squareHeroNetworkObject.Spawn(true);
+
+            //activePlayerSquareHero.transform.SetParent(playerSquareHeroSpawnPoint, true);
 
             currentPlayerSquareHero = activePlayerSquareHero.GetComponent<Hero>();
 
@@ -166,7 +176,10 @@ public class HeroSelectionRotator : MonoBehaviour
             //Instanziere den neuen Spieler-Diamond-Held an der vorgesehenen Position
             activePlayerDiamondHero = Instantiate(availableHeroes[currentPlayerDiamondHeroIndex], playerDiamondHeroSpawnPoint.position, playerDiamondHeroSpawnPoint.rotation);
 
-            activePlayerDiamondHero.transform.SetParent(playerDiamondHeroSpawnPoint, true);
+            NetworkObject diamondHeroNetworkObject = activePlayerDiamondHero.GetComponent<NetworkObject>();
+            diamondHeroNetworkObject.Spawn(true);
+
+            //activePlayerDiamondHero.transform.SetParent(playerDiamondHeroSpawnPoint, true);
 
             currentPlayerDiamondHero = activePlayerDiamondHero.GetComponent<Hero>();
 

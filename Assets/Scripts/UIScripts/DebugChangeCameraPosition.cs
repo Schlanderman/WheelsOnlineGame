@@ -67,12 +67,12 @@ public class DebugChangeCameraPosition : MonoBehaviour
     private void UpdateButtonStates()
     {
         camChangeLeft.interactable = isOnPlayerOnePosition;    //Deaktiviert, wenn auf Position von Spieler 2
-        playerOneHud.SetActive(isOnPlayerOnePosition);
-        hpScreensPlayerOne.SetActive(isOnPlayerOnePosition);
+        //playerOneHud.SetActive(isOnPlayerOnePosition);
+        //hpScreensPlayerOne.SetActive(isOnPlayerOnePosition);
 
         camChangeRight.interactable = !isOnPlayerOnePosition;    //Deaktiviert, wenn auf Position von Spieler 1
-        playerTwoHud.SetActive(!isOnPlayerOnePosition);
-        hpScreensPlayerTwo.SetActive(!isOnPlayerOnePosition);
+        //playerTwoHud.SetActive(!isOnPlayerOnePosition);
+        //hpScreensPlayerTwo.SetActive(!isOnPlayerOnePosition);
     }
 
     private IEnumerator MoveCameraSmoothly(Transform targetPosition)

@@ -1,8 +1,9 @@
 using System.Collections;
 using System.Collections.Generic;
+using Unity.Netcode;
 using UnityEngine;
 
-public class HeroActions : MonoBehaviour
+public class HeroActions : NetworkBehaviour
 {
     [SerializeField] private EnemyScript enemyScript;  //Offline only
 
@@ -463,5 +464,11 @@ public class HeroActions : MonoBehaviour
         bool temp = priestBoostedOtherHero;
         priestBoostedOtherHero = false;
         return temp;
+    }
+
+    private void OnDestroy()
+    {
+        InitialHeroSetting.Instance.OnSetHeroesInitially -= InitialHeroSetting_OnSetHeroesInitially;
+        InitialHeroSetting.Instance.OnSetEnemyManagers -= InitialHeroSetting_OnSetEnemyManagers;
     }
 }
