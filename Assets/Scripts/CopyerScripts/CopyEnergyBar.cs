@@ -1,31 +1,18 @@
-using System;
 using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 
-public class EnergyBar : MonoBehaviour
+public class CopyEnergyBar : ManagerCopiesHandler<EnergyBar>
 {
     [SerializeField] private Transform energyBar;       //Das Objekt, das die Stange darstellt
-    [SerializeField] private float startYPosition = 0f; //Die Startposition der Stange
-    [SerializeField] private float stepSize = .12f;     //Die Größe jedes Schritts (Verschiebung pro Energieeinheit)
 
-    //Events
-    public event Action<float> OnActivateChangeEnergyBar;
-
-    //Methode, um die Energieanzeige zu aktualisieren
-    public void UpdateEnergieDisplay(int currentEnergy, int maxEnergy)
+    protected override void SetEvents()
     {
-        //Berechne die Anzehl der Schritte, die die Stange bewegen soll
-        int energyNeeded = maxEnergy - currentEnergy;
+        originalManager.OnActivateChangeEnergyBar += EnergyBar_OnActivateChangeEnergyBar;
+    }
 
-        //Berechne die neue Y-Position basierend auf der verbleibenden Energie
-        float newYPosition = startYPosition + (energyNeeded * stepSize);
-
-        //Event aktivieren
-        OnActivateChangeEnergyBar?.Invoke(newYPosition);
-
-        //Setze die neue Y-Position der Stange
-        StartCoroutine(MoveEnergyBar(newYPosition));
+    private void EnergyBar_OnActivateChangeEnergyBar(float targetYPosition)
+    {
+        StartCoroutine(MoveEnergyBar(targetYPosition));
     }
 
     private IEnumerator MoveEnergyBar(float targetYPosition)

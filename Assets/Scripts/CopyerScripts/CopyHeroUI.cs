@@ -1,9 +1,6 @@
-using System;
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 
-public class HeroUIUpdater : MonoBehaviour
+public class CopyHeroUI : ManagerCopiesHandler<HeroUIUpdater>
 {
     //Referenzen zu den beiden Blöcken und den Rädern
     [SerializeField] private GameObject block1Renderer;
@@ -18,14 +15,21 @@ public class HeroUIUpdater : MonoBehaviour
     [SerializeField] private Material healingMaterial;
     [SerializeField] private Material energyMaterial;
 
-    //Events
-    public event Action<Hero> OnActivateUIUpdate;
+    protected override void SetEvents()
+    {
+        originalManager.OnActivateUIUpdate += HeroUIUpdater_OnActivateUIUpdate;
+    }
+
+    private void HeroUIUpdater_OnActivateUIUpdate(Hero hero)
+    {
+        UpdateHeroDisplay(hero);
+    }
+
+
 
     //Methode zum aktualisieren der Blöcke und Räder
-    public void UpdateHeroDisplay(Hero hero)
+    private void UpdateHeroDisplay(Hero hero)
     {
-        OnActivateUIUpdate?.Invoke(hero);
-
         MeshRenderer renderer1 = block1Renderer.GetComponent<MeshRenderer>();
         MeshRenderer renderer2 = block2Renderer.GetComponent<MeshRenderer>();
 

@@ -23,6 +23,10 @@ public class WheelManager : MonoBehaviour
     private bool canSpin = true;            //Zeigt an, ob man alle Räder drehen darf
     private bool firstSpin = true;          //Zeigt an, ob dies der erste Dreh des Spiels auf einer Seite ist
 
+    //Events für andere Skripts
+    public event Action<int, int, int, int, int> OnWheelsHaveStopped;
+    public event EventHandler OnUnlockClamps;
+
     //Definiere ein Dictionary für jedes Rad und dessen Symbolreihenfolge
     private Dictionary<int, Symbol[]> wheelSymbols = new Dictionary<int, Symbol[]>
     {
@@ -95,10 +99,11 @@ public class WheelManager : MonoBehaviour
         InitialHeroSetting.Instance.OnInitializePlayerReadyness += InitialHeroSetting_OnInitializePlayerReadyness;
     }
 
-    //Events
+    //Events für dieses Skript
     private void TurnManager_OnResetRound(object sender, EventArgs e)
     {
         ResetRound();
+        OnUnlockClamps?.Invoke(this, EventArgs.Empty);
     }
 
     private void TurnManager_OnInitializePlayerRoundFinished(object sender, EventArgs e)
@@ -250,6 +255,14 @@ public class WheelManager : MonoBehaviour
         {
             TurnManager.Instance.ChangePlayerRoundFinished(PlayerScript.Instance.playerId, true);
         }
+
+        OnWheelsHaveStopped?.Invoke(
+            wheels[0].GetTopSymbolIndex(),
+            wheels[1].GetTopSymbolIndex(),
+            wheels[2].GetTopSymbolIndex(),
+            wheels[3].GetTopSymbolIndex(),
+            wheels[4].GetTopSymbolIndex()
+            );
 
         TurnManager.Instance.TestForReadyness();
     }

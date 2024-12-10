@@ -1,22 +1,26 @@
-using System;
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 
-public class XPLightManager : MonoBehaviour
+public class CopyXPLights : ManagerCopiesHandler<XPLightManager>
 {
     [SerializeField] private GameObject[] xpLamps;      //Array von Lampen
     [SerializeField] private Material lampOffMaterial;  //Material für die ausgeschaltete Lampe
     [SerializeField] private Material lampOnMaterial;   //Material für die eingeschaltete Lampe
 
-    //Events
-    public event Action<int> OnActivateLampUpdate;
+    protected override void SetEvents()
+    {
+        originalManager.OnActivateLampUpdate += XPLightManager_OnActivateLampUpdate;
+    }
+
+    private void XPLightManager_OnActivateLampUpdate(int currentXP)
+    {
+        UpdateXPLamps(currentXP);
+    }
+
+
 
     //Methode zum Aktualisieren der Lampen basierend auf dem XP-Wert des Helden
-    public void UpdateXPLamps(int currentXP)
+    private void UpdateXPLamps(int currentXP)
     {
-        OnActivateLampUpdate?.Invoke(currentXP);
-
         //Iteriere über alle Lampen
         for (int i = 0; i < xpLamps.Length; i++)
         {

@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -10,6 +11,9 @@ public class BulwarkMover : MonoBehaviour
     [SerializeField] private float stepSize = 0.07f;        //Die Größe jedes Schritts (Verschiebung pro Energieeinheit)
 
     private int bulwarkLevel = 0;
+
+    //Events
+    public event Action<float> OnMoveBulwark;
 
     public void increaseBulwark(int height)
     {
@@ -50,6 +54,8 @@ public class BulwarkMover : MonoBehaviour
 
     private IEnumerator MoveBulwark(float targetYPosition)
     {
+        OnMoveBulwark?.Invoke(targetYPosition);
+
         //Dauer der Animation
         float duration = 0.5f;
         float timeElapsed = 0f;

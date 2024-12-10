@@ -1,9 +1,7 @@
-using System;
 using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 
-public class ActionRodAnimManager : MonoBehaviour
+public class CopyActionRods : ManagerCopiesHandler<ActionRodAnimManager>
 {
     //Action Rods
     [SerializeField] private GameObject[] actionRod;
@@ -14,22 +12,30 @@ public class ActionRodAnimManager : MonoBehaviour
     //Animators
     private Animator[] rodAnimator = new Animator[4];
 
-    //Events
-    public event Action<int, string, string> OnActivateActionRodAnimation;
-
     //Alles zuweisen
     private void Start()
     {
         for (int i = 0; i < actionRod.Length; i++)
         {
-            //Debug.Log("An Posotion " + i + " ist das Element: " + actionRod[i] + ", was das Element " + actionRod[i].GetComponentInChildren<ActionRodSprites>() + " enthält und nun in " + rodSprite[i] + " einfügt.");
             rodSprite[i] = actionRod[i].GetComponentInChildren<ActionRodSprites>();
             rodAnimator[i] = actionRod[i].GetComponent<Animator>();
         }
     }
 
+    protected override void SetEvents()
+    {
+        originalManager.OnActivateActionRodAnimation += ActionRodAnimManager_OnActivateActionRodAnimation;
+    }
+
+    private void ActionRodAnimManager_OnActivateActionRodAnimation(int rodNumber, string sprite, string animation)
+    {
+        string changedAnimation = ChangeAnimationString(animation);
+
+        StartCoroutine(ActivateRodAnimation(rodNumber, sprite, changedAnimation));
+    }
+
     //Animation ausführen (ohne Zeitrückgabe)
-    public IEnumerator ActivateRodAnimation(int rodNumber, string sprite, string animation)
+    private IEnumerator ActivateRodAnimation(int rodNumber, string sprite, string animation)
     {
         switch (sprite)
         {
@@ -66,7 +72,6 @@ public class ActionRodAnimManager : MonoBehaviour
                 break;
         }
 
-        OnActivateActionRodAnimation?.Invoke(rodNumber, sprite, animation);
         yield return StartCoroutine(AnimationMaker(rodNumber, animation));
     }
 
@@ -82,43 +87,19 @@ public class ActionRodAnimManager : MonoBehaviour
         rodSprite[rodNumber].DeactivateAll();
     }
 
-    public void TestActivateRodAnimation(int rodNumber, string sprite, string animation)
+    private string ChangeAnimationString(string animation)
     {
-        switch (sprite)
-        {
-            case "Arrow":
-                rodSprite[rodNumber].ActivateArrow();
-                break;
-
-            case "Bomb":
-                rodSprite[rodNumber].ActivateBomb();
-                break;
-
-            case "Book":
-                rodSprite[rodNumber].ActivateBook();
-                break;
-
-            case "Dagger":
-                rodSprite[rodNumber].ActivateDagger();
-                break;
-
-            case "Fireball":
-                rodSprite[rodNumber].ActivateFireball();
-                break;
-
-            case "Hammer":
-                rodSprite[rodNumber].ActivateHammer();
-                break;
-
-            case "Sword":
-                rodSprite[rodNumber].ActivateSword();
-                break;
-
-            default:
-                Debug.LogError(sprite + " ist kein Valides Argunent für die Spriteauswahl!");
-                break;
-        }
-
-        StartCoroutine(AnimationMaker(rodNumber, animation));
+        if (animation == "AttackRightBulwark") { return "AttackLeftBulwark"; }
+        if (animation == "AttackLeftBulwark") { return "AttackRightBulwark"; }
+        if (animation == "AttackRightCrown") { return "AttackLeftCrown"; }
+        if (animation == "AttackLeftCrown") { return "AttackRightCrown"; }
+        if (animation == "FireballRightHigh") { return "FireballLeftHigh"; }
+        if (animation == "FireballLeftHigh") { return "FireballRightHigh"; }
+        if (animation == "ArrowRightBulwark") { return "ArrowLeftBulwark"; }
+        if (animation == "ArrowLeftBulwark") { return "ArrowRightBulwark"; }
+        if (animation == "ArrowRightCrown") { return "ArrowLeftCrown"; }
+        if (animation == "ArrowLeftCrown") { return "ArrowRightCrown"; }
+        
+        return animation;
     }
 }

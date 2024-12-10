@@ -512,7 +512,6 @@ GameObject:
   - component: {fileID: 8422804313386549872}
   - component: {fileID: 4278099751814379790}
   - component: {fileID: 4495534290059417120}
-  - component: {fileID: 2301136901388583019}
   m_Layer: 0
   m_Name: Wheel_4
   m_TagString: Untagged
@@ -611,24 +610,6 @@ BoxCollider:
   serializedVersion: 3
   m_Size: {x: 0.27598476, y: 0.55, z: 0.55}
   m_Center: {x: 0, y: 0, z: 0}
---- !u!114 &2301136901388583019
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 156096336382696573}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 64cce6a0d4804f74396a2342ebd40914, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  spinSpeed: 500
-  slowDownRate: 2
-  isLocked: 0
-  wheelIndex: 3
-  wheelManager: {fileID: 0}
-  clampedActivator: {fileID: 8001137837047738690}
 --- !u!1 &190644819751501255
 GameObject:
   m_ObjectHideFlags: 0
@@ -915,7 +896,7 @@ GameObject:
   m_Component:
   - component: {fileID: 7206491834704420886}
   m_Layer: 0
-  m_Name: FigureCurbEnemySquareSpawn
+  m_Name: FigureCurbCopySquareSpawn
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -3932,7 +3913,6 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 8809472041804426428}
-  - component: {fileID: 7894181901471023095}
   m_Layer: 0
   m_Name: XPParticleManagerEnemy
   m_TagString: Untagged
@@ -3958,36 +3938,6 @@ Transform:
   - {fileID: 83181362605943691}
   m_Father: {fileID: 6782111820915903043}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &7894181901471023095
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1984123105865399391}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 88156e8bc05c6a64e9dac0e28df84749, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  squareParticles:
-  - {fileID: 5994761131884679394}
-  - {fileID: 8432542899247719340}
-  - {fileID: 5789434956600088943}
-  - {fileID: 3577573997532495306}
-  - {fileID: 3022250579441964740}
-  diamondParticles:
-  - {fileID: 6087505108805901009}
-  - {fileID: 4571480952086125013}
-  - {fileID: 7993822369505713757}
-  - {fileID: 8953672318351310451}
-  - {fileID: 2671027115695472300}
-  hammerParticles:
-  - {fileID: 9110869601670165997}
-  - {fileID: 1466661683261951820}
-  - {fileID: 7814256616645442263}
-  - {fileID: 1532785409240246837}
-  - {fileID: 458963035393302334}
 --- !u!1 &2026203231869282246
 GameObject:
   m_ObjectHideFlags: 0
@@ -5428,6 +5378,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 834906933385592926}
+  - component: {fileID: 4093417842879173111}
   m_Layer: 0
   m_Name: XPLightsManagerDiamond
   m_TagString: Untagged
@@ -5456,6 +5407,27 @@ Transform:
   - {fileID: 978053173215454618}
   m_Father: {fileID: 347419279760764335}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &4093417842879173111
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2611889704561809536}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 700874f9089cc5b409b6228aeb14d673, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  xpLamps:
+  - {fileID: 2495793338424995588}
+  - {fileID: 470920080310910570}
+  - {fileID: 7262079187069634155}
+  - {fileID: 841881285810230395}
+  - {fileID: 1754443304127325603}
+  - {fileID: 7053034956451661777}
+  lampOffMaterial: {fileID: 2100000, guid: 013be2c5da18f7241ad907c8dd42d1d3, type: 2}
+  lampOnMaterial: {fileID: 2100000, guid: 58b5d99cdf5d5224bae5f349b67d7c06, type: 2}
 --- !u!1 &2624235627163873199
 GameObject:
   m_ObjectHideFlags: 0
@@ -5486,6 +5458,7 @@ Transform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
+  - {fileID: 2657658325458118855}
   - {fileID: 7206491834704420886}
   - {fileID: 4113321965716699426}
   - {fileID: 3910075656768326532}
@@ -5507,6 +5480,18 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 2fbed83858841d942815ff4e0941c937, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  copyWheels: {fileID: 8719566556890966453}
+  copyHeroFigures: {fileID: 8106682686487642563}
+  copyXPLightsSquare: {fileID: 2076026845952173636}
+  copyXPLightsDiamond: {fileID: 4093417842879173111}
+  copyXPParticles: {fileID: 3490740608969357056}
+  copyHeroUISquare: {fileID: 4353280963435883293}
+  copyHeroUIDiamond: {fileID: 7273563814494714972}
+  copyBulwark: {fileID: 2247742875587820676}
+  copyCrown: {fileID: 1496595977101015088}
+  copyActionRods: {fileID: 7134021848489161914}
+  copyEnergyBarSquare: {fileID: 612972878006308132}
+  CopyEnergyBarDiamond: {fileID: 6753180405663654657}
 --- !u!1 &2660454415622367928
 GameObject:
   m_ObjectHideFlags: 0
@@ -5516,8 +5501,9 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 3910075656768326532}
+  - component: {fileID: 8719566556890966453}
   m_Layer: 0
-  m_Name: WheelsEnemySpawn
+  m_Name: WheelsCopySpawn
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -5539,6 +5525,41 @@ Transform:
   - {fileID: 7099429571212657259}
   m_Father: {fileID: 8124868175778552737}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &8719566556890966453
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2660454415622367928}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 91d65341e7df1f74ba8a3451ea272031, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  wheels:
+  - {fileID: 4241679885021176871}
+  - {fileID: 7772452779656344602}
+  - {fileID: 2164671888504171877}
+  - {fileID: 4880230670248028076}
+  - {fileID: 4089298101375762303}
+  materialOfSymbols:
+  - {fileID: 2100000, guid: addf08a79639ea8489395ec680a363e7, type: 2}
+  - {fileID: 2100000, guid: 114cdf86ced395149a2668b836bfbae4, type: 2}
+  - {fileID: 2100000, guid: 82a91c6ff3fa23f4894ed4e8852e857b, type: 2}
+  - {fileID: 2100000, guid: faf58b7d11c3e294e82d0b036cfdd946, type: 2}
+  - {fileID: 2100000, guid: 2a79e14ea81730743a5563ef8404d169, type: 2}
+  - {fileID: 2100000, guid: a781d6beffba8d449af883fb679f42dc, type: 2}
+  - {fileID: 2100000, guid: 429c58663cd6a7b4d86f19e29773739a, type: 2}
+  - {fileID: 2100000, guid: 91fc926fd0bc4424a8faa14ae2787a2e, type: 2}
+  - {fileID: 2100000, guid: feafcc7849151244288390045f31d308, type: 2}
+  - {fileID: 2100000, guid: d03fa288d4a75c64583039284e9afb5e, type: 2}
+  clampedActivators:
+  - {fileID: 4236766159484516518}
+  - {fileID: 3711655743795340218}
+  - {fileID: 7438734871755824879}
+  - {fileID: 8001137837047738690}
+  - {fileID: 2853031654874343108}
 --- !u!1 &2675083762836073456
 GameObject:
   m_ObjectHideFlags: 0
@@ -5739,7 +5760,7 @@ GameObject:
   m_Component:
   - component: {fileID: 4113321965716699426}
   m_Layer: 0
-  m_Name: FigureCurbEnemyDiamondSpawn
+  m_Name: FigureCurbCopyDiamondSpawn
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -5773,7 +5794,6 @@ GameObject:
   - component: {fileID: 2958225336757167081}
   - component: {fileID: 7728110607577331898}
   - component: {fileID: 4109652167161311740}
-  - component: {fileID: 5991943007678831709}
   m_Layer: 0
   m_Name: Wheel_1
   m_TagString: Untagged
@@ -5872,24 +5892,6 @@ BoxCollider:
   serializedVersion: 3
   m_Size: {x: 0.27598476, y: 0.55, z: 0.55}
   m_Center: {x: 0, y: 0, z: 0}
---- !u!114 &5991943007678831709
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 2943548091312456311}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 64cce6a0d4804f74396a2342ebd40914, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  spinSpeed: 500
-  slowDownRate: 2
-  isLocked: 0
-  wheelIndex: 0
-  wheelManager: {fileID: 0}
-  clampedActivator: {fileID: 4236766159484516518}
 --- !u!1 &3043973347150937208
 GameObject:
   m_ObjectHideFlags: 0
@@ -6398,7 +6400,7 @@ GameObject:
   - component: {fileID: 7293034981752523062}
   - component: {fileID: 7719183799221840474}
   m_Layer: 0
-  m_Name: FigureCurbSelfDiamond
+  m_Name: FigureCurbCopyDiamond
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -6727,7 +6729,7 @@ GameObject:
   - component: {fileID: 7005303114386622161}
   - component: {fileID: 789018325147855632}
   m_Layer: 0
-  m_Name: FigureCurbEnemySquare
+  m_Name: FigureCurbCopySquare
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -7976,6 +7978,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 7173238523546103298}
+  - component: {fileID: 7273563814494714972}
   m_Layer: 0
   m_Name: DisplayManagerDiamond
   m_TagString: Untagged
@@ -8003,6 +8006,27 @@ Transform:
   - {fileID: 276446366307370223}
   m_Father: {fileID: 347419279760764335}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &7273563814494714972
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4205337337109067315}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 65ec20f5964eff9469d9ad6385360973, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  block1Renderer: {fileID: 3758370966724584519}
+  block2Renderer: {fileID: 2468488448814873945}
+  wheel1: {fileID: 8468708380059390681}
+  wheel2: {fileID: 2897004948323486554}
+  crownDamageMaterial: {fileID: 2100000, guid: a2dd48c26d27ad746adcbdafd84d1b9f, type: 2}
+  bulwarkDamageMaterial: {fileID: 2100000, guid: 5d02cf1ebe7266d438524c0afe6202d2, type: 2}
+  delayMaterial: {fileID: 2100000, guid: 97b976fbeff376640baf64d79108a1b2, type: 2}
+  healingMaterial: {fileID: 2100000, guid: f50ed6af9f9ee3847a4a05a220d54c42, type: 2}
+  energyMaterial: {fileID: 2100000, guid: 593f2d6472234d04483e1c0824ddbd24, type: 2}
 --- !u!1 &4272656432199318809
 GameObject:
   m_ObjectHideFlags: 0
@@ -8724,6 +8748,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 6241157536381371646}
+  - component: {fileID: 2076026845952173636}
   m_Layer: 0
   m_Name: XPLightsManagerSquare
   m_TagString: Untagged
@@ -8752,6 +8777,27 @@ Transform:
   - {fileID: 809285736550198030}
   m_Father: {fileID: 3491640218968933775}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &2076026845952173636
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4840677505314061616}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 700874f9089cc5b409b6228aeb14d673, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  xpLamps:
+  - {fileID: 7397028990318799045}
+  - {fileID: 7543321891890492777}
+  - {fileID: 35325689133604785}
+  - {fileID: 3911446301806009135}
+  - {fileID: 7673412956671834315}
+  - {fileID: 1730251258570435979}
+  lampOffMaterial: {fileID: 2100000, guid: 013be2c5da18f7241ad907c8dd42d1d3, type: 2}
+  lampOnMaterial: {fileID: 2100000, guid: 58b5d99cdf5d5224bae5f349b67d7c06, type: 2}
 --- !u!1 &4923203618868587549
 GameObject:
   m_ObjectHideFlags: 0
@@ -9765,8 +9811,9 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 6782111820915903043}
+  - component: {fileID: 3490740608969357056}
   m_Layer: 0
-  m_Name: XPParticleEnemy
+  m_Name: XPParticleCopy
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -9788,6 +9835,36 @@ Transform:
   - {fileID: 8809472041804426428}
   m_Father: {fileID: 8124868175778552737}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &3490740608969357056
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5497203100489665446}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: bbfed4034e67df5419b777648779c390, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  squareParticles:
+  - {fileID: 5994761131884679394}
+  - {fileID: 8432542899247719340}
+  - {fileID: 5789434956600088943}
+  - {fileID: 3577573997532495306}
+  - {fileID: 3022250579441964740}
+  diamondParticles:
+  - {fileID: 6087505108805901009}
+  - {fileID: 4571480952086125013}
+  - {fileID: 7993822369505713757}
+  - {fileID: 8953672318351310451}
+  - {fileID: 2671027115695472300}
+  hammerParticles:
+  - {fileID: 9110869601670165997}
+  - {fileID: 1466661683261951820}
+  - {fileID: 7814256616645442263}
+  - {fileID: 1532785409240246837}
+  - {fileID: 458963035393302334}
 --- !u!1 &5576958953842056233
 GameObject:
   m_ObjectHideFlags: 0
@@ -9932,7 +10009,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 276446366307370223}
-  - component: {fileID: 3031410548403105517}
+  - component: {fileID: 6753180405663654657}
   m_Layer: 0
   m_Name: EnergySpawnDiamond
   m_TagString: Untagged
@@ -9956,7 +10033,7 @@ Transform:
   - {fileID: 5588097225891864715}
   m_Father: {fileID: 7173238523546103298}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &3031410548403105517
+--- !u!114 &6753180405663654657
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -9965,12 +10042,10 @@ MonoBehaviour:
   m_GameObject: {fileID: 5602501857276621384}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 485b5a250815f0a4fb15a9985f0b8dd2, type: 3}
+  m_Script: {fileID: 11500000, guid: 58cc6944de1c1354ebd7e6c1e53903e9, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
   energyBar: {fileID: 5588097225891864715}
-  startYPosition: 0
-  stepSize: 0.12
 --- !u!1 &5603167226894998149
 GameObject:
   m_ObjectHideFlags: 0
@@ -10294,6 +10369,59 @@ MeshRenderer:
   m_SortingLayer: 0
   m_SortingOrder: 0
   m_AdditionalVertexStreams: {fileID: 0}
+--- !u!1 &5824558536088746634
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 2657658325458118855}
+  - component: {fileID: 8106682686487642563}
+  m_Layer: 0
+  m_Name: CopyHeroFigures
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &2657658325458118855
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5824558536088746634}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 8124868175778552737}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &8106682686487642563
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5824558536088746634}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: da0f98691103bba40b9572ecef1364bb, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  availableHeroes:
+  - {fileID: 6006510453213458233, guid: 9d6fa47e6d83c3e499d7aaaa81723388, type: 3}
+  - {fileID: 210579314880244994, guid: 9d982a73d247848449b9f84eff6abb4f, type: 3}
+  - {fileID: 2736208742009805876, guid: 1c84628ee93bc884d99192fe107825a3, type: 3}
+  - {fileID: 8659753276594678948, guid: a25bc32815a7a784baf7121b366dcfb9, type: 3}
+  - {fileID: 2495073711343981731, guid: 582602b946f796745b4a4a6ab2118b54, type: 3}
+  - {fileID: 4285298512509971137, guid: 8ef2428fe5814e24b8eefe05374b4bd8, type: 3}
+  playerSquareHeroSpawnPoint: {fileID: 4992195819236710160}
+  playerDiamondHeroSpawnPoint: {fileID: 6289815532654893823}
 --- !u!1 &5857807610773769130
 GameObject:
   m_ObjectHideFlags: 0
@@ -10586,7 +10714,6 @@ GameObject:
   - component: {fileID: 1592054758017910552}
   - component: {fileID: 835641377087469354}
   - component: {fileID: 7408067913000299842}
-  - component: {fileID: 2869937132299002026}
   m_Layer: 0
   m_Name: Wheel_2
   m_TagString: Untagged
@@ -10685,24 +10812,6 @@ BoxCollider:
   serializedVersion: 3
   m_Size: {x: 0.27598476, y: 0.55, z: 0.55}
   m_Center: {x: 0, y: 0, z: 0}
---- !u!114 &2869937132299002026
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 5941968287733888249}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 64cce6a0d4804f74396a2342ebd40914, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  spinSpeed: 500
-  slowDownRate: 2
-  isLocked: 0
-  wheelIndex: 1
-  wheelManager: {fileID: 0}
-  clampedActivator: {fileID: 3711655743795340218}
 --- !u!1 &5976245786300261396
 GameObject:
   m_ObjectHideFlags: 0
@@ -11303,7 +11412,6 @@ GameObject:
   - component: {fileID: 2358612837728799839}
   - component: {fileID: 7992608611321516050}
   - component: {fileID: 685422162017799176}
-  - component: {fileID: 2127722282542018310}
   m_Layer: 0
   m_Name: Wheel_3
   m_TagString: Untagged
@@ -11402,24 +11510,6 @@ BoxCollider:
   serializedVersion: 3
   m_Size: {x: 0.27598476, y: 0.55, z: 0.55}
   m_Center: {x: 0, y: 0, z: 0}
---- !u!114 &2127722282542018310
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 6304439089327315248}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 64cce6a0d4804f74396a2342ebd40914, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  spinSpeed: 500
-  slowDownRate: 2
-  isLocked: 0
-  wheelIndex: 2
-  wheelManager: {fileID: 0}
-  clampedActivator: {fileID: 7438734871755824879}
 --- !u!1 &6398217619468714206
 GameObject:
   m_ObjectHideFlags: 0
@@ -12088,7 +12178,6 @@ GameObject:
   - component: {fileID: 2340054084267329746}
   - component: {fileID: 2872028189120804968}
   - component: {fileID: 3582568243346029162}
-  - component: {fileID: 8388012717677737149}
   m_Layer: 0
   m_Name: Wheel_5
   m_TagString: Untagged
@@ -12187,24 +12276,6 @@ BoxCollider:
   serializedVersion: 3
   m_Size: {x: 0.27598476, y: 0.55, z: 0.55}
   m_Center: {x: 0, y: 0, z: 0}
---- !u!114 &8388012717677737149
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 6606316771992497251}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 64cce6a0d4804f74396a2342ebd40914, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  spinSpeed: 500
-  slowDownRate: 2
-  isLocked: 0
-  wheelIndex: 4
-  wheelManager: {fileID: 0}
-  clampedActivator: {fileID: 2853031654874343108}
 --- !u!1 &6621428302079004543
 GameObject:
   m_ObjectHideFlags: 0
@@ -13220,8 +13291,9 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 3133165969519381958}
+  - component: {fileID: 1496595977101015088}
   m_Layer: 0
-  m_Name: CrownDisplayEnemy
+  m_Name: CrownDisplayCopy
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -13245,6 +13317,20 @@ Transform:
   - {fileID: 900814472433522299}
   m_Father: {fileID: 8124868175778552737}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &1496595977101015088
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6974734314395750016}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: a891800441676b5438e84c4b52b702a4, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  oneWheel: {fileID: 4532790856791045311}
+  tenWheel: {fileID: 8172857329120251816}
 --- !u!1 &6993279144383688675
 GameObject:
   m_ObjectHideFlags: 0
@@ -13254,6 +13340,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 838272877082804494}
+  - component: {fileID: 4353280963435883293}
   m_Layer: 0
   m_Name: DisplayManagerSquare
   m_TagString: Untagged
@@ -13281,6 +13368,27 @@ Transform:
   - {fileID: 3267649877128876496}
   m_Father: {fileID: 3491640218968933775}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &4353280963435883293
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6993279144383688675}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 65ec20f5964eff9469d9ad6385360973, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  block1Renderer: {fileID: 3897640890610508018}
+  block2Renderer: {fileID: 2088673305220686354}
+  wheel1: {fileID: 665792216567707493}
+  wheel2: {fileID: 8738527732657572648}
+  crownDamageMaterial: {fileID: 2100000, guid: a2dd48c26d27ad746adcbdafd84d1b9f, type: 2}
+  bulwarkDamageMaterial: {fileID: 2100000, guid: 5d02cf1ebe7266d438524c0afe6202d2, type: 2}
+  delayMaterial: {fileID: 2100000, guid: 97b976fbeff376640baf64d79108a1b2, type: 2}
+  healingMaterial: {fileID: 2100000, guid: f50ed6af9f9ee3847a4a05a220d54c42, type: 2}
+  energyMaterial: {fileID: 2100000, guid: 593f2d6472234d04483e1c0824ddbd24, type: 2}
 --- !u!1 &7053034956451661777
 GameObject:
   m_ObjectHideFlags: 0
@@ -13551,9 +13659,9 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 6612414831610956524}
-  - component: {fileID: 5292228081421633168}
+  - component: {fileID: 7134021848489161914}
   m_Layer: 0
-  m_Name: ActionRodManagerEnemy
+  m_Name: ActionRodManagerCopy
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -13578,7 +13686,7 @@ Transform:
   - {fileID: 1731872964781741104}
   m_Father: {fileID: 8124868175778552737}
   m_LocalEulerAnglesHint: {x: 0, y: 180, z: 0}
---- !u!114 &5292228081421633168
+--- !u!114 &7134021848489161914
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -13587,14 +13695,14 @@ MonoBehaviour:
   m_GameObject: {fileID: 7110708458185045534}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 793f39fb571e99b4b9a03812e820d290, type: 3}
+  m_Script: {fileID: 11500000, guid: cbc0a51b5434b3a4eab93787c86c6846, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
   actionRod:
-  - {fileID: 7963390432321269628}
-  - {fileID: 4708965382439067428}
-  - {fileID: 2360196499512441411}
   - {fileID: 4923203618868587549}
+  - {fileID: 2360196499512441411}
+  - {fileID: 4708965382439067428}
+  - {fileID: 7963390432321269628}
 --- !u!1 &7129416321827524839
 GameObject:
   m_ObjectHideFlags: 0
@@ -13604,8 +13712,9 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 3393219658674091806}
+  - component: {fileID: 2247742875587820676}
   m_Layer: 0
-  m_Name: BulwarkSpawnEnemy
+  m_Name: BulwarkCopySpawn
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -13627,6 +13736,19 @@ Transform:
   - {fileID: 7086561805435523576}
   m_Father: {fileID: 8124868175778552737}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &2247742875587820676
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7129416321827524839}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 8cf836cfcb34b954c9590758ee141013, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  bulwark: {fileID: 7086561805435523576}
 --- !u!1 &7141358899900313014
 GameObject:
   m_ObjectHideFlags: 0
@@ -14753,7 +14875,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 3267649877128876496}
-  - component: {fileID: 6789982596068893688}
+  - component: {fileID: 612972878006308132}
   m_Layer: 0
   m_Name: EnergySpawnSquare
   m_TagString: Untagged
@@ -14777,7 +14899,7 @@ Transform:
   - {fileID: 2040003238350288625}
   m_Father: {fileID: 838272877082804494}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &6789982596068893688
+--- !u!114 &612972878006308132
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -14786,12 +14908,10 @@ MonoBehaviour:
   m_GameObject: {fileID: 7661345761033259300}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 485b5a250815f0a4fb15a9985f0b8dd2, type: 3}
+  m_Script: {fileID: 11500000, guid: 58cc6944de1c1354ebd7e6c1e53903e9, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
   energyBar: {fileID: 2040003238350288625}
-  startYPosition: 0
-  stepSize: 0.12
 --- !u!1 &7673412956671834315
 GameObject:
   m_ObjectHideFlags: 0

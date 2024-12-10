@@ -1,18 +1,12 @@
-using System;
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 
-public class ParticleManager : MonoBehaviour
+public class CopyXPParticles : ManagerCopiesHandler<ParticleManager>
 {
     [SerializeField] ParticleMover[] squareParticles;
     [SerializeField] ParticleMover[] diamondParticles;
     [SerializeField] ParticleMover[] hammerParticles;
 
-    //Events
-    public event Action<int, string> OnActivateParticleMove;
-
-    public void ActivateParticleMove(int wheel, string particle)
+    private void ActivateParticleMove(int wheel, string particle)
     {
         //Schauen, welches Rad angesprochen wird
         for (int i = 0; i < 5; i++)
@@ -48,7 +42,15 @@ public class ParticleManager : MonoBehaviour
                 }
             }
         }
+    }
 
-        OnActivateParticleMove?.Invoke(wheel, particle);
+    protected override void SetEvents()
+    {
+        originalManager.OnActivateParticleMove += OriginalParticles_OnActivateParticleMove;
+    }
+
+    private void OriginalParticles_OnActivateParticleMove(int wheel, string particle)
+    {
+        ActivateParticleMove(wheel, particle);
     }
 }

@@ -44,7 +44,7 @@ public class DebugMultiplayerUI : MonoBehaviour
 
     public void ActivatePlayers()
     {
-        //Spielerobjekte Spawnen
+        //Spielerobjekte spawnen
         GameObject newPlayerOne = Instantiate(playerOnePrefab, gameBoardPlayerOne, false);
         GameObject newPlayerTwo = Instantiate(playerTwoPrefab, gameBoardPlayerTwo, false);
         selfHud.SetManagers(newPlayerOne.GetComponent<PlayerScript>().GetSelectionRotator(), newPlayerOne.GetComponent<PlayerScript>().GetWheelManager());
@@ -57,5 +57,12 @@ public class DebugMultiplayerUI : MonoBehaviour
         StartCoroutine(TurnManager.Instance.InitializeReadynessLate());
         StartCoroutine(TurnManager.Instance.InitializeCrownHPLate());
         StartCoroutine(InitialHeroSetting.Instance.InitializeReadynessLate());
+
+        //CopyObjekte spawnen
+        GameObject newCopyOfPlayerOne = Instantiate(actionsCopyer, gameBoardPlayerTwo, false);
+        GameObject newCopyOfPlayerTwo = Instantiate(actionsCopyer, gameBoardPlayerOne, false);
+
+        newCopyOfPlayerOne.GetComponent<CopyManager>().SetManagersFromOriginal(newPlayerOne);
+        newCopyOfPlayerTwo.GetComponent<CopyManager>().SetManagersFromOriginal(newPlayerTwo);
     }
 }

@@ -191,4 +191,18 @@ public class WheelSpin : MonoBehaviour
         clampLock = overallLock;
         initialClampLock = initialLock;
     }
+
+    //Berechne, welcher SymbolIndex oben liegt, basierend auf der Rotation
+    public int GetTopSymbolIndex()
+    {
+        //Berechne, in welchem der 8 möglichen Slots das Rad gestoppt hat
+        int symbolIndex = Mathf.RoundToInt(finalRotation / 45f) % 8;
+        if ((symbolIndex - 1) < 0)
+        {
+            symbolIndex = 7;
+        }
+        else { symbolIndex--; }
+
+        return symbolIndex;
+    }
 }

@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -36,6 +37,9 @@ public class HeroSelectionRotator : MonoBehaviour
     //Referenz auf das aktive Objekt des Helden
     private GameObject activePlayerSquareHero;      //Referenz zum Objekt des Spieler-Square-Helden
     private GameObject activePlayerDiamondHero;     //Referenz zum Objekt des Spieler-Diamond-Helden
+
+    //Events
+    public event Action<int, int, string> OnActivateChangeHero;
 
     //Initialisierung
     private void Start()
@@ -124,6 +128,8 @@ public class HeroSelectionRotator : MonoBehaviour
     //Methode zum Aktualisieren der 3D-Helden in der Szene
     private void UpdateHero(string heroType)
     {
+        OnActivateChangeHero?.Invoke(currentPlayerSquareHeroIndex, currentPlayerDiamondHeroIndex, heroType);
+
         if (heroType == "Square")
         {
             //Lösche den aktuellen Spieler-Square-Held, wenn einer existiert
