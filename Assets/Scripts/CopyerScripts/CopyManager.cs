@@ -1,6 +1,7 @@
+using Unity.Netcode;
 using UnityEngine;
 
-public class CopyManager : MonoBehaviour
+public class CopyManager : NetworkBehaviour
 {
     //private EnemyScript enemyScript;    //Offline only
 

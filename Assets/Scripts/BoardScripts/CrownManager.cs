@@ -32,7 +32,7 @@ public class CrownManager : MonoBehaviour
         }
         else
         {
-            TurnManager.Instance.ChangeCrownHP(PlayerScript.Instance.playerId, maxHP);
+            //TurnManager.Instance.ChangeCrownHP(PlayerScript.Instance.playerId, maxHP);
         }
     }
 
@@ -59,7 +59,7 @@ public class CrownManager : MonoBehaviour
         }
         else
         {
-            TurnManager.Instance.ChangeCrownHP(PlayerScript.Instance.playerId, currentHP);
+            //TurnManager.Instance.ChangeCrownHP(PlayerScript.Instance.playerId, currentHP);
         }
 
         UpdateHPDisplay();
@@ -80,7 +80,7 @@ public class CrownManager : MonoBehaviour
         }
         else
         {
-            TurnManager.Instance.ChangeCrownHP(PlayerScript.Instance.playerId, currentHP);
+            //TurnManager.Instance.ChangeCrownHP(PlayerScript.Instance.playerId, currentHP);
         }
 
         UpdateHPDisplay();
@@ -105,8 +105,8 @@ public class CrownManager : MonoBehaviour
         }
         else
         {
-            PlayerScript.Instance.GetHPScriptsSelf().SetCurrentHP(PlayerScript.Instance.playerId, currentHP);
-            PlayerScript.Instance.GetHPScriptsEnemy().SetCurrentHP(PlayerScript.Instance.playerId, currentHP);
+            //PlayerScript.Instance.GetHPScriptsSelf().SetCurrentHP(PlayerScript.Instance.playerId, currentHP);
+            //PlayerScript.Instance.GetHPScriptsEnemy().SetCurrentHP(PlayerScript.Instance.playerId, currentHP);
         }
     }
 
@@ -147,35 +147,4 @@ public class CrownManager : MonoBehaviour
         oneWheel.localEulerAngles = targetRotationOnes;
         tenWheel.localEulerAngles = targetRotationTens;
     }
-
-    //private IEnumerator WheelRotator(float rotationOnes, float rotationTens)
-    //{
-    //    //Dauer der Animation
-    //    float duration = 0.3f;
-    //    float timeElapsed = 0f;
-
-    //    //Die aktuelle Rotation in Quaternion speichern
-    //    Quaternion initialRotationOnes = oneWheel.rotation;
-    //    Quaternion initialRotationTens = tenWheel.rotation;
-
-    //    //Zielrotation in Quaternion berechnen, um eine sanfte Imterpolation durchzuführen
-    //    Quaternion targetRotationOnes = Quaternion.Euler(rotationOnes, oneWheel.eulerAngles.y, oneWheel.eulerAngles.z);
-    //    Quaternion targetRotationTens = Quaternion.Euler(rotationTens, tenWheel.eulerAngles.y, tenWheel.eulerAngles.z);
-
-    //    //Führe die Interpolation über die Zeit durch
-    //    while (timeElapsed < duration)
-    //    {
-    //        //Linear interpolieren zwischen der Startrotation und der Zielrotation
-    //        oneWheel.rotation = Quaternion.Lerp(initialRotationOnes, targetRotationOnes, timeElapsed / duration);
-    //        tenWheel.rotation = Quaternion.Lerp(initialRotationTens, targetRotationTens, timeElapsed / duration);
-
-    //        //Erhöhe die verstrichene Zeit
-    //        timeElapsed += Time.deltaTime;
-    //        //Warte bis zum nächsten Frame
-    //        yield return null;
-    //    }
-
-    //    oneWheel.rotation = targetRotationOnes;
-    //    tenWheel.rotation = targetRotationTens;
-    //}
 }

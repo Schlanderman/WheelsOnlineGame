@@ -5419,6 +5419,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 700874f9089cc5b409b6228aeb14d673, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  ShowTopMostFoldoutHeaderGroup: 1
   xpLamps:
   - {fileID: 2495793338424995588}
   - {fileID: 470920080310910570}
@@ -5437,6 +5438,8 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 8124868175778552737}
+  - component: {fileID: 2674617942112333099}
+  - component: {fileID: -4896517844691958534}
   - component: {fileID: 6085429411606400547}
   m_Layer: 0
   m_Name: PlayerActionsCopyer
@@ -5468,6 +5471,67 @@ Transform:
   - {fileID: 6612414831610956524}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &2674617942112333099
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2624235627163873199}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d5a57f767e5e46a458fc5d3c628d0cbb, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  GlobalObjectIdHash: 2446362606
+  InScenePlacedSourceGlobalObjectIdHash: 0
+  DeferredDespawnTick: 0
+  Ownership: 1
+  AlwaysReplicateAsRoot: 0
+  SynchronizeTransform: 1
+  ActiveSceneSynchronization: 0
+  SceneMigrationSynchronization: 1
+  SpawnWithObservers: 1
+  DontDestroyWithOwner: 0
+  AutoObjectParentSync: 1
+  SyncOwnerTransformWhenParented: 1
+  AllowOwnerToParent: 0
+--- !u!114 &-4896517844691958534
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2624235627163873199}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: e96cb6065543e43c4a752faaa1468eb1, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  ShowTopMostFoldoutHeaderGroup: 1
+  NetworkTransformExpanded: 0
+  AuthorityMode: 1
+  TickSyncChildren: 0
+  UseUnreliableDeltas: 0
+  SyncPositionX: 1
+  SyncPositionY: 0
+  SyncPositionZ: 0
+  SyncRotAngleX: 0
+  SyncRotAngleY: 0
+  SyncRotAngleZ: 0
+  SyncScaleX: 0
+  SyncScaleY: 0
+  SyncScaleZ: 0
+  PositionThreshold: 0.001
+  RotAngleThreshold: 0.01
+  ScaleThreshold: 0.01
+  UseQuaternionSynchronization: 0
+  UseQuaternionCompression: 0
+  UseHalfFloatPrecision: 0
+  InLocalSpace: 0
+  SwitchTransformSpaceWhenParented: 0
+  Interpolate: 1
+  SlerpPosition: 0
 --- !u!114 &6085429411606400547
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -5480,6 +5544,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 2fbed83858841d942815ff4e0941c937, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  ShowTopMostFoldoutHeaderGroup: 1
   copyWheels: {fileID: 8719566556890966453}
   copyHeroFigures: {fileID: 8106682686487642563}
   copyXPLightsSquare: {fileID: 2076026845952173636}
@@ -5537,6 +5602,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 91d65341e7df1f74ba8a3451ea272031, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  ShowTopMostFoldoutHeaderGroup: 1
   wheels:
   - {fileID: 4241679885021176871}
   - {fileID: 7772452779656344602}
@@ -8018,6 +8084,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 65ec20f5964eff9469d9ad6385360973, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  ShowTopMostFoldoutHeaderGroup: 1
   block1Renderer: {fileID: 3758370966724584519}
   block2Renderer: {fileID: 2468488448814873945}
   wheel1: {fileID: 8468708380059390681}
@@ -8789,6 +8856,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 700874f9089cc5b409b6228aeb14d673, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  ShowTopMostFoldoutHeaderGroup: 1
   xpLamps:
   - {fileID: 7397028990318799045}
   - {fileID: 7543321891890492777}
@@ -9847,6 +9915,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: bbfed4034e67df5419b777648779c390, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  ShowTopMostFoldoutHeaderGroup: 1
   squareParticles:
   - {fileID: 5994761131884679394}
   - {fileID: 8432542899247719340}
@@ -10045,6 +10114,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 58cc6944de1c1354ebd7e6c1e53903e9, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  ShowTopMostFoldoutHeaderGroup: 1
   energyBar: {fileID: 5588097225891864715}
 --- !u!1 &5603167226894998149
 GameObject:
@@ -10413,6 +10483,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: da0f98691103bba40b9572ecef1364bb, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  ShowTopMostFoldoutHeaderGroup: 1
   availableHeroes:
   - {fileID: 6006510453213458233, guid: 9d6fa47e6d83c3e499d7aaaa81723388, type: 3}
   - {fileID: 210579314880244994, guid: 9d982a73d247848449b9f84eff6abb4f, type: 3}
@@ -10420,8 +10491,7 @@ MonoBehaviour:
   - {fileID: 8659753276594678948, guid: a25bc32815a7a784baf7121b366dcfb9, type: 3}
   - {fileID: 2495073711343981731, guid: 582602b946f796745b4a4a6ab2118b54, type: 3}
   - {fileID: 4285298512509971137, guid: 8ef2428fe5814e24b8eefe05374b4bd8, type: 3}
-  playerSquareHeroSpawnPoint: {fileID: 4992195819236710160}
-  playerDiamondHeroSpawnPoint: {fileID: 6289815532654893823}
+  playerHeroObject: {fileID: 2624235627163873199}
 --- !u!1 &5857807610773769130
 GameObject:
   m_ObjectHideFlags: 0
@@ -13329,6 +13399,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a891800441676b5438e84c4b52b702a4, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  ShowTopMostFoldoutHeaderGroup: 1
   oneWheel: {fileID: 4532790856791045311}
   tenWheel: {fileID: 8172857329120251816}
 --- !u!1 &6993279144383688675
@@ -13380,6 +13451,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 65ec20f5964eff9469d9ad6385360973, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  ShowTopMostFoldoutHeaderGroup: 1
   block1Renderer: {fileID: 3897640890610508018}
   block2Renderer: {fileID: 2088673305220686354}
   wheel1: {fileID: 665792216567707493}
@@ -13698,6 +13770,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: cbc0a51b5434b3a4eab93787c86c6846, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  ShowTopMostFoldoutHeaderGroup: 1
   actionRod:
   - {fileID: 4923203618868587549}
   - {fileID: 2360196499512441411}
@@ -13748,6 +13821,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 8cf836cfcb34b954c9590758ee141013, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  ShowTopMostFoldoutHeaderGroup: 1
   bulwark: {fileID: 7086561805435523576}
 --- !u!1 &7141358899900313014
 GameObject:
@@ -14911,6 +14985,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 58cc6944de1c1354ebd7e6c1e53903e9, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  ShowTopMostFoldoutHeaderGroup: 1
   energyBar: {fileID: 2040003238350288625}
 --- !u!1 &7673412956671834315
 GameObject:

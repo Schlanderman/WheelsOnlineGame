@@ -45,7 +45,7 @@ public class HeroActions : MonoBehaviour
         }
         else
         {
-            if (playerId != PlayerScript.Instance.playerId) { return; }   //Es wird nichts gemacht, wenn Id nicht übereinstimmt
+            //if (playerId != PlayerScript.Instance.playerId) { return; }   //Es wird nichts gemacht, wenn Id nicht übereinstimmt
         }
 
         //Testen, ob dies hier de Square Seite ist
@@ -78,8 +78,7 @@ public class HeroActions : MonoBehaviour
         }
         else
         {
-            if (playerId == PlayerScript.Instance.playerId) { return; }
-                //Debug.Log($"Empfange Invoke mit ID {playerId}, Crown {enemyCM.gameObject}, Bulwark {enemyBM.gameObject} und Actionrod {enemyARM.gameObject} bei Spieler: {PlayerScript.Instance.playerId}");
+            //if (playerId == PlayerScript.Instance.playerId) { return; }
 
             enemyCrown = enemyCM;
             enemyBulwark = enemyBM;
@@ -139,7 +138,7 @@ public class HeroActions : MonoBehaviour
         }
         else
         {
-            InitialHeroSetting.Instance.SetEnemyManagers(PlayerScript.Instance.playerId, playerCrown, playerBulwark, rodAnimations);
+            //InitialHeroSetting.Instance.SetEnemyManagers(PlayerScript.Instance.playerId, playerCrown, playerBulwark, rodAnimations);
         }
     }
 

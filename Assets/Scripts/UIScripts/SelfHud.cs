@@ -44,8 +44,8 @@ public class SelfHud : MonoBehaviour
 
         readyButton.onClick.AddListener(() =>
         {
-            InitialHeroSetting.Instance.ChangePlayerReadyness(PlayerScript.Instance.playerId, true);
-            InitialHeroSetting.Instance.CheckReady();
+            //InitialHeroSetting.Instance.ChangePlayerReadyness(PlayerScript.Instance.playerId, true);
+            MultiplayerGameManager.Instance.SetLocalPlayerReadyToPlay(true);
         });
     }
 
@@ -57,10 +57,10 @@ public class SelfHud : MonoBehaviour
 
     private void InitialHeroSetting_OnDeactivateRotatorButtons(ulong playerId)
     {
-        if (playerId != PlayerScript.Instance.playerId)
-        {
-            return;
-        }
+        //if (playerId != PlayerScript.Instance.playerId)
+        //{
+        //    return;
+        //}
 
         figureSquareSelectLeftButton.gameObject.SetActive(false);
         figureSquareSelectRightButton.gameObject.SetActive(false);

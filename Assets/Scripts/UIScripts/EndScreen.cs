@@ -17,17 +17,17 @@ public class EndScreen : MonoBehaviour
 
     private void TurnManager_OnSetEndscreen(bool isTied, ulong winnerId)
     {
-        if (isTied)
-        {
-            tieScreen.SetActive(true);
-        }
-        else if (winnerId == PlayerScript.Instance.playerId)
-        {
-            winScreen.SetActive(true);
-        }
-        else
-        {
-            loseScreen.SetActive(true);
-        }
+        //if (isTied)
+        //{
+        //    tieScreen.SetActive(true);
+        //}
+        //else if (winnerId == PlayerScript.Instance.playerId)
+        //{
+        //    winScreen.SetActive(true);
+        //}
+        //else
+        //{
+        //    loseScreen.SetActive(true);
+        //}
     }
 }

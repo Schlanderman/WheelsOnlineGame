@@ -3,8 +3,10 @@ using System.Collections.Generic;
 using Unity.VisualScripting;
 using UnityEngine;
 using System;
+using Unity.Netcode;
+using Unity.Collections;
 
-public class Hero : MonoBehaviour
+public class Hero : NetworkBehaviour
 {
     public HeroType heroType;
     public HeroRank heroRank = HeroRank.Bronze;
@@ -64,7 +66,6 @@ public class Hero : MonoBehaviour
     private void InitialUpdateHeroStats()
     {
         currentStats = HeroManager.heroData[(heroType, heroRank)];
-        //Debug.Log($"{heroType} auf {heroRank} hat {currentStats.energyToAct} Energie, {currentStats.crownDamage} KronenSchaden, {currentStats.bulwarkDamage} Bulwarkschaden, {currentStats.delayAdding} Delay, {currentStats.healingAdding} Healing und {currentStats.energyAdding} Energiezufuhr.");
     }
 
     private void UpdateHeroStats()
@@ -72,7 +73,6 @@ public class Hero : MonoBehaviour
         currentStats = HeroManager.heroData[(heroType, heroRank)];
         energyBar.UpdateEnergieDisplay(currentEnergy, GetMaxEnergy());
         uiUpdater.UpdateHeroDisplay(this);
-        //Debug.Log($"{heroType} auf {heroRank} hat {currentStats.energyToAct} Energie, {currentStats.crownDamage} KronenSchaden, {currentStats.bulwarkDamage} Bulwarkschaden, {currentStats.delayAdding} Delay, {currentStats.healingAdding} Healing und {currentStats.energyAdding} Energiezufuhr.");
     }
 
     public void SetHeroActions(HeroActions actions)
@@ -147,7 +147,6 @@ public class Hero : MonoBehaviour
         currentEnergy = 0;
         energyBar.UpdateEnergieDisplay(currentEnergy, GetMaxEnergy());
 
-        //Debug.Log("Hier wird " + this + " an " + heroActions + " weitergegeben.");
         yield return StartCoroutine(heroActions.ActivateHeroAction(this));
     }
 
@@ -156,6 +155,78 @@ public class Hero : MonoBehaviour
         Debug.Log(type + " führt seine zweite Aktion aus!");
         yield return StartCoroutine(heroActions.PriestSecondAction());
     }
+
+
+
+    //Parent setzen
+    public void SetHeroParent(GameObject parentTransformRoot, HeroSpawnDummy.PlayerSideKey playerSide, HeroSpawnDummy.HeroSideKey heroSide)
+    {
+        SetHeroParentServerRpc(parentTransformRoot, playerSide, heroSide);
+    }
+
+    [ServerRpc(RequireOwnership = false)]
+    private void SetHeroParentServerRpc(NetworkObjectReference heroObjectParentRootReference, HeroSpawnDummy.PlayerSideKey playerSide, HeroSpawnDummy.HeroSideKey heroSide)
+    {
+        if (heroObjectParentRootReference.TryGet(out NetworkObject rootNetworkObject))
+        {
+            GameObject rootObject = rootNetworkObject.gameObject;
+            //Transform heroObjectParentTransform = rootObject.transform.Find(childPath.ToString());
+            Transform heroObjectParentTransform = GetTransformFromKeywords(rootObject, playerSide, heroSide);
+
+            this.transform.parent = heroObjectParentTransform;
+            this.transform.position = Vector3.zero;
+            this.transform.rotation = Quaternion.identity;
+        }
+        else
+        {
+            Debug.LogError("Root oder Child konnte nicht gefunden werden.");
+        }
+    }
+
+    private Transform GetTransformFromKeywords(GameObject rootObject, HeroSpawnDummy.PlayerSideKey playerSide, HeroSpawnDummy.HeroSideKey heroSide)
+    {
+        string tagToSearchFor = "";
+
+        if (playerSide == HeroSpawnDummy.PlayerSideKey.Player)
+        {
+            if (heroSide == HeroSpawnDummy.HeroSideKey.Square)
+            {
+                tagToSearchFor = "PlayerSquareHeroSpawn";
+            }
+            else
+            {
+                tagToSearchFor = "PlayerDiamondHeroSpawn";
+            }
+        }
+        else
+        {
+            if (heroSide == HeroSpawnDummy.HeroSideKey.Square)
+            {
+                tagToSearchFor = "EnemySquareHeroSpawn";
+            }
+            else
+            {
+                tagToSearchFor = "EnemyDiamondHeroSpawn";
+            }
+        }
+
+        return FindChildTransformWithTag(rootObject, tagToSearchFor);
+    }
+
+    private Transform FindChildTransformWithTag(GameObject rootObject, string tag)
+    {
+        foreach (Transform child in rootObject.transform)
+        {
+            if (child.CompareTag(tag))
+            {
+                return child;
+            }
+        }
+        Debug.LogWarning($"Der Tag '{tag}' konnte nicht in {rootObject} gefunden werden!");
+        return null;    //Kein Child mit dem Tag gefunden
+    }
+
+
 
     //Methoden um die Werte auszulesen
     public int GetCrownDamage()

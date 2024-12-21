@@ -1,6 +1,7 @@
+using Unity.Netcode;
 using UnityEngine;
 
-public abstract class ManagerCopiesHandler<TManager> : MonoBehaviour where TManager: MonoBehaviour
+public abstract class ManagerCopiesHandler<TManager> : NetworkBehaviour where TManager: MonoBehaviour
 {
     protected TManager originalManager;
 

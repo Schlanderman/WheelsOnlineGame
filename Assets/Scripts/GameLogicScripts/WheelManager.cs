@@ -96,7 +96,6 @@ public class WheelManager : MonoBehaviour
         TurnManager.Instance.OnResetRound += TurnManager_OnResetRound;
         TurnManager.Instance.OnInitializePlayerRoundFinished += TurnManager_OnInitializePlayerRoundFinished;
         InitialHeroSetting.Instance.OnActivateSpinButton += InitialHeroSetting_OnActivateSpinButton;
-        InitialHeroSetting.Instance.OnInitializePlayerReadyness += InitialHeroSetting_OnInitializePlayerReadyness;
     }
 
     //Events für dieses Skript
@@ -114,25 +113,13 @@ public class WheelManager : MonoBehaviour
         }
         else
         {
-            TurnManager.Instance.ChangePlayerRoundFinished(PlayerScript.Instance.playerId, false);
+            //TurnManager.Instance.ChangePlayerRoundFinished(PlayerScript.Instance.playerId, false);
         }
     }
 
     private void InitialHeroSetting_OnActivateSpinButton(object sender, EventArgs e)
     {
         ActivateSpinButton();
-    }
-
-    private void InitialHeroSetting_OnInitializePlayerReadyness(object sender, EventArgs e)
-    {
-        if (enemyScript != null)
-        {
-            InitialHeroSetting.Instance.ChangePlayerReadynessInitial(enemyScript.playerId, false);
-        }
-        else
-        {
-            InitialHeroSetting.Instance.ChangePlayerReadynessInitial(PlayerScript.Instance.playerId, false);
-        }
     }
 
 
@@ -253,7 +240,7 @@ public class WheelManager : MonoBehaviour
         }
         else
         {
-            TurnManager.Instance.ChangePlayerRoundFinished(PlayerScript.Instance.playerId, true);
+            //TurnManager.Instance.ChangePlayerRoundFinished(PlayerScript.Instance.playerId, true);
         }
 
         OnWheelsHaveStopped?.Invoke(

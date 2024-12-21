@@ -2,9 +2,10 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
+using Unity.Netcode;
 using UnityEngine;
 
-public class InitialHeroSetting : MonoBehaviour
+public class InitialHeroSetting : NetworkBehaviour
 {
     public static InitialHeroSetting Instance { get; private set; }
 
@@ -21,10 +22,6 @@ public class InitialHeroSetting : MonoBehaviour
     [SerializeField] private Hero playerTwoSquareHero;
     [SerializeField] private Hero playerTwoDiamondHero;
 
-    private ulong playerOneId;
-    private ulong playerTwoId;
-
-    private Dictionary<ulong, bool> playerReadyDictionary;
     private Dictionary<ulong, (HeroActions, HeroActions, EvaluationManager)> playerComponentsDictionary;
     private Dictionary<ulong, (Hero, Hero)> playerHeroesDictionary;
 
@@ -43,36 +40,22 @@ public class InitialHeroSetting : MonoBehaviour
     {
         Instance = this;
 
-        playerReadyDictionary = new Dictionary<ulong, bool>();
         playerComponentsDictionary = new Dictionary<ulong, (HeroActions, HeroActions, EvaluationManager)>();
         playerHeroesDictionary = new Dictionary<ulong, (Hero, Hero)>();
     }
 
     private void Start()
     {
-        //StartCoroutine(InitializeReadynessLate());
+        MultiplayerGameManager.Instance.OnPlayersAreReadyToPlay += MultiplayerGameManager_OnPlayersAreReadyToPlay;
     }
 
-    public void CheckReady()
+    private void MultiplayerGameManager_OnPlayersAreReadyToPlay(object sender, EventArgs e)
     {
-        foreach (ulong playerId in playerReadyDictionary.Keys)
-        {
-            if (!playerReadyDictionary[playerId])
-            {
-                return;
-            }
-        }
-
         //ReadyDeaktivieren, Spin aktivieren
         OnDeactivateReadyButton?.Invoke(this, EventArgs.Empty);
         OnActivateSpinButton?.Invoke(this, EventArgs.Empty);
 
-        //Bestimmen, welcher Spieler welcher ist
-        ulong[] playerIds = playerReadyDictionary.Keys.ToArray();
-        playerOneId = playerIds[0];
-        playerTwoId = playerIds[1];
-
-        InitializeEverything();
+        InitializeEverythingServerRPC();
     }
 
     private void InitializeEverything()
@@ -81,8 +64,8 @@ public class InitialHeroSetting : MonoBehaviour
         OnGetHeroes?.Invoke(this, EventArgs.Empty);
 
         //Heroes setzen
-        OnSetHeroesInitially?.Invoke(playerOneId, playerOneSquareHero, playerOneDiamondHero, playerTwoSquareHero, playerTwoDiamondHero);
-        OnSetHeroesInitially?.Invoke(playerTwoId, playerTwoSquareHero, playerTwoDiamondHero, playerOneSquareHero, playerOneDiamondHero);
+        //OnSetHeroesInitially?.Invoke(playerOneId, playerOneSquareHero, playerOneDiamondHero, playerTwoSquareHero, playerTwoDiamondHero);
+        //OnSetHeroesInitially?.Invoke(playerTwoId, playerTwoSquareHero, playerTwoDiamondHero, playerOneSquareHero, playerOneDiamondHero);
 
         //Alle Heroes mit HeroActions befüllen
         playerOneSquareHero.SetHeroActions(playerOneSquareActions);
@@ -101,15 +84,10 @@ public class InitialHeroSetting : MonoBehaviour
         OnSetCoverUp?.Invoke(this, EventArgs.Empty);
     }
 
-    public void ChangePlayerReadynessInitial(ulong playerId, bool state)
+    [ServerRpc(RequireOwnership = true)]
+    private void InitializeEverythingServerRPC()
     {
-        playerReadyDictionary[playerId] = state;
-    }
-
-    public void ChangePlayerReadyness(ulong playerId, bool state)
-    {
-        playerReadyDictionary[playerId] = state;
-        OnDeactivateRotatorButtons?.Invoke(playerId);
+        
     }
 
     public IEnumerator InitializeReadynessLate()
@@ -136,20 +114,20 @@ public class InitialHeroSetting : MonoBehaviour
         var playerHeroes = playerHeroesDictionary.Values.ToArray();
 
         //Der erste eintrag im Dictionary gehört zu Spieler 1, ansonsten der erste Eintrag um Dictionary gehört zu Spieler 2
-        if (playerIds[0] == playerOneId)
-        {
-            playerOneSquareHero = playerHeroes[0].Item1;
-            playerOneDiamondHero = playerHeroes[0].Item2;
-            playerTwoSquareHero = playerHeroes[1].Item1;
-            playerTwoDiamondHero = playerHeroes[1].Item2;
-        }
-        else
-        {
-            playerOneSquareHero = playerHeroes[1].Item1;
-            playerOneDiamondHero = playerHeroes[1].Item2;
-            playerTwoSquareHero = playerHeroes[0].Item1;
-            playerTwoDiamondHero = playerHeroes[0].Item2;
-        }
+        //if (playerIds[0] == playerOneId)
+        //{
+        //    playerOneSquareHero = playerHeroes[0].Item1;
+        //    playerOneDiamondHero = playerHeroes[0].Item2;
+        //    playerTwoSquareHero = playerHeroes[1].Item1;
+        //    playerTwoDiamondHero = playerHeroes[1].Item2;
+        //}
+        //else
+        //{
+        //    playerOneSquareHero = playerHeroes[1].Item1;
+        //    playerOneDiamondHero = playerHeroes[1].Item2;
+        //    playerTwoSquareHero = playerHeroes[0].Item1;
+        //    playerTwoDiamondHero = playerHeroes[0].Item2;
+        //}
     }
 
     public void SetPlayerComponents(ulong playerId, HeroActions squareActions, HeroActions diamondActions, EvaluationManager evalManager)
@@ -170,26 +148,26 @@ public class InitialHeroSetting : MonoBehaviour
 
         //Zuweisung der einzelnen Komponenten
         //Der erste eintrag im Dictionary gehört zu Spieler 1, ansonsten der erste Eintrag um Dictionary gehört zu Spieler 2
-        if (playerIds[0] == playerOneId)
-        {
-            playerOneSquareActions = playerComponents[0].Item1;
-            playerOneDiamondActions = playerComponents[0].Item2;
-            playerOneEvaluationManager = playerComponents[0].Item3;
+        //if (playerIds[0] == playerOneId)
+        //{
+        //    playerOneSquareActions = playerComponents[0].Item1;
+        //    playerOneDiamondActions = playerComponents[0].Item2;
+        //    playerOneEvaluationManager = playerComponents[0].Item3;
 
-            playerTwoSquareActions = playerComponents[1].Item1;
-            playerTwoDiamondActions = playerComponents[1].Item2;
-            playerTwoEvaluationManager = playerComponents[1].Item3;
-        }
-        else
-        {
-            playerOneSquareActions = playerComponents[1].Item1;
-            playerOneDiamondActions = playerComponents[1].Item2;
-            playerOneEvaluationManager = playerComponents[1].Item3;
+        //    playerTwoSquareActions = playerComponents[1].Item1;
+        //    playerTwoDiamondActions = playerComponents[1].Item2;
+        //    playerTwoEvaluationManager = playerComponents[1].Item3;
+        //}
+        //else
+        //{
+        //    playerOneSquareActions = playerComponents[1].Item1;
+        //    playerOneDiamondActions = playerComponents[1].Item2;
+        //    playerOneEvaluationManager = playerComponents[1].Item3;
 
-            playerTwoSquareActions = playerComponents[0].Item1;
-            playerTwoDiamondActions = playerComponents[0].Item2;
-            playerTwoEvaluationManager = playerComponents[0].Item3;
-        }
+        //    playerTwoSquareActions = playerComponents[0].Item1;
+        //    playerTwoDiamondActions = playerComponents[0].Item2;
+        //    playerTwoEvaluationManager = playerComponents[0].Item3;
+        //}
     }
 
     public void SetEnemyManagers(ulong playerId, CrownManager enemyCrownManager, BulwarkMover enemyBulwarkMover, ActionRodAnimManager enemyActionRodManager)

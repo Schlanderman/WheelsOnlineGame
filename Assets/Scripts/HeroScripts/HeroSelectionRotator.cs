@@ -1,10 +1,12 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using Unity.Collections;
+using Unity.Netcode;
 using UnityEngine;
 using UnityEngine.UI;
 
-public class HeroSelectionRotator : MonoBehaviour
+public class HeroSelectionRotator : NetworkBehaviour
 {
     [SerializeField] private EnemyScript enemyScript;  //Offline only
 
@@ -23,8 +25,13 @@ public class HeroSelectionRotator : MonoBehaviour
     [SerializeField] private XPLightManager playerDiamondXPLightManager;
 
     //Referenzen auf die Spawnpositionen der Helden
-    [SerializeField] private Transform playerSquareHeroSpawnPoint;      //Position, an der der Spieler-Square-Held erscheinen soll
-    [SerializeField] private Transform playerDiamondHeroSpawnPoint;     //Position, an der der Spieler-Diamond-Held erscheinen soll
+    //[SerializeField] private Transform playerSquareHeroSpawnPoint;      //Position, an der der Spieler-Square-Held erscheinen soll
+    //[SerializeField] private Transform playerDiamondHeroSpawnPoint;     //Position, an der der Spieler-Diamond-Held erscheinen soll
+
+    //Referenzen, um die Parents zu setzen
+    [SerializeField] private GameObject playerHeroObject;
+    private FixedString128Bytes pathToSquareHeroSpawn = "FigureCurbSelfSquareSpawn/FigureCurbSelfSquare/FigureStandSquare/SquareHeroSpawn";
+    private FixedString128Bytes pathToDiamondHeroSpawn = "FigureCurbSelfDiamondSpawn/FigureCurbSelfDiamond/FigureStandDiamond/DiamondHeroSpawn";
 
     //Welcher Held in der Liste ist ausgewählt
     private int currentPlayerSquareHeroIndex = 0;               //Aktuelle Position des Spieler Square Helden in der Liste
@@ -35,8 +42,8 @@ public class HeroSelectionRotator : MonoBehaviour
     private Hero currentPlayerDiamondHero;
 
     //Referenz auf das aktive Objekt des Helden
-    private GameObject activePlayerSquareHero;      //Referenz zum Objekt des Spieler-Square-Helden
-    private GameObject activePlayerDiamondHero;     //Referenz zum Objekt des Spieler-Diamond-Helden
+    [SerializeField] private GameObject activePlayerSquareHero;      //Referenz zum Objekt des Spieler-Square-Helden
+    [SerializeField] private GameObject activePlayerDiamondHero;     //Referenz zum Objekt des Spieler-Diamond-Helden
 
     //Events
     public event Action<int, int, string> OnActivateChangeHero;
@@ -59,7 +66,7 @@ public class HeroSelectionRotator : MonoBehaviour
         }
         else
         {
-            InitialHeroSetting.Instance.SetPlayerHeroes(PlayerScript.Instance.playerId, currentPlayerSquareHero, currentPlayerDiamondHero);
+            //InitialHeroSetting.Instance.SetPlayerHeroes(PlayerScript.Instance.playerId, currentPlayerSquareHero, currentPlayerDiamondHero);
         }
     }
 
@@ -76,12 +83,12 @@ public class HeroSelectionRotator : MonoBehaviour
         }
         else
         {
-            InitialHeroSetting.Instance.SetPlayerComponents(
-                PlayerScript.Instance.playerId,
-                PlayerScript.Instance.GetSquareHeroActions(),
-                PlayerScript.Instance.GetDiamondHeroActions(),
-                PlayerScript.Instance.GetEvaluationManager()
-                );
+            //InitialHeroSetting.Instance.SetPlayerComponents(
+            //    PlayerScript.Instance.playerId,
+            //    PlayerScript.Instance.GetSquareHeroActions(),
+            //    PlayerScript.Instance.GetDiamondHeroActions(),
+            //    PlayerScript.Instance.GetEvaluationManager()
+            //    );
         }
     }
 
@@ -132,16 +139,18 @@ public class HeroSelectionRotator : MonoBehaviour
 
         if (heroType == "Square")
         {
-            //Lösche den aktuellen Spieler-Square-Held, wenn einer existiert
-            if (activePlayerSquareHero != null)
-            {
-                Destroy(activePlayerSquareHero);
-            }
+            ////Lösche den aktuellen Spieler-Square-Held, wenn einer existiert
+            //if (activePlayerSquareHero != null)
+            //{
+            //    Destroy(activePlayerSquareHero);
+            //}
 
-            //Instanziere den neuen Spieler-Square-Held an der vorgesehenen Position
-            activePlayerSquareHero = Instantiate(availableHeroes[currentPlayerSquareHeroIndex], playerSquareHeroSpawnPoint.position, playerSquareHeroSpawnPoint.rotation);
+            ////Instanziere den neuen Spieler-Square-Held an der vorgesehenen Position
+            //activePlayerSquareHero = Instantiate(availableHeroes[currentPlayerSquareHeroIndex], playerSquareHeroSpawnPoint.position, playerSquareHeroSpawnPoint.rotation);
 
-            activePlayerSquareHero.transform.SetParent(playerSquareHeroSpawnPoint, true);
+            InstantiateNewHeroRpc(heroType);
+
+            activePlayerSquareHero.GetComponent<Hero>().SetHeroParent(playerHeroObject, HeroSpawnDummy.PlayerSideKey.Player, HeroSpawnDummy.HeroSideKey.Square);
 
             currentPlayerSquareHero = activePlayerSquareHero.GetComponent<Hero>();
 
@@ -157,16 +166,18 @@ public class HeroSelectionRotator : MonoBehaviour
 
         else if (heroType == "Diamond")
         {
-            //Lösche den aktuellen Spieler-Diamond-Held, wenn einer existiert
-            if (activePlayerDiamondHero != null)
-            {
-                Destroy(activePlayerDiamondHero);
-            }
+            ////Lösche den aktuellen Spieler-Diamond-Held, wenn einer existiert
+            //if (activePlayerDiamondHero != null)
+            //{
+            //    Destroy(activePlayerDiamondHero);
+            //}
 
-            //Instanziere den neuen Spieler-Diamond-Held an der vorgesehenen Position
-            activePlayerDiamondHero = Instantiate(availableHeroes[currentPlayerDiamondHeroIndex], playerDiamondHeroSpawnPoint.position, playerDiamondHeroSpawnPoint.rotation);
+            ////Instanziere den neuen Spieler-Diamond-Held an der vorgesehenen Position
+            //activePlayerDiamondHero = Instantiate(availableHeroes[currentPlayerDiamondHeroIndex], playerDiamondHeroSpawnPoint.position, playerDiamondHeroSpawnPoint.rotation);
 
-            activePlayerDiamondHero.transform.SetParent(playerDiamondHeroSpawnPoint, true);
+            InstantiateNewHeroRpc(heroType);
+
+            activePlayerDiamondHero.GetComponent<Hero>().SetHeroParent(playerHeroObject, HeroSpawnDummy.PlayerSideKey.Player, HeroSpawnDummy.HeroSideKey.Diamond);
 
             currentPlayerDiamondHero = activePlayerDiamondHero.GetComponent<Hero>();
 
@@ -178,6 +189,78 @@ public class HeroSelectionRotator : MonoBehaviour
                 playerDiamondEnergyBar.UpdateEnergieDisplay(0, currentPlayerDiamondHero.GetMaxEnergy());
                 currentPlayerDiamondHero.SetXPLightManager(playerDiamondXPLightManager);
             }
+        }
+    }
+
+
+
+    //Rpcs
+    [Rpc(SendTo.Server)]
+    public void InstantiateNewHeroRpc(string heroType)
+    {
+        //Nur ausführen, wenn es der Server ist
+        if (!IsServer) { return; }
+
+        NetworkObject currentlyActiveHero = null;
+        if (heroType == "Square")
+        {
+            if (activePlayerSquareHero != null)
+            {
+                currentlyActiveHero = activePlayerSquareHero.GetComponent<NetworkObject>();
+            }
+        }
+        else
+        {
+            if (activePlayerDiamondHero != null)
+            {
+                currentlyActiveHero = activePlayerDiamondHero.GetComponent<NetworkObject>();
+            }
+        }
+
+        //Altes Objekt zerstören
+        if (currentlyActiveHero != null && currentlyActiveHero.IsSpawned)
+        {
+            currentlyActiveHero.Despawn(true);
+        }
+
+        //Instanziieren und Networkobjekt abrufen
+        GameObject newHeroObject = null;
+        NetworkObject newHeroNetworkObject = null;
+        if (heroType == "Square")
+        {
+            newHeroObject = Instantiate(availableHeroes[currentPlayerSquareHeroIndex]);
+            newHeroNetworkObject = newHeroObject.GetComponent<NetworkObject>();
+        }
+        else
+        {
+            newHeroObject = Instantiate(availableHeroes[currentPlayerDiamondHeroIndex]);
+            newHeroNetworkObject = newHeroObject.GetComponent<NetworkObject>();
+        }
+
+        //Spawn auf dem Server
+        if (newHeroNetworkObject != null)
+        {
+            newHeroNetworkObject.Spawn();
+            SetHeroToAllClientRpc(newHeroNetworkObject, heroType);
+        }
+        else
+        {
+            Debug.LogError("Das Objekt hat keine NetworkObject-Komponente und kann nicht gespawnt werden.");
+        }
+    }
+
+    [ClientRpc]
+    private void SetHeroToAllClientRpc(NetworkObjectReference heroNetworkObjectReference, string heroType)
+    {
+        heroNetworkObjectReference.TryGet(out NetworkObject heroNetworkObject);
+
+        if (heroType == "Square")
+        {
+            activePlayerSquareHero = heroNetworkObject.gameObject;
+        }
+        else
+        {
+            activePlayerDiamondHero = heroNetworkObject.gameObject;
         }
     }
 }

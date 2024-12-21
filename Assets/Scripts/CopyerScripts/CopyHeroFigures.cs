@@ -1,3 +1,5 @@
+using Unity.Collections;
+using Unity.Netcode;
 using UnityEngine;
 
 public class CopyHeroFigures : ManagerCopiesHandler<HeroSelectionRotator>
@@ -5,8 +7,13 @@ public class CopyHeroFigures : ManagerCopiesHandler<HeroSelectionRotator>
     [SerializeField] private GameObject[] availableHeroes;      //Liste der verfügbaren Helden
 
     //Referenzen auf die Spawnpositionen der Helden
-    [SerializeField] private Transform playerSquareHeroSpawnPoint;
-    [SerializeField] private Transform playerDiamondHeroSpawnPoint;
+    //[SerializeField] private Transform playerSquareHeroSpawnPoint;
+    //[SerializeField] private Transform playerDiamondHeroSpawnPoint;
+
+    //Referenzen, um die Parents zu setzen
+    [SerializeField] private GameObject playerHeroObject;
+    private FixedString128Bytes pathToSquareHeroSpawn = "FigureCurbCopySquareSpawn/FigureCurbCopySquare/FigureStandSquare/SquareHeroSpawn";
+    private FixedString128Bytes pathToDiamondHeroSpawn = "FigureCurbCopyDiamondSpawn/FigureCurbCopyDiamond/FigureStandDiamond/DiamondHeroSpawn";
 
     //Referenz auf das aktive Objekt des Helden
     private GameObject activePlayerSquareHero;
@@ -42,29 +49,35 @@ public class CopyHeroFigures : ManagerCopiesHandler<HeroSelectionRotator>
     {
         if (heroType == "Square")
         {
-            //Lösche den aktuellen Spieler-Square-Held, wenn einer existiert
-            if (activePlayerSquareHero != null)
-            {
-                Destroy(activePlayerSquareHero);
-            }
+            ////Lösche den aktuellen Spieler-Square-Held, wenn einer existiert
+            //if (activePlayerSquareHero != null)
+            //{
+            //    Destroy(activePlayerSquareHero);
+            //}
 
-            //Instanziere den neuen Spieler-Square-Held an der vorgesehenen Position
-            activePlayerSquareHero = Instantiate(availableHeroes[currentPlayerSquareHeroIndex], playerSquareHeroSpawnPoint.position, playerSquareHeroSpawnPoint.rotation);
-            activePlayerSquareHero.transform.SetParent(playerSquareHeroSpawnPoint, true);
+            ////Instanziere den neuen Spieler-Square-Held an der vorgesehenen Position
+            //activePlayerSquareHero = Instantiate(availableHeroes[currentPlayerSquareHeroIndex], playerSquareHeroSpawnPoint.position, playerSquareHeroSpawnPoint.rotation);
+
+            InstantiateNewHeroRpc(heroType);
+
+            activePlayerSquareHero.GetComponent<Hero>().SetHeroParent(playerHeroObject, HeroSpawnDummy.PlayerSideKey.Enemy, HeroSpawnDummy.HeroSideKey.Square);
             activeSquareHeroAnimations = activePlayerSquareHero.GetComponentInChildren<HeroAnimationManager>();
         }
 
         else if (heroType == "Diamond")
         {
-            //Lösche den aktuellen Spieler-Diamond-Held, wenn einer existiert
-            if (activePlayerDiamondHero != null)
-            {
-                Destroy(activePlayerDiamondHero);
-            }
+            ////Lösche den aktuellen Spieler-Diamond-Held, wenn einer existiert
+            //if (activePlayerDiamondHero != null)
+            //{
+            //    Destroy(activePlayerDiamondHero);
+            //}
 
-            //Instanziere den neuen Spieler-Diamond-Held an der vorgesehenen Position
-            activePlayerDiamondHero = Instantiate(availableHeroes[currentPlayerDiamondHeroIndex], playerDiamondHeroSpawnPoint.position, playerDiamondHeroSpawnPoint.rotation);
-            activePlayerDiamondHero.transform.SetParent(playerDiamondHeroSpawnPoint, true);
+            ////Instanziere den neuen Spieler-Diamond-Held an der vorgesehenen Position
+            //activePlayerDiamondHero = Instantiate(availableHeroes[currentPlayerDiamondHeroIndex], playerDiamondHeroSpawnPoint.position, playerDiamondHeroSpawnPoint.rotation);
+
+            InstantiateNewHeroRpc(heroType);
+
+            activePlayerDiamondHero.GetComponent<Hero>().SetHeroParent(playerHeroObject, HeroSpawnDummy.PlayerSideKey.Enemy, HeroSpawnDummy.HeroSideKey.Diamond);
             activeDiamondHeroAnimations = activePlayerDiamondHero.GetComponentInChildren<HeroAnimationManager>();
         }
     }
@@ -105,5 +118,60 @@ public class CopyHeroFigures : ManagerCopiesHandler<HeroSelectionRotator>
         else if (animation == "PopUp" && rodIndex >= 2) { return "Diamond"; }
 
         return "Diamond";
+    }
+
+
+    //Rpcs
+    [Rpc(SendTo.Server)]
+    public void InstantiateNewHeroRpc(string heroType)
+    {
+        //Nur ausführen, wenn es der Server ist
+        if (!IsServer) { return; }
+
+        NetworkObject currentlyActiveHero = null;
+        if (heroType == "Square")
+        {
+            if (activePlayerSquareHero != null)
+            {
+                currentlyActiveHero = activePlayerSquareHero.GetComponent<NetworkObject>();
+            }
+        }
+        else
+        {
+            if (activePlayerDiamondHero != null)
+            {
+                currentlyActiveHero = activePlayerDiamondHero.GetComponent<NetworkObject>();
+            }
+        }
+
+        //Altes Objekt zerstören
+        if (currentlyActiveHero != null && currentlyActiveHero.IsSpawned)
+        {
+            currentlyActiveHero.Despawn(true);
+        }
+
+        //Instanziieren und Networkobjekt abrufen
+        NetworkObject newHeroNetworkObject = null;
+        if (heroType == "Square")
+        {
+            activePlayerSquareHero = Instantiate(availableHeroes[currentPlayerSquareHeroIndex]);
+            newHeroNetworkObject = activePlayerSquareHero.GetComponent<NetworkObject>();
+
+        }
+        else
+        {
+            activePlayerDiamondHero = Instantiate(availableHeroes[currentPlayerDiamondHeroIndex]);
+            newHeroNetworkObject = activePlayerDiamondHero.GetComponent<NetworkObject>();
+        }
+
+        //Spawn auf dem Server
+        if (newHeroNetworkObject != null)
+        {
+            newHeroNetworkObject.Spawn();
+        }
+        else
+        {
+            Debug.LogError("Das Objekt hat keine NetworkObject-Komponente und kann nicht gespawnt werden.");
+        }
     }
 }

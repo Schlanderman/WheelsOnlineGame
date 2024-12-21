@@ -8,13 +8,13 @@ public class HPScripts : MonoBehaviour
 
     public void SetCurrentHP(ulong playerId, int currentHP)
     {
-        if (playerId == PlayerScript.Instance.playerId)
-        {
-            playerHP.text = currentHP.ToString();
-        }
-        else
-        {
-            enemyHP.text = currentHP.ToString();
-        }
+        //if (playerId == PlayerScript.Instance.playerId)
+        //{
+        //    playerHP.text = currentHP.ToString();
+        //}
+        //else
+        //{
+        //    enemyHP.text = currentHP.ToString();
+        //}
     }
 }
