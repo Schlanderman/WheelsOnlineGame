@@ -1,10 +1,13 @@
 using System.Collections;
 using System.Collections.Generic;
+using Unity.Netcode;
 using UnityEngine;
 
-public class HeroActions : MonoBehaviour
+public class HeroActions : NetworkBehaviour
 {
     [SerializeField] private EnemyScript enemyScript;  //Offline only
+
+    [SerializeField] private GameObject playerObject;
 
     [SerializeField] private CrownManager playerCrown;      //Spielerkrone
     [SerializeField] private CrownManager enemyCrown;       //Gegnerkrone
@@ -34,11 +37,93 @@ public class HeroActions : MonoBehaviour
     {
         InitialHeroSetting.Instance.OnSetHeroesInitially += InitialHeroSetting_OnSetHeroesInitially;
         InitialHeroSetting.Instance.OnSetEnemyManagers += InitialHeroSetting_OnSetEnemyManagers;
+        InitialHeroSetting.Instance.OnSetMultiplayerHeroesInitially += InitialHeroSetting_OnSetMultiplayerHeroesInitially;
     }
 
-    private void InitialHeroSetting_OnSetMultiplayerHeroesInitially()
+    private void InitialHeroSetting_OnSetMultiplayerHeroesInitially(Hero playerOneSquare, Hero playerOneDiamond, Hero playerTwoSquare, Hero playerTwoDiamond)
     {
+        //Debug.Log($"Hier werden von Instanz {NetworkManager.Singleton.LocalClientId} die folgenden Helden übergeben:" +
+        //    $"\n{playerOneSquare}\n{playerOneDiamond}\n{playerTwoSquare}\n{playerTwoDiamond}");
 
+        SetMultiplayerHeroesRpc(
+            playerOneSquare.GetComponent<NetworkObject>(),
+            playerOneDiamond.GetComponent<NetworkObject>(),
+            playerTwoSquare.GetComponent<NetworkObject>(),
+            playerTwoDiamond.GetComponent<NetworkObject>()
+            );
+    }
+
+    [Rpc(SendTo.Everyone)]
+    private void SetMultiplayerHeroesRpc(NetworkObjectReference playerOneSquareNetworkObjectReference, NetworkObjectReference playerOneDiamondNetworkObjectReference,
+        NetworkObjectReference playerTwoSquareNetworkObjectReference, NetworkObjectReference playerTwoDiamondNetworkObjectReference)
+    {
+        Debug.Log("RPC wurde aufgerufen!");
+        //Alle networkObjectReferences in NetworkObjects wandeln und dann die Heros holen
+        if (!playerOneSquareNetworkObjectReference.TryGet(out NetworkObject playerOneSquareNetworkObject))
+        {
+            Debug.LogWarning($"'{playerOneSquareNetworkObjectReference}' hat kein NetworkObject.");
+            return;
+        }
+        if (!playerOneDiamondNetworkObjectReference.TryGet(out NetworkObject playerOneDiamondNetworkObject))
+        {
+            Debug.LogWarning($"'{playerOneDiamondNetworkObjectReference}' hat kein NetworkObject.");
+            return;
+        }
+        if (!playerTwoSquareNetworkObjectReference.TryGet(out NetworkObject playerTwoSquareNetworkObject))
+        {
+            Debug.LogWarning($"'{playerTwoSquareNetworkObjectReference}' hat kein NetworkObject.");
+            return;
+        }
+        if (!playerTwoDiamondNetworkObjectReference.TryGet(out NetworkObject playerTwoDiamondNetworkObject))
+        {
+            Debug.LogWarning($"'{playerTwoDiamondNetworkObjectReference}' hat kein NetworkObject.");
+            return;
+        }
+
+        Hero playerOneSquare = playerOneSquareNetworkObject.GetComponent<Hero>();
+        Hero playerOneDiamond = playerOneDiamondNetworkObject.GetComponent<Hero>();
+        Hero playerTwoSquare = playerTwoSquareNetworkObject.GetComponent<Hero>();
+        Hero playerTwoDiamond = playerTwoDiamondNetworkObject.GetComponent<Hero>();
+
+        //Wahr, wenn dies hier das Spieler 1 Objekt des Hosts ist
+        if (playerObject.GetComponent<NetworkObject>().OwnerClientId == NetworkManager.Singleton.LocalClientId)
+        {
+            //Überprüfung, ob Square oder Diamond
+            if (isSquareSide)
+            {
+                //Dies hier ist Square
+                SetPlayerHeroes(playerOneSquare, playerOneDiamond);
+                SetSquareSideMain();
+            }
+            else
+            {
+                //Dies hier ist Diamond
+                SetPlayerHeroes(playerOneDiamond, playerOneSquare);
+                SetDiamondSideMain();
+            }
+
+            SetEnemyHeroes(playerTwoSquare, playerTwoDiamond);
+            //Hier kommt noch SetEnemyManagers hin...
+        }
+        else
+        {
+            //Überprüfung, ob Square oder Diamond
+            if (isSquareSide)
+            {
+                //Dies hier ist Square
+                SetPlayerHeroes(playerTwoSquare, playerTwoDiamond);
+                SetSquareSideMain();
+            }
+            else
+            {
+                //Dies hier ist Diamond
+                SetPlayerHeroes(playerTwoDiamond, playerTwoSquare);
+                SetDiamondSideMain();
+            }
+
+            SetEnemyHeroes(playerOneSquare, playerOneDiamond);
+            //Hier kommt noch SetEnemyManagers hin...
+        }
     }
 
     private void InitialHeroSetting_OnSetHeroesInitially(ulong playerId, Hero heroOne, Hero heroTwo, Hero heroThree, Hero heroFour)

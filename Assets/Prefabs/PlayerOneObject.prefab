@@ -718,8 +718,6 @@ MonoBehaviour:
   - {fileID: 8659753276594678948, guid: a25bc32815a7a784baf7121b366dcfb9, type: 3}
   - {fileID: 2495073711343981731, guid: 582602b946f796745b4a4a6ab2118b54, type: 3}
   - {fileID: 4285298512509971137, guid: 8ef2428fe5814e24b8eefe05374b4bd8, type: 3}
-  squareSpawn: {fileID: 4717189989095760906}
-  diamondSpawn: {fileID: 9122619491730913154}
   playerSquareHeroUIUpdater: {fileID: 8989631824565724675}
   playerDiamondHeroUIUpdater: {fileID: 4295264279610823804}
   playerSquareEnergyBar: {fileID: 2528705754884397894}
@@ -4891,6 +4889,14 @@ PrefabInstance:
       value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 3249552310672822432, guid: 160d486d03509e14b955064c2cc1efcd, type: 3}
+      propertyPath: playerObject
+      value: 
+      objectReference: {fileID: 5599033558673492644}
+    - target: {fileID: 3249552310672822432, guid: 160d486d03509e14b955064c2cc1efcd, type: 3}
+      propertyPath: playerScript
+      value: 
+      objectReference: {fileID: 1998453462984375215}
+    - target: {fileID: 3249552310672822432, guid: 160d486d03509e14b955064c2cc1efcd, type: 3}
       propertyPath: wheelManager
       value: 
       objectReference: {fileID: 1573712921715866852}
@@ -5480,6 +5486,14 @@ PrefabInstance:
       propertyPath: playerCrown
       value: 
       objectReference: {fileID: 1164390074800900993}
+    - target: {fileID: 2681220486230538518, guid: 8392c5b293d564d4a890e7a39447abca, type: 3}
+      propertyPath: playerObject
+      value: 
+      objectReference: {fileID: 5599033558673492644}
+    - target: {fileID: 2681220486230538518, guid: 8392c5b293d564d4a890e7a39447abca, type: 3}
+      propertyPath: playerScript
+      value: 
+      objectReference: {fileID: 1998453462984375215}
     - target: {fileID: 2681220486230538518, guid: 8392c5b293d564d4a890e7a39447abca, type: 3}
       propertyPath: wheelManager
       value: 

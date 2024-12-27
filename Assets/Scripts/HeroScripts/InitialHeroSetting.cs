@@ -28,7 +28,6 @@ public class InitialHeroSetting : NetworkBehaviour
     //Events
     public event EventHandler OnActivateSpinButton;
     public event EventHandler OnSetCoverUp;
-    public event EventHandler OnInitializePlayerReadyness;
     public event EventHandler OnDeactivateReadyButton;
     public event Action<ulong> OnDeactivateRotatorButtons;
     public event Action<ulong, Hero, Hero, Hero, Hero> OnSetHeroesInitially;
@@ -103,42 +102,8 @@ public class InitialHeroSetting : NetworkBehaviour
 
     public IEnumerator InitializeReadynessLate()
     {
+        //Macht nix mehr, kann entfernt werden
         yield return new WaitForEndOfFrame();
-
-        OnInitializePlayerReadyness?.Invoke(this, EventArgs.Empty);
-    }
-
-    public void SetPlayerHeroesAlt(ulong playerId, Hero square, Hero diamond)
-    {
-        playerHeroesDictionary[playerId] = (square, diamond);
-
-        PopulateHeroComponents();
-    }
-
-    private void PopulateHeroComponents()
-    {
-        //Nichts machen wenn nicht beide Spieler vorhanden sind
-        if (playerHeroesDictionary.Count != 2) { return; }
-
-        //Dicitonary in Arrays umwandeln, um die einzelnen Komponenten auszulesen
-        ulong[] playerIds = playerHeroesDictionary.Keys.ToArray();
-        var playerHeroes = playerHeroesDictionary.Values.ToArray();
-
-        //Der erste eintrag im Dictionary gehört zu Spieler 1, ansonsten der erste Eintrag um Dictionary gehört zu Spieler 2
-        //if (playerIds[0] == playerOneId)
-        //{
-        //    playerOneSquareHero = playerHeroes[0].Item1;
-        //    playerOneDiamondHero = playerHeroes[0].Item2;
-        //    playerTwoSquareHero = playerHeroes[1].Item1;
-        //    playerTwoDiamondHero = playerHeroes[1].Item2;
-        //}
-        //else
-        //{
-        //    playerOneSquareHero = playerHeroes[1].Item1;
-        //    playerOneDiamondHero = playerHeroes[1].Item2;
-        //    playerTwoSquareHero = playerHeroes[0].Item1;
-        //    playerTwoDiamondHero = playerHeroes[0].Item2;
-        //}
     }
 
     public void SetPlayerHeroes(Hero square, Hero diamond)
@@ -176,6 +141,12 @@ public class InitialHeroSetting : NetworkBehaviour
             playerTwoSquareHero = square;
             playerTwoDiamondHero = diamond;
         }
+
+        //Nur der Server und das Script, das Spieler 1 entspricht, kann ab hier etwas machen
+        if (!IsServer || rpcParams.Receive.SenderClientId == NetworkManager.Singleton.LocalClientId) { return; }
+
+        //Heroes in HeroActions setzen
+        OnSetMultiplayerHeroesInitially?.Invoke(playerOneSquareHero, playerOneDiamondHero, playerTwoSquareHero, playerTwoDiamondHero);
     }
 
     public void SetMultiplayerPlayerComponents(PlayerScript playerScriptObject)
