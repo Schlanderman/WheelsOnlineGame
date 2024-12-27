@@ -20,6 +20,7 @@ public class PlayerScript : NetworkBehaviour
     [SerializeField] private HeroSelectionRotator selectionRotator;
     [SerializeField] private WheelManager wheelManager;
     [SerializeField] private GameObject heroSpawnPosition;
+    [SerializeField] private GameObject playerUIElements;
 
     private GameObject[] gameboardPositions;
     private Camera mainCamera;
@@ -91,6 +92,16 @@ public class PlayerScript : NetworkBehaviour
         hpScriptsEnemy = scriptEnemy;
     }
 
+    public void ChangePlayerUIElements(bool state)
+    {
+        if (IsOwner)
+        {
+            playerUIElements.SetActive(state);
+        }
+    }
+
+
+
     [ServerRpc(RequireOwnership = false)]
     private void ChangePlayerboardServerRpc()
     {
@@ -100,8 +111,6 @@ public class PlayerScript : NetworkBehaviour
     [Rpc(SendTo.Server)]
     private void SpawnParentsForHeroesRpc()
     {
-        Debug.Log("Jetzt sollten die Spawns gespawnt werden...");
-
         GameObject heroSpawnPositionSquare = Instantiate(heroSpawnPosition);
         GameObject heroSpawnPositionDiamond = Instantiate(heroSpawnPosition);
 

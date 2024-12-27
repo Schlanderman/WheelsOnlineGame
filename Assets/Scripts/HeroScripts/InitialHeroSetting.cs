@@ -36,6 +36,9 @@ public class InitialHeroSetting : NetworkBehaviour
     public event EventHandler OnGetPlayerComponents;
     public event Action<ulong, CrownManager, BulwarkMover, ActionRodAnimManager> OnSetEnemyManagers;
 
+    //Multiplayer Events
+    public event Action<Hero, Hero, Hero, Hero> OnSetMultiplayerHeroesInitially;
+
     public void Awake()
     {
         Instance = this;
@@ -51,21 +54,28 @@ public class InitialHeroSetting : NetworkBehaviour
 
     private void MultiplayerGameManager_OnPlayersAreReadyToPlay(object sender, EventArgs e)
     {
+        PlayersAreReadyToPlayRpc();
+    }
+
+    [Rpc(SendTo.Everyone)]
+    private void PlayersAreReadyToPlayRpc()
+    {
         //ReadyDeaktivieren, Spin aktivieren
         OnDeactivateReadyButton?.Invoke(this, EventArgs.Empty);
         OnActivateSpinButton?.Invoke(this, EventArgs.Empty);
 
-        InitializeEverythingServerRPC();
+        InitializeEverything();
     }
 
-    private void InitializeEverything()
+    private void InitializeEverythingAlt()
     {
-        OnGetPlayerComponents?.Invoke(this, EventArgs.Empty);
-        OnGetHeroes?.Invoke(this, EventArgs.Empty);
+        OnGetPlayerComponents?.Invoke(this, EventArgs.Empty);   //Bekommt HeroActions + EvaluationManager von PlayerScript
+        OnGetHeroes?.Invoke(this, EventArgs.Empty);     //Heroes in diesen Manager laden
 
         //Heroes setzen
         //OnSetHeroesInitially?.Invoke(playerOneId, playerOneSquareHero, playerOneDiamondHero, playerTwoSquareHero, playerTwoDiamondHero);
         //OnSetHeroesInitially?.Invoke(playerTwoId, playerTwoSquareHero, playerTwoDiamondHero, playerOneSquareHero, playerOneDiamondHero);
+        //OnSetMultiplayerHeroesInitially?.Invoke(playerOneSquareHero, playerOneDiamondHero, playerTwoSquareHero, playerTwoDiamondHero);
 
         //Alle Heroes mit HeroActions befüllen
         playerOneSquareHero.SetHeroActions(playerOneSquareActions);
@@ -84,10 +94,11 @@ public class InitialHeroSetting : NetworkBehaviour
         OnSetCoverUp?.Invoke(this, EventArgs.Empty);
     }
 
-    [ServerRpc(RequireOwnership = true)]
-    private void InitializeEverythingServerRPC()
+    private void InitializeEverything()
     {
-        
+        Debug.Log("Alle sind bereit, Spiel wird gestartet!");
+        OnGetPlayerComponents?.Invoke(this, EventArgs.Empty);   //Bekommt HeroActions + EvaluationManager von PlayerScript
+        OnGetHeroes?.Invoke(this, EventArgs.Empty);     //Heroes in diesen Manager laden
     }
 
     public IEnumerator InitializeReadynessLate()
@@ -97,7 +108,7 @@ public class InitialHeroSetting : NetworkBehaviour
         OnInitializePlayerReadyness?.Invoke(this, EventArgs.Empty);
     }
 
-    public void SetPlayerHeroes(ulong playerId, Hero square, Hero diamond)
+    public void SetPlayerHeroesAlt(ulong playerId, Hero square, Hero diamond)
     {
         playerHeroesDictionary[playerId] = (square, diamond);
 
@@ -130,11 +141,74 @@ public class InitialHeroSetting : NetworkBehaviour
         //}
     }
 
-    public void SetPlayerComponents(ulong playerId, HeroActions squareActions, HeroActions diamondActions, EvaluationManager evalManager)
+    public void SetPlayerHeroes(Hero square, Hero diamond)
     {
-        playerComponentsDictionary[playerId] = (squareActions, diamondActions, evalManager);
+        SetMultiplayerPlayerHeroesRpc(square.GetComponent<NetworkObject>(), diamond.GetComponent<NetworkObject>());
+    }
 
-        PopulatePlayerComponents();
+    [Rpc(SendTo.Everyone)]
+    private void SetMultiplayerPlayerHeroesRpc(NetworkObjectReference squareNetworkObjectReference, NetworkObjectReference diamondNetworkObjectReference, RpcParams rpcParams = default)
+    {
+        if (!squareNetworkObjectReference.TryGet(out NetworkObject squareNetworkObject))
+        {
+            Debug.LogWarning($"'{squareNetworkObjectReference}' enthält kein NetworkObject!");
+            return;
+        }
+        if (!diamondNetworkObjectReference.TryGet(out NetworkObject diamondNetworkObject))
+        {
+            Debug.LogWarning($"'{diamondNetworkObjectReference}' enthält kein NetworkObject!");
+            return;
+        }
+
+        Hero square = squareNetworkObject.GetComponent<Hero>();
+        Hero diamond = diamondNetworkObject.GetComponent<Hero>();
+
+        //Testen, ob die SenderId mit der lokalen ID übereinstimmt
+        if (rpcParams.Receive.SenderClientId == NetworkManager.Singleton.LocalClientId)
+        {
+            //Wenn die IDs übereinstimmen, dann sind das die Helden vom lokalen Spieler und werden PlayerOne zugewiesen
+            playerOneSquareHero = square;
+            playerOneDiamondHero = diamond;
+        }
+        else
+        {
+            //Wenn die IDs nicht übereinstimmen, dann sind das die Helden des Gegners und werden PlayerTwo zugewiesen
+            playerTwoSquareHero = square;
+            playerTwoDiamondHero = diamond;
+        }
+    }
+
+    public void SetMultiplayerPlayerComponents(PlayerScript playerScriptObject)
+    {
+        SetMultiplayerPlayerComponentsRpc(playerScriptObject.GetComponent<NetworkObject>());
+    }
+
+    [Rpc(SendTo.Everyone)]
+    private void SetMultiplayerPlayerComponentsRpc(NetworkObjectReference playerNetworkObjectReference, RpcParams rpcParams = default)
+    {
+        if (!playerNetworkObjectReference.TryGet(out NetworkObject playerNetworkObject))
+        {
+            Debug.LogWarning($"'{playerNetworkObjectReference}' enthält kein NetworkObject!");
+            return;
+        }
+
+        PlayerScript playerReference = playerNetworkObject.GetComponent<PlayerScript>();
+
+        //Testen, ob die SenderId mit der lokalen ID übereinstimmt
+        if (rpcParams.Receive.SenderClientId == NetworkManager.Singleton.LocalClientId)
+        {
+            //Wenn ja, dann werden die gegnerischen Helden gesetzt
+            playerTwoSquareActions = playerReference.GetSquareHeroActions();
+            playerTwoDiamondActions = playerReference.GetDiamondHeroActions();
+            playerTwoEvaluationManager = playerReference.GetEvaluationManager();
+        }
+        else
+        {
+            //Wenn nicht, dann werden die eigenen Helden gesetzt
+            playerOneSquareActions = playerReference.GetSquareHeroActions();
+            playerOneDiamondActions = playerReference.GetDiamondHeroActions();
+            playerOneEvaluationManager = playerReference.GetEvaluationManager();
+        }
     }
 
     private void PopulatePlayerComponents()

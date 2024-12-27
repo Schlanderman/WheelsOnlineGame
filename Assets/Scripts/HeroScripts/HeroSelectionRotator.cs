@@ -24,22 +24,16 @@ public class HeroSelectionRotator : NetworkBehaviour
     [SerializeField] private XPLightManager playerSquareXPLightManager;
     [SerializeField] private XPLightManager playerDiamondXPLightManager;
 
-    //Referenzen auf die Spawnpositionen der Helden
-    //[SerializeField] private Transform playerSquareHeroSpawnPoint;      //Position, an der der Spieler-Square-Held erscheinen soll
-    //[SerializeField] private Transform playerDiamondHeroSpawnPoint;     //Position, an der der Spieler-Diamond-Held erscheinen soll
-
     //Referenzen, um die Parents zu setzen
     [SerializeField] private GameObject playerHeroObject;
-    private FixedString128Bytes pathToSquareHeroSpawn = "FigureCurbSelfSquareSpawn/FigureCurbSelfSquare/FigureStandSquare/SquareHeroSpawn";
-    private FixedString128Bytes pathToDiamondHeroSpawn = "FigureCurbSelfDiamondSpawn/FigureCurbSelfDiamond/FigureStandDiamond/DiamondHeroSpawn";
 
     //Welcher Held in der Liste ist ausgewählt
     private int currentPlayerSquareHeroIndex = 0;               //Aktuelle Position des Spieler Square Helden in der Liste
     private int currentPlayerDiamondHeroIndex = 0;              //Aktuelle Position des Spieler Diamond Helden in der Liste
 
     //Referenz auf den ausgewählten Helden
-    private Hero currentPlayerSquareHero;
-    private Hero currentPlayerDiamondHero;
+    [SerializeField] private Hero currentPlayerSquareHero;
+    [SerializeField] private Hero currentPlayerDiamondHero;
 
     //Referenz auf das aktive Objekt des Helden
     [SerializeField] private GameObject activePlayerSquareHero;      //Referenz zum Objekt des Spieler-Square-Helden
@@ -60,54 +54,22 @@ public class HeroSelectionRotator : NetworkBehaviour
 
     private void InitialHeroSetting_OnGetHeroes(object sender, System.EventArgs e)
     {
-        if (enemyScript != null)
+        //Damit die Helden nicht überschrieben werden, da zu häufig gefeuert wird, nur aufrufen, wenn die Id vom Gameobject nicht mit der lokalen Id übereinstimmt
+        if (this.NetworkObject.OwnerClientId != NetworkManager.Singleton.LocalClientId)
         {
-            InitialHeroSetting.Instance.SetPlayerHeroes(enemyScript.playerId, currentPlayerSquareHero, currentPlayerDiamondHero);
-        }
-        else
-        {
-            //InitialHeroSetting.Instance.SetPlayerHeroes(PlayerScript.Instance.playerId, currentPlayerSquareHero, currentPlayerDiamondHero);
+            InitialHeroSetting.Instance.SetPlayerHeroes(currentPlayerSquareHero, currentPlayerDiamondHero);
         }
     }
 
     private void InitialHeroSetting_OnGetPlayerComponents(object sender, System.EventArgs e)
     {
-        if (enemyScript != null)
-        {
-            InitialHeroSetting.Instance.SetPlayerComponents(
-                enemyScript.playerId,
-                enemyScript.GetSquareHeroActions(),
-                enemyScript.GetDiamondHeroActions(),
-                enemyScript.GetEvaluationManager()
-                );
-        }
-        else
-        {
-            //InitialHeroSetting.Instance.SetPlayerComponents(
-            //    PlayerScript.Instance.playerId,
-            //    PlayerScript.Instance.GetSquareHeroActions(),
-            //    PlayerScript.Instance.GetDiamondHeroActions(),
-            //    PlayerScript.Instance.GetEvaluationManager()
-            //    );
-        }
+        InitialHeroSetting.Instance.SetMultiplayerPlayerComponents(PlayerScript.LocalInstance);
     }
 
     //Methode zum Rotieren nach rechts
     public void RotateRight(string heroType)
     {
-        if (heroType == "Square")
-        {
-            currentPlayerSquareHeroIndex = (currentPlayerSquareHeroIndex + 1) % availableHeroes.Length;
-        }
-        else if (heroType == "Diamond")
-        {
-            currentPlayerDiamondHeroIndex = (currentPlayerDiamondHeroIndex + 1) % availableHeroes.Length;
-        }
-        else
-        {
-            Debug.LogError("Der HeroType " + heroType + " existiert nicht!");
-            return;
-        }
+        UpdateHeroIndexRpc(heroType, true);
 
         UpdateHero(heroType);
     }
@@ -115,19 +77,7 @@ public class HeroSelectionRotator : NetworkBehaviour
     //Methode zum Rotieren nach links
     public void RotateLeft(string heroType)
     {
-        if (heroType == "Square")
-        {
-            currentPlayerSquareHeroIndex = (currentPlayerSquareHeroIndex - 1 + availableHeroes.Length) % availableHeroes.Length;
-        }
-        else if (heroType == "Diamond")
-        {
-            currentPlayerDiamondHeroIndex = (currentPlayerDiamondHeroIndex - 1 + availableHeroes.Length) % availableHeroes.Length;
-        }
-        else
-        {
-            Debug.LogError("Der HeroType " + heroType + " existiert nicht!");
-            return;
-        }
+        UpdateHeroIndexRpc(heroType, false);
 
         UpdateHero(heroType);
     }
@@ -135,72 +85,67 @@ public class HeroSelectionRotator : NetworkBehaviour
     //Methode zum Aktualisieren der 3D-Helden in der Szene
     private void UpdateHero(string heroType)
     {
-        OnActivateChangeHero?.Invoke(currentPlayerSquareHeroIndex, currentPlayerDiamondHeroIndex, heroType);
-
-        if (heroType == "Square")
-        {
-            ////Lösche den aktuellen Spieler-Square-Held, wenn einer existiert
-            //if (activePlayerSquareHero != null)
-            //{
-            //    Destroy(activePlayerSquareHero);
-            //}
-
-            ////Instanziere den neuen Spieler-Square-Held an der vorgesehenen Position
-            //activePlayerSquareHero = Instantiate(availableHeroes[currentPlayerSquareHeroIndex], playerSquareHeroSpawnPoint.position, playerSquareHeroSpawnPoint.rotation);
-
-            InstantiateNewHeroRpc(heroType);
-
-            activePlayerSquareHero.GetComponent<Hero>().SetHeroParent(playerHeroObject, HeroSpawnDummy.PlayerSideKey.Player, HeroSpawnDummy.HeroSideKey.Square);
-
-            currentPlayerSquareHero = activePlayerSquareHero.GetComponent<Hero>();
-
-            if (currentPlayerSquareHero != null)
-            {
-                currentPlayerSquareHero.SetUIUpdater(playerSquareHeroUIUpdater);
-                playerSquareHeroUIUpdater.UpdateHeroDisplay(currentPlayerSquareHero);
-                currentPlayerSquareHero.SetEnergyBar(playerSquareEnergyBar);
-                playerSquareEnergyBar.UpdateEnergieDisplay(0, currentPlayerSquareHero.GetMaxEnergy());
-                currentPlayerSquareHero.SetXPLightManager(playerSquareXPLightManager);
-            }
-        }
-
-        else if (heroType == "Diamond")
-        {
-            ////Lösche den aktuellen Spieler-Diamond-Held, wenn einer existiert
-            //if (activePlayerDiamondHero != null)
-            //{
-            //    Destroy(activePlayerDiamondHero);
-            //}
-
-            ////Instanziere den neuen Spieler-Diamond-Held an der vorgesehenen Position
-            //activePlayerDiamondHero = Instantiate(availableHeroes[currentPlayerDiamondHeroIndex], playerDiamondHeroSpawnPoint.position, playerDiamondHeroSpawnPoint.rotation);
-
-            InstantiateNewHeroRpc(heroType);
-
-            activePlayerDiamondHero.GetComponent<Hero>().SetHeroParent(playerHeroObject, HeroSpawnDummy.PlayerSideKey.Player, HeroSpawnDummy.HeroSideKey.Diamond);
-
-            currentPlayerDiamondHero = activePlayerDiamondHero.GetComponent<Hero>();
-
-            if (currentPlayerDiamondHero != null)
-            {
-                currentPlayerDiamondHero.SetUIUpdater(playerDiamondHeroUIUpdater);
-                playerDiamondHeroUIUpdater.UpdateHeroDisplay(currentPlayerDiamondHero);
-                currentPlayerDiamondHero.SetEnergyBar(playerDiamondEnergyBar);
-                playerDiamondEnergyBar.UpdateEnergieDisplay(0, currentPlayerDiamondHero.GetMaxEnergy());
-                currentPlayerDiamondHero.SetXPLightManager(playerDiamondXPLightManager);
-            }
-        }
+        UpdateHeroRpc(heroType);
     }
 
 
 
+
     //Rpcs
+    [Rpc(SendTo.Everyone)]
+    private void UpdateHeroIndexRpc(string heroType, bool rotateRight)
+    {
+        if (rotateRight)
+        {
+            if (heroType == "Square")
+            {
+                currentPlayerSquareHeroIndex = (currentPlayerSquareHeroIndex + 1) % availableHeroes.Length;
+            }
+            else if (heroType == "Diamond")
+            {
+                currentPlayerDiamondHeroIndex = (currentPlayerDiamondHeroIndex + 1) % availableHeroes.Length;
+            }
+            else
+            {
+                Debug.LogError("Der HeroType " + heroType + " existiert nicht!");
+                return;
+            }
+        }
+        else
+        {
+            if (heroType == "Square")
+            {
+                currentPlayerSquareHeroIndex = (currentPlayerSquareHeroIndex - 1 + availableHeroes.Length) % availableHeroes.Length;
+            }
+            else if (heroType == "Diamond")
+            {
+                currentPlayerDiamondHeroIndex = (currentPlayerDiamondHeroIndex - 1 + availableHeroes.Length) % availableHeroes.Length;
+            }
+            else
+            {
+                Debug.LogError("Der HeroType " + heroType + " existiert nicht!");
+                return;
+            }
+        }
+    }
+
+    [Rpc(SendTo.Server, RequireOwnership = false)]
+    private void UpdateHeroRpc(string heroType)
+    {
+        OnActivateChangeHero?.Invoke(currentPlayerSquareHeroIndex, currentPlayerDiamondHeroIndex, heroType);
+
+        InstantiateNewHeroRpc(heroType);
+
+        UpdateDisplaysRpc(heroType);
+    }
+
     [Rpc(SendTo.Server)]
-    public void InstantiateNewHeroRpc(string heroType)
+    private void InstantiateNewHeroRpc(string heroType)
     {
         //Nur ausführen, wenn es der Server ist
         if (!IsServer) { return; }
 
+        //Zurzeit vorhandenen Helden in Zwischenvariable speichern, um ihn danach löschen zu können
         NetworkObject currentlyActiveHero = null;
         if (heroType == "Square")
         {
@@ -241,7 +186,7 @@ public class HeroSelectionRotator : NetworkBehaviour
         if (newHeroNetworkObject != null)
         {
             newHeroNetworkObject.Spawn();
-            SetHeroToAllClientRpc(newHeroNetworkObject, heroType);
+            SetHeroToAllRpc(newHeroNetworkObject, heroType);
         }
         else
         {
@@ -249,18 +194,66 @@ public class HeroSelectionRotator : NetworkBehaviour
         }
     }
 
-    [ClientRpc]
-    private void SetHeroToAllClientRpc(NetworkObjectReference heroNetworkObjectReference, string heroType)
+    [Rpc(SendTo.Everyone)]
+    private void SetHeroToAllRpc(NetworkObjectReference heroNetworkObjectReference, string heroType)
     {
-        heroNetworkObjectReference.TryGet(out NetworkObject heroNetworkObject);
-
-        if (heroType == "Square")
+        if (heroNetworkObjectReference.TryGet(out NetworkObject heroNetworkObject))
         {
-            activePlayerSquareHero = heroNetworkObject.gameObject;
+            if (heroType == "Square")
+            {
+                activePlayerSquareHero = heroNetworkObject.gameObject;
+
+                activePlayerSquareHero.GetComponent<Hero>().SetHeroParent(playerHeroObject, HeroSpawnDummy.PlayerSideKey.Player, HeroSpawnDummy.HeroSideKey.Square);
+
+                currentPlayerSquareHero = activePlayerSquareHero.GetComponent<Hero>();
+            }
+            else
+            {
+                activePlayerDiamondHero = heroNetworkObject.gameObject;
+
+                activePlayerDiamondHero.GetComponent<Hero>().SetHeroParent(playerHeroObject, HeroSpawnDummy.PlayerSideKey.Player, HeroSpawnDummy.HeroSideKey.Diamond);
+
+                currentPlayerDiamondHero = activePlayerDiamondHero.GetComponent<Hero>();
+            }
         }
         else
         {
-            activePlayerDiamondHero = heroNetworkObject.gameObject;
+            Debug.LogWarning($"Aus '{heroNetworkObjectReference}' konnte kein NetworkObject herausgezogen werden.");
+        }
+    }
+
+    [Rpc(SendTo.Everyone)]
+    private void UpdateDisplaysRpc(string heroType)
+    {
+        if (heroType == "Square")
+        {
+            if (currentPlayerSquareHero != null)
+            {
+                currentPlayerSquareHero.SetUIUpdater(playerSquareHeroUIUpdater);
+                playerSquareHeroUIUpdater.UpdateHeroDisplay(currentPlayerSquareHero);
+                currentPlayerSquareHero.SetEnergyBar(playerSquareEnergyBar);
+                playerSquareEnergyBar.UpdateEnergieDisplay(0, currentPlayerSquareHero.GetMaxEnergy());
+                currentPlayerSquareHero.SetXPLightManager(playerSquareXPLightManager);
+            }
+            else
+            {
+                Debug.LogWarning($"Der Held '{currentPlayerSquareHero}' ist nicht vorhanden!");
+            }
+        }
+        else
+        {
+            if (currentPlayerDiamondHero != null)
+            {
+                currentPlayerDiamondHero.SetUIUpdater(playerDiamondHeroUIUpdater);
+                playerDiamondHeroUIUpdater.UpdateHeroDisplay(currentPlayerDiamondHero);
+                currentPlayerDiamondHero.SetEnergyBar(playerDiamondEnergyBar);
+                playerDiamondEnergyBar.UpdateEnergieDisplay(0, currentPlayerDiamondHero.GetMaxEnergy());
+                currentPlayerDiamondHero.SetXPLightManager(playerDiamondXPLightManager);
+            }
+            else
+            {
+                Debug.LogWarning($"Der Held '{currentPlayerDiamondHero}' ist nicht vorhanden!");
+            }
         }
     }
 }

@@ -1,4 +1,5 @@
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using Unity.Netcode;
 using UnityEngine;
@@ -16,7 +17,6 @@ public class MultiplayerGameManager : NetworkBehaviour
     //Dictionaries für alle Spieler
     private Dictionary<ulong, bool> playerReadyToPlayDictionary = new Dictionary<ulong, bool>();
 
-    //Für die Copyobjekte
     //Copyer Prefab
     [SerializeField] private GameObject actionsCopyer;
 
@@ -74,7 +74,7 @@ public class MultiplayerGameManager : NetworkBehaviour
     {
         isLocalPlayerReadyToPlay = state;
 
-        SetPlayerReadyToPlayeServerRPC();
+        SetPlayerReadyToPlayServerRPC();
     }
 
     public void SetLocalPlayerRoundFinished(bool state)
@@ -111,6 +111,7 @@ public class MultiplayerGameManager : NetworkBehaviour
         //Nur ausführen, wenn 2 Spieler verbunden sind
         if (NetworkManager.Singleton.ConnectedClients.Count != 2) { return; }
 
+        ActivatePlayerUIElementsRpc();
         SpawnCopyersRpc();
     }
 
@@ -118,7 +119,7 @@ public class MultiplayerGameManager : NetworkBehaviour
 
     //RPCs für die Funktionen
     [ServerRpc(RequireOwnership = false)]
-    private void SetPlayerReadyToPlayeServerRPC(ServerRpcParams serverRpcParams = default)
+    private void SetPlayerReadyToPlayServerRPC(ServerRpcParams serverRpcParams = default)
     {
         playerReadyToPlayDictionary[serverRpcParams.Receive.SenderClientId] = true;
 
@@ -153,27 +154,25 @@ public class MultiplayerGameManager : NetworkBehaviour
         copyOfPlayerOneNetwork.transform.position = gameBoardPlayerOne.transform.position;
         copyOfPlayerTwoNetwork.transform.position = gameBoardPlayerTwo.transform.position;
 
+        copyOfPlayerOneNetwork.Spawn(true);
+        copyOfPlayerTwoNetwork.Spawn(true);
+
+        SpawnParentsForHeroesRpc(copyOfPlayerOneNetwork);
+        SpawnParentsForHeroesRpc(copyOfPlayerTwoNetwork);
+
         var players = FindObjectsByType<PlayerScript>(FindObjectsSortMode.None);
 
         foreach (var player in players)
         {
             if (player.OwnerClientId == NetworkManager.ServerClientId)
             {
-                //Debug.Log($"Hier wird ein CopyObjekt gesetzt, von: {NetworkManager.Singleton.LocalClientId}");
                 copyOfPlayerOneNetwork.GetComponent<CopyManager>().SetManagersFromOriginal(player.gameObject);
             }
             else
             {
-                //Debug.Log($"Hier wird ein CopyObjekt gesetzt, von: {NetworkManager.Singleton.LocalClientId}");
                 copyOfPlayerTwoNetwork.GetComponent<CopyManager>().SetManagersFromOriginal(player.gameObject);
             }
         }
-        
-        copyOfPlayerOneNetwork.Spawn(true);
-        copyOfPlayerTwoNetwork.Spawn(true);
-
-        SpawnParentsForHeroesRpc(copyOfPlayerOneNetwork);
-        SpawnParentsForHeroesRpc(copyOfPlayerTwoNetwork);
     }
 
     [Rpc(SendTo.Server)]
@@ -204,5 +203,11 @@ public class MultiplayerGameManager : NetworkBehaviour
             heroSpawnPositionSquare.GetComponent<HeroSpawnDummy>().SetParentForHeroSpawn(copyNetworkObject.gameObject);
             heroSpawnPositionDiamond.GetComponent<HeroSpawnDummy>().SetParentForHeroSpawn(copyNetworkObject.gameObject);
         }
+    }
+
+    [Rpc(SendTo.Everyone)]
+    private void ActivatePlayerUIElementsRpc()
+    {
+        PlayerScript.LocalInstance.ChangePlayerUIElements(false);
     }
 }

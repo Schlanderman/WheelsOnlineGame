@@ -36,6 +36,11 @@ public class HeroActions : MonoBehaviour
         InitialHeroSetting.Instance.OnSetEnemyManagers += InitialHeroSetting_OnSetEnemyManagers;
     }
 
+    private void InitialHeroSetting_OnSetMultiplayerHeroesInitially()
+    {
+
+    }
+
     private void InitialHeroSetting_OnSetHeroesInitially(ulong playerId, Hero heroOne, Hero heroTwo, Hero heroThree, Hero heroFour)
     {
         //Wenn playerId übereinstimmt, dann werden die Heroes zugewiesen, ansonsten nicht
@@ -48,7 +53,7 @@ public class HeroActions : MonoBehaviour
             //if (playerId != PlayerScript.Instance.playerId) { return; }   //Es wird nichts gemacht, wenn Id nicht übereinstimmt
         }
 
-        //Testen, ob dies hier de Square Seite ist
+        //Testen, ob dies hier die Square Seite ist
         if (isSquareSide)
         {
             SetPlayerHeroes(heroOne, heroTwo);

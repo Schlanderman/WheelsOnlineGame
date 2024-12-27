@@ -49,15 +49,6 @@ public class CopyHeroFigures : ManagerCopiesHandler<HeroSelectionRotator>
     {
         if (heroType == "Square")
         {
-            ////Lösche den aktuellen Spieler-Square-Held, wenn einer existiert
-            //if (activePlayerSquareHero != null)
-            //{
-            //    Destroy(activePlayerSquareHero);
-            //}
-
-            ////Instanziere den neuen Spieler-Square-Held an der vorgesehenen Position
-            //activePlayerSquareHero = Instantiate(availableHeroes[currentPlayerSquareHeroIndex], playerSquareHeroSpawnPoint.position, playerSquareHeroSpawnPoint.rotation);
-
             InstantiateNewHeroRpc(heroType);
 
             activePlayerSquareHero.GetComponent<Hero>().SetHeroParent(playerHeroObject, HeroSpawnDummy.PlayerSideKey.Enemy, HeroSpawnDummy.HeroSideKey.Square);
@@ -66,15 +57,6 @@ public class CopyHeroFigures : ManagerCopiesHandler<HeroSelectionRotator>
 
         else if (heroType == "Diamond")
         {
-            ////Lösche den aktuellen Spieler-Diamond-Held, wenn einer existiert
-            //if (activePlayerDiamondHero != null)
-            //{
-            //    Destroy(activePlayerDiamondHero);
-            //}
-
-            ////Instanziere den neuen Spieler-Diamond-Held an der vorgesehenen Position
-            //activePlayerDiamondHero = Instantiate(availableHeroes[currentPlayerDiamondHeroIndex], playerDiamondHeroSpawnPoint.position, playerDiamondHeroSpawnPoint.rotation);
-
             InstantiateNewHeroRpc(heroType);
 
             activePlayerDiamondHero.GetComponent<Hero>().SetHeroParent(playerHeroObject, HeroSpawnDummy.PlayerSideKey.Enemy, HeroSpawnDummy.HeroSideKey.Diamond);

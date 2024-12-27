@@ -21,13 +21,6 @@ public class HeroSpawnDummy : NetworkBehaviour
     public PlayerSideKey playerSide { get; private set; }
     public HeroSideKey heroSideKey { get; private set; }
 
-    public override void OnNetworkSpawn()
-    {
-        //playerSide = PlayerSideKey.Player;
-        //heroSideKey = HeroSideKey.Square;
-        //UpdateTagForPosition();
-    }
-
     public void SetPositionForHeroSpawn(PlayerSideKey newPlayerSide, HeroSideKey newHeroSide, GameObject parentTransformRoot)
     {
         playerSide = newPlayerSide;

@@ -718,6 +718,8 @@ MonoBehaviour:
   - {fileID: 8659753276594678948, guid: a25bc32815a7a784baf7121b366dcfb9, type: 3}
   - {fileID: 2495073711343981731, guid: 582602b946f796745b4a4a6ab2118b54, type: 3}
   - {fileID: 4285298512509971137, guid: 8ef2428fe5814e24b8eefe05374b4bd8, type: 3}
+  squareSpawn: {fileID: 4717189989095760906}
+  diamondSpawn: {fileID: 9122619491730913154}
   playerSquareHeroUIUpdater: {fileID: 8989631824565724675}
   playerDiamondHeroUIUpdater: {fileID: 4295264279610823804}
   playerSquareEnergyBar: {fileID: 2528705754884397894}
@@ -725,6 +727,8 @@ MonoBehaviour:
   playerSquareXPLightManager: {fileID: 7352315500122678353}
   playerDiamondXPLightManager: {fileID: 9086331295998961939}
   playerHeroObject: {fileID: 5599033558673492644}
+  currentPlayerSquareHero: {fileID: 0}
+  currentPlayerDiamondHero: {fileID: 0}
   activePlayerSquareHero: {fileID: 0}
   activePlayerDiamondHero: {fileID: 0}
 --- !u!1 &2609834318280274708
@@ -1440,6 +1444,7 @@ MonoBehaviour:
   selectionRotator: {fileID: 4073505999893429724}
   wheelManager: {fileID: 1573712921715866852}
   heroSpawnPosition: {fileID: 5572124818557607016, guid: cd470f86a36d4a6469ae804d0d3489ba, type: 3}
+  playerUIElements: {fileID: 1987516377602477916}
 --- !u!114 &-21955601314381746
 MonoBehaviour:
   m_ObjectHideFlags: 0

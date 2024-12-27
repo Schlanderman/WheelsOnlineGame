@@ -1,6 +1,7 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using Unity.Netcode;
 using UnityEngine;
 
 public class HeroUIUpdater : MonoBehaviour
@@ -26,6 +27,11 @@ public class HeroUIUpdater : MonoBehaviour
     {
         OnActivateUIUpdate?.Invoke(hero);
 
+        UpdateHeroDisplayActual(hero);
+    }
+
+    public void UpdateHeroDisplayActual(Hero hero)
+    {
         MeshRenderer renderer1 = block1Renderer.GetComponent<MeshRenderer>();
         MeshRenderer renderer2 = block2Renderer.GetComponent<MeshRenderer>();
 

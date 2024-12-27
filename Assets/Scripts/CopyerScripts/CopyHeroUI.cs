@@ -17,7 +17,14 @@ public class CopyHeroUI : ManagerCopiesHandler<HeroUIUpdater>
 
     protected override void SetEvents()
     {
-        originalManager.OnActivateUIUpdate += HeroUIUpdater_OnActivateUIUpdate;
+        if (originalManager != null)
+        {
+            originalManager.OnActivateUIUpdate += HeroUIUpdater_OnActivateUIUpdate;
+        }
+        else
+        {
+            Debug.LogError("Der Originale Manager konnte nicht zugewiesen werden!");
+        }
     }
 
     private void HeroUIUpdater_OnActivateUIUpdate(Hero hero)

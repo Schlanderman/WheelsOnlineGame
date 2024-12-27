@@ -3,8 +3,6 @@ using UnityEngine;
 
 public class CopyManager : NetworkBehaviour
 {
-    //private EnemyScript enemyScript;    //Offline only
-
     //Sachen, die ich vom CopyObjekt brauche:
     //Wheels 1 - 5
     [SerializeField] private CopyWheels copyWheels;
@@ -48,6 +46,21 @@ public class CopyManager : NetworkBehaviour
 
     public void SetManagersFromOriginal(GameObject originalPlayerObject)
     {
+        SetManagersFromOriginalRpc(originalPlayerObject.GetComponent<NetworkObject>());
+    }
+
+
+    [Rpc(SendTo.Everyone)]
+    private void SetManagersFromOriginalRpc(NetworkObjectReference originalPlayerNetworkObjectReference)
+    {
+        if (!originalPlayerNetworkObjectReference.TryGet(out NetworkObject originalPlayerNetworkObject))
+        {
+            Debug.LogWarning($"Konnte kein NetworkObject in '{originalPlayerNetworkObjectReference}' finden!");
+            return;
+        }
+
+        GameObject originalPlayerObject = originalPlayerNetworkObject.gameObject;
+
         //Manager, die nur einfach vorhanden sind
         originalWheels = originalPlayerObject.GetComponentInChildren<WheelManager>();
         originalHeroRotator = originalPlayerObject.GetComponentInChildren<HeroSelectionRotator>();
