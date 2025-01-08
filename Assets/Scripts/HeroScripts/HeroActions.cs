@@ -10,18 +10,18 @@ public class HeroActions : NetworkBehaviour
     [SerializeField] private GameObject playerObject;
 
     [SerializeField] private CrownManager playerCrown;      //Spielerkrone
-    [SerializeField] private CrownManager enemyCrown;       //Gegnerkrone
+    private CrownManager enemyCrown;       //Gegnerkrone
 
     [SerializeField] private BulwarkMover playerBulwark;    //Spielerbulwark
-    [SerializeField] private BulwarkMover enemyBulwark;     //Gegnerbulwark
+    private BulwarkMover enemyBulwark;     //Gegnerbulwark
 
     [SerializeField] private ActionRodAnimManager rodAnimations;        //Spieleranimationen
-    [SerializeField] private ActionRodAnimManager enemyRodAnimations;   //Gegneranimationen
+    private ActionRodAnimManager enemyRodAnimations;   //Gegneranimationen
 
-    [SerializeField] private Hero selfThisHero;          //Der Aktive Held
-    [SerializeField] private Hero selfOtherHero;         //Der andere Held auf Spielerseite
-    [SerializeField] private Hero enemySquareHero;       //Square Held auf Gegnerseite
-    [SerializeField] private Hero enemyDiamondHero;      //Diamond Held auf Gegnerseite
+    private Hero selfThisHero;          //Der Aktive Held
+    private Hero selfOtherHero;         //Der andere Held auf Spielerseite
+    private Hero enemySquareHero;       //Square Held auf Gegnerseite
+    private Hero enemyDiamondHero;      //Diamond Held auf Gegnerseite
 
     private HeroAnimationManager heroAnimationManager;      //Der Animationsmanager des Helden
 
@@ -35,16 +35,12 @@ public class HeroActions : NetworkBehaviour
 
     private void Start()
     {
-        InitialHeroSetting.Instance.OnSetHeroesInitially += InitialHeroSetting_OnSetHeroesInitially;
         InitialHeroSetting.Instance.OnSetEnemyManagers += InitialHeroSetting_OnSetEnemyManagers;
         InitialHeroSetting.Instance.OnSetMultiplayerHeroesInitially += InitialHeroSetting_OnSetMultiplayerHeroesInitially;
     }
 
     private void InitialHeroSetting_OnSetMultiplayerHeroesInitially(Hero playerOneSquare, Hero playerOneDiamond, Hero playerTwoSquare, Hero playerTwoDiamond)
     {
-        //Debug.Log($"Hier werden von Instanz {NetworkManager.Singleton.LocalClientId} die folgenden Helden übergeben:" +
-        //    $"\n{playerOneSquare}\n{playerOneDiamond}\n{playerTwoSquare}\n{playerTwoDiamond}");
-
         SetMultiplayerHeroesRpc(
             playerOneSquare.GetComponent<NetworkObject>(),
             playerOneDiamond.GetComponent<NetworkObject>(),
@@ -57,7 +53,6 @@ public class HeroActions : NetworkBehaviour
     private void SetMultiplayerHeroesRpc(NetworkObjectReference playerOneSquareNetworkObjectReference, NetworkObjectReference playerOneDiamondNetworkObjectReference,
         NetworkObjectReference playerTwoSquareNetworkObjectReference, NetworkObjectReference playerTwoDiamondNetworkObjectReference)
     {
-        Debug.Log("RPC wurde aufgerufen!");
         //Alle networkObjectReferences in NetworkObjects wandeln und dann die Heros holen
         if (!playerOneSquareNetworkObjectReference.TryGet(out NetworkObject playerOneSquareNetworkObject))
         {
@@ -85,95 +80,44 @@ public class HeroActions : NetworkBehaviour
         Hero playerTwoSquare = playerTwoSquareNetworkObject.GetComponent<Hero>();
         Hero playerTwoDiamond = playerTwoDiamondNetworkObject.GetComponent<Hero>();
 
-        //Wahr, wenn dies hier das Spieler 1 Objekt des Hosts ist
-        if (playerObject.GetComponent<NetworkObject>().OwnerClientId == NetworkManager.Singleton.LocalClientId)
-        {
-            //Überprüfung, ob Square oder Diamond
-            if (isSquareSide)
-            {
-                //Dies hier ist Square
-                SetPlayerHeroes(playerOneSquare, playerOneDiamond);
-                SetSquareSideMain();
-            }
-            else
-            {
-                //Dies hier ist Diamond
-                SetPlayerHeroes(playerOneDiamond, playerOneSquare);
-                SetDiamondSideMain();
-            }
+        //Zuweisung für die Helden
+        bool isPlayerOneObject = playerObject.GetComponent<NetworkObject>().OwnerClientId == PlayerScript.LocalInstance.OwnerClientId;
+        bool isHostPlayerOne = IsHost != isPlayerOneObject;
 
-            SetEnemyHeroes(playerTwoSquare, playerTwoDiamond);
-            //Hier kommt noch SetEnemyManagers hin...
-        }
-        else
-        {
-            //Überprüfung, ob Square oder Diamond
-            if (isSquareSide)
-            {
-                //Dies hier ist Square
-                SetPlayerHeroes(playerTwoSquare, playerTwoDiamond);
-                SetSquareSideMain();
-            }
-            else
-            {
-                //Dies hier ist Diamond
-                SetPlayerHeroes(playerTwoDiamond, playerTwoSquare);
-                SetDiamondSideMain();
-            }
+        //Bestimme die Helden für den Spieler und den Gegner basierend auf den Bedingungen
+        var playerSquare = isHostPlayerOne ? playerOneSquare : playerTwoSquare;
+        var playerDiamond = isHostPlayerOne ? playerOneDiamond : playerTwoDiamond;
+        var enemySquare = isHostPlayerOne ? playerTwoSquare : playerOneSquare;
+        var enemyDiamond = isHostPlayerOne ? playerTwoDiamond : playerOneDiamond;
 
-            SetEnemyHeroes(playerOneSquare, playerOneDiamond);
-            //Hier kommt noch SetEnemyManagers hin...
-        }
-    }
-
-    private void InitialHeroSetting_OnSetHeroesInitially(ulong playerId, Hero heroOne, Hero heroTwo, Hero heroThree, Hero heroFour)
-    {
-        //Wenn playerId übereinstimmt, dann werden die Heroes zugewiesen, ansonsten nicht
-        if (enemyScript != null)
-        {
-            if (playerId != enemyScript.playerId) { return; }   //Es wird nichts gemacht, wenn Id nicht übereinstimmt
-        }
-        else
-        {
-            //if (playerId != PlayerScript.Instance.playerId) { return; }   //Es wird nichts gemacht, wenn Id nicht übereinstimmt
-        }
-
-        //Testen, ob dies hier die Square Seite ist
+        //Überprüfung, ob Square oder Diamond
         if (isSquareSide)
         {
-            SetPlayerHeroes(heroOne, heroTwo);
+            SetPlayerHeroes(playerSquare, playerDiamond);
             SetSquareSideMain();
+            SetEnemyManagers();
         }
         else
         {
-            SetPlayerHeroes(heroTwo, heroOne);
+            SetPlayerHeroes(playerDiamond, playerSquare);
             SetDiamondSideMain();
         }
 
-        SetEnemyHeroes(heroThree, heroFour);
-        SetEnemyManagers();
-        //SetPlayerSideMain();
+        //Setze die Helden für den Gegner
+        SetEnemyHeroes(enemySquare, enemyDiamond);
+
+        //Dieses Script dem jeweiligen Helden übergeben
+        selfThisHero.SetHeroActions(this);
     }
 
     private void InitialHeroSetting_OnSetEnemyManagers(ulong playerId, CrownManager enemyCM, BulwarkMover enemyBM, ActionRodAnimManager enemyARM)
     {
-        if (enemyScript != null)
-        {
-            if (playerId == enemyScript.playerId) { return; }
-            //Debug.Log($"Empfange Invoke mit ID {playerId}, Crown {enemyCM.gameObject}, Bulwark {enemyBM.gameObject} und Actionrod {enemyARM.gameObject} bei Spieler: {enemyScript.playerId}");
+        //Testen, ob die playerId mit der OwnerId übereinstimmt. Wenn ja, dann werden keine Managers gesetzt
+        if (playerId == playerObject.GetComponent<NetworkObject>().OwnerClientId) {  return; }
 
-            enemyCrown = enemyCM;
-            enemyBulwark = enemyBM;
-            enemyRodAnimations = enemyARM;
-        }
-        else
-        {
-            //if (playerId == PlayerScript.Instance.playerId) { return; }
-
-            enemyCrown = enemyCM;
-            enemyBulwark = enemyBM;
-            enemyRodAnimations = enemyARM;
-        }
+        enemyCrown = enemyCM;
+        enemyBulwark = enemyBM;
+        enemyRodAnimations = enemyARM;
     }
 
 
@@ -207,29 +151,9 @@ public class HeroActions : NetworkBehaviour
         thisHeroSide = "Diamond";
     }
 
-    //Methoden, um die Userseiten zuzuweisen
-    public void SetPlayerSideMain()
-    {
-        if (enemyScript != null)
-        {
-            thisUserSide = "Enemy";
-        }
-        else
-        {
-            thisUserSide = "Player";
-        }
-    }
-
     private void SetEnemyManagers()
     {
-        if (enemyScript != null)
-        {
-            InitialHeroSetting.Instance.SetEnemyManagers(enemyScript.playerId, playerCrown, playerBulwark, rodAnimations);
-        }
-        else
-        {
-            //InitialHeroSetting.Instance.SetEnemyManagers(PlayerScript.Instance.playerId, playerCrown, playerBulwark, rodAnimations);
-        }
+        InitialHeroSetting.Instance.SetEnemyManagers(playerObject.GetComponent<NetworkObject>().OwnerClientId, playerCrown, playerBulwark, rodAnimations);
     }
 
 

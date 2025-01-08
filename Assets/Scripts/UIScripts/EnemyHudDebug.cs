@@ -53,7 +53,7 @@ public class EnemyHudDebug : MonoBehaviour
 
     private void Start()
     {
-        InitialHeroSetting.Instance.OnDeactivateRotatorButtons += InitialHeroSetting_OnDeactivateRotatorButtons;
+        //InitialHeroSetting.Instance.OnDeactivateRotatorButtons += InitialHeroSetting_OnDeactivateRotatorButtons;
         InitialHeroSetting.Instance.OnDeactivateReadyButton += InitialHeroSetting_OnDeactivateRotatorButtons;
     }
 
