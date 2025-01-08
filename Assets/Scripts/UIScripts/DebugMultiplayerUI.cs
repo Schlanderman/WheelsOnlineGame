@@ -54,6 +54,7 @@ public class DebugMultiplayerUI : MonoBehaviour
         newPlayerOne.GetComponent<PlayerScript>().SetHPScripts(hpScriptsPlayerOne, hpScriptsPlayerTwo);
         newPlayerTwo.GetComponent<EnemyScript>().SetHPScripts(hpScriptsPlayerTwo, hpScriptsPlayerOne);
 
+        //Dies hier wird nichts mehr machen!
         StartCoroutine(TurnManager.Instance.InitializeReadynessLate());
         StartCoroutine(TurnManager.Instance.InitializeCrownHPLate());
         StartCoroutine(InitialHeroSetting.Instance.InitializeReadynessLate());

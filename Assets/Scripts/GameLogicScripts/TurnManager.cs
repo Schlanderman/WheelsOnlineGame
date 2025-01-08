@@ -2,9 +2,10 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
+using Unity.Netcode;
 using UnityEngine;
 
-public class TurnManager : MonoBehaviour
+public class TurnManager : NetworkBehaviour
 {
     public static TurnManager Instance {  get; private set; }
 
@@ -12,7 +13,6 @@ public class TurnManager : MonoBehaviour
     public event EventHandler OnResetRound;
     public event EventHandler OnSetCoverUp;
     public event EventHandler OnSetCoverDown;
-    public event EventHandler OnInitializePlayerRoundFinished;
     public event EventHandler OnInitializeCrownHP;
     public event Action<bool, ulong> OnSetEndscreen;
 
@@ -41,8 +41,23 @@ public class TurnManager : MonoBehaviour
 
     private void Start()
     {
+        MultiplayerGameManager.Instance.OnPlayersRoundIsFinished += MultiplayerGameManager_OnPlayersRoundIsFinished;
         //StartCoroutine(InitializeReadynessLate());
         //StartCoroutine(InitializeCrownHPLate());
+    }
+
+    private void MultiplayerGameManager_OnPlayersRoundIsFinished(object sender, EventArgs e)
+    {
+        BeginTurnRpc();
+    }
+
+    //Die Spieler haben alle ihre Räder gedreht und die Animationen und auswertungen können nun beginnen
+    [Rpc(SendTo.Everyone)]
+    private void BeginTurnRpc()
+    {
+        //Resette den aktuellen Schritt und starte den Zugzyklus
+        currentTurnStep = 1;
+        StartCoroutine(ProcessTurnStep());
     }
 
     public void SetHeroes(Hero playerSquare, Hero playerDiamond, Hero enemySquare, Hero enemyDiamond)
@@ -54,20 +69,11 @@ public class TurnManager : MonoBehaviour
         enemyHeroes[1] = enemyDiamond;
     }
 
-    public void TestForReadyness()
-    {
-        foreach (ulong playerId in playerRoundFinishedDictionary.Keys)
-        {
-            if (!playerRoundFinishedDictionary[playerId])
-            {
-                return;
-            }
-        }
 
-        BeginTurn();
-        OnInitializePlayerRoundFinished?.Invoke(this, EventArgs.Empty);
-    }
 
+
+
+    //Logic um den Spielzyklus auszuwerten
     public void BeginTurn()
     {
         //Resette den aktuellen Schritt und starte den Zugzyklus
@@ -384,8 +390,6 @@ public class TurnManager : MonoBehaviour
     public IEnumerator InitializeReadynessLate()
     {
         yield return new WaitForEndOfFrame();
-
-        OnInitializePlayerRoundFinished?.Invoke(this, EventArgs.Empty);
     }
 
     public IEnumerator InitializeCrownHPLate()

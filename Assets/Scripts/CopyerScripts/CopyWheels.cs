@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using Unity.Netcode;
 using UnityEngine;
 
 public class CopyWheels : ManagerCopiesHandler<WheelManager>
@@ -75,6 +76,16 @@ public class CopyWheels : ManagerCopiesHandler<WheelManager>
 
     private void OriginalWheelManager_OnWheelsHaveStopped(int rotWheel1, int rotWheel2, int rotWheel3, int rotWheel4, int rotWheel5)
     {
+        //Rotationen bei beiden Clients setzen
+        SetCopyWheelsRotationRpc(rotWheel1, rotWheel2, rotWheel3, rotWheel4, rotWheel5);
+
+        //Clamps bei beiden Clients aktivieren
+        ChangeClampActivationRpc(true);
+    }
+
+    [Rpc(SendTo.Everyone)]
+    private void SetCopyWheelsRotationRpc(int rotWheel1, int rotWheel2, int rotWheel3, int rotWheel4, int rotWheel5)
+    {
         //Array mit den Rotationswerten erstellen
         int[] rotations = { rotWheel1, rotWheel2, rotWheel3, rotWheel4, rotWheel5 };
 
@@ -100,16 +111,15 @@ public class CopyWheels : ManagerCopiesHandler<WheelManager>
                 Debug.LogWarning($"Wheel[{i}] ist null. Rotation wird übersprungen!");
             }
         }
-
-        ChangeClampActivation(true);
     }
 
     private void OriginalWheelManager_OnUnlockClamps(object sender, System.EventArgs e)
     {
-        ChangeClampActivation(false);
+        ChangeClampActivationRpc(false);
     }
 
-    private void ChangeClampActivation(bool status)
+    [Rpc(SendTo.Everyone)]
+    private void ChangeClampActivationRpc(bool status)
     {
         foreach (var clamp in clampedActivators)
         {

@@ -32,12 +32,12 @@ public class HeroSelectionRotator : NetworkBehaviour
     private int currentPlayerDiamondHeroIndex = 0;              //Aktuelle Position des Spieler Diamond Helden in der Liste
 
     //Referenz auf den ausgewählten Helden
-    [SerializeField] private Hero currentPlayerSquareHero;
-    [SerializeField] private Hero currentPlayerDiamondHero;
+    private Hero currentPlayerSquareHero;
+    private Hero currentPlayerDiamondHero;
 
     //Referenz auf das aktive Objekt des Helden
-    [SerializeField] private GameObject activePlayerSquareHero;      //Referenz zum Objekt des Spieler-Square-Helden
-    [SerializeField] private GameObject activePlayerDiamondHero;     //Referenz zum Objekt des Spieler-Diamond-Helden
+    private GameObject activePlayerSquareHero;      //Referenz zum Objekt des Spieler-Square-Helden
+    private GameObject activePlayerDiamondHero;     //Referenz zum Objekt des Spieler-Diamond-Helden
 
     //Events
     public event Action<int, int, string> OnActivateChangeHero;

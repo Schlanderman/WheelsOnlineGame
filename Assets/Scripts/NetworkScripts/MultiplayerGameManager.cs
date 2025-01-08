@@ -16,6 +16,7 @@ public class MultiplayerGameManager : NetworkBehaviour
 
     //Dictionaries für alle Spieler
     private Dictionary<ulong, bool> playerReadyToPlayDictionary = new Dictionary<ulong, bool>();
+    private Dictionary<ulong, bool> playerRoundFinishedDictionary = new Dictionary<ulong, bool>();
 
     //Copyer Prefab
     [SerializeField] private GameObject actionsCopyer;
@@ -28,7 +29,7 @@ public class MultiplayerGameManager : NetworkBehaviour
 
     //Events
     public event EventHandler OnPlayersAreReadyToPlay;
-    public event EventHandler OnLocalPlayerRoundFinishedChanged;
+    public event EventHandler OnPlayersRoundIsFinished;
     public event EventHandler OnLocalPlayerCurrentHPChanged;
 
 
@@ -37,6 +38,7 @@ public class MultiplayerGameManager : NetworkBehaviour
         Instance = this;
 
         playerReadyToPlayDictionary = new Dictionary<ulong, bool>();
+        playerRoundFinishedDictionary = new Dictionary<ulong, bool>();
     }
 
     private void Start()
@@ -74,13 +76,14 @@ public class MultiplayerGameManager : NetworkBehaviour
     {
         isLocalPlayerReadyToPlay = state;
 
-        SetPlayerReadyToPlayServerRPC();
+        SetPlayerReadyToPlayServerRpc();
     }
 
     public void SetLocalPlayerRoundFinished(bool state)
     {
         isLocalPlayerRoundFinished = state;
-        OnLocalPlayerRoundFinishedChanged?.Invoke(this, EventArgs.Empty);
+
+        SetPlayerRoundFinishedServerRpc();
     }
 
     public void ChangeLocalPlayerCurrentHP(int newHP)
@@ -119,7 +122,7 @@ public class MultiplayerGameManager : NetworkBehaviour
 
     //RPCs für die Funktionen
     [ServerRpc(RequireOwnership = false)]
-    private void SetPlayerReadyToPlayServerRPC(ServerRpcParams serverRpcParams = default)
+    private void SetPlayerReadyToPlayServerRpc(ServerRpcParams serverRpcParams = default)
     {
         playerReadyToPlayDictionary[serverRpcParams.Receive.SenderClientId] = true;
 
@@ -137,6 +140,29 @@ public class MultiplayerGameManager : NetworkBehaviour
         if (allClientsReady)
         {
             OnPlayersAreReadyToPlay?.Invoke(this, EventArgs.Empty);
+        }
+    }
+
+    [ServerRpc(RequireOwnership = false)]
+    private void SetPlayerRoundFinishedServerRpc(ServerRpcParams serverRpcParams = default)
+    {
+        playerRoundFinishedDictionary[serverRpcParams.Receive.SenderClientId] = true;
+
+        bool allClientsReady = true;
+        foreach (ulong clientId in NetworkManager.Singleton.ConnectedClientsIds)
+        {
+            if (!playerRoundFinishedDictionary.ContainsKey(clientId) || !playerRoundFinishedDictionary[clientId])
+            {
+                //This Player is not Ready!
+                allClientsReady = false;
+                break;
+            }
+        }
+
+        if (allClientsReady)
+        {
+            OnPlayersRoundIsFinished?.Invoke(this, EventArgs.Empty);
+            playerRoundFinishedDictionary.Clear();
         }
     }
 

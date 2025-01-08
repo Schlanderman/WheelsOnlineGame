@@ -94,7 +94,6 @@ public class WheelManager : MonoBehaviour
         spinButton.SetActive(false);
 
         TurnManager.Instance.OnResetRound += TurnManager_OnResetRound;
-        TurnManager.Instance.OnInitializePlayerRoundFinished += TurnManager_OnInitializePlayerRoundFinished;
         InitialHeroSetting.Instance.OnActivateSpinButton += InitialHeroSetting_OnActivateSpinButton;
     }
 
@@ -103,18 +102,6 @@ public class WheelManager : MonoBehaviour
     {
         ResetRound();
         OnUnlockClamps?.Invoke(this, EventArgs.Empty);
-    }
-
-    private void TurnManager_OnInitializePlayerRoundFinished(object sender, EventArgs e)
-    {
-        if (enemyScript != null)
-        {
-            TurnManager.Instance.ChangePlayerRoundFinished(enemyScript.playerId, false);
-        }
-        else
-        {
-            //TurnManager.Instance.ChangePlayerRoundFinished(PlayerScript.Instance.playerId, false);
-        }
     }
 
     private void InitialHeroSetting_OnActivateSpinButton(object sender, EventArgs e)
@@ -224,7 +211,7 @@ public class WheelManager : MonoBehaviour
     }
 
     //Funktion zum beenden der Runde
-    public void EndRound()
+    private void EndRound()
     {
         Debug.Log("Runde beendet. Alle Spins verbraucht!");
 
@@ -233,16 +220,21 @@ public class WheelManager : MonoBehaviour
             wheel.StopWheel();
         }
 
+        //Kann später weg
         //Hier übergeben, dass der Spieler bereit ist
-        if (enemyScript != null)
-        {
-            TurnManager.Instance.ChangePlayerRoundFinished(enemyScript.playerId, true);
-        }
-        else
-        {
-            //TurnManager.Instance.ChangePlayerRoundFinished(PlayerScript.Instance.playerId, true);
-        }
+        //if (enemyScript != null)
+        //{
+        //    TurnManager.Instance.ChangePlayerRoundFinished(enemyScript.playerId, true);
+        //}
+        //else
+        //{
+        //    //TurnManager.Instance.ChangePlayerRoundFinished(PlayerScript.Instance.playerId, true);
+        //}
 
+        //Dem MultiplayerGameManager ubermitteln, dass der Client alle Turns verbraucht hat
+        MultiplayerGameManager.Instance.SetLocalPlayerRoundFinished(true);
+
+        //Den Copyscripts die aktuelle Position der einzelnen Räder übergeben, damit sich diese ausrichten können
         OnWheelsHaveStopped?.Invoke(
             wheels[0].GetTopSymbolIndex(),
             wheels[1].GetTopSymbolIndex(),
@@ -251,7 +243,7 @@ public class WheelManager : MonoBehaviour
             wheels[4].GetTopSymbolIndex()
             );
 
-        TurnManager.Instance.TestForReadyness();
+        //TurnManager.Instance.TestForReadyness();
     }
 
     private void ResetRound()
