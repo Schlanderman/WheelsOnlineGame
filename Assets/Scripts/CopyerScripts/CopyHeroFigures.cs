@@ -6,14 +6,8 @@ public class CopyHeroFigures : ManagerCopiesHandler<HeroSelectionRotator>
 {
     [SerializeField] private GameObject[] availableHeroes;      //Liste der verfügbaren Helden
 
-    //Referenzen auf die Spawnpositionen der Helden
-    //[SerializeField] private Transform playerSquareHeroSpawnPoint;
-    //[SerializeField] private Transform playerDiamondHeroSpawnPoint;
-
     //Referenzen, um die Parents zu setzen
     [SerializeField] private GameObject playerHeroObject;
-    private FixedString128Bytes pathToSquareHeroSpawn = "FigureCurbCopySquareSpawn/FigureCurbCopySquare/FigureStandSquare/SquareHeroSpawn";
-    private FixedString128Bytes pathToDiamondHeroSpawn = "FigureCurbCopyDiamondSpawn/FigureCurbCopyDiamond/FigureStandDiamond/DiamondHeroSpawn";
 
     //Referenz auf das aktive Objekt des Helden
     private GameObject activePlayerSquareHero;
@@ -133,27 +127,45 @@ public class CopyHeroFigures : ManagerCopiesHandler<HeroSelectionRotator>
         }
 
         //Instanziieren und Networkobjekt abrufen
+        GameObject newHeroObject = null;
         NetworkObject newHeroNetworkObject = null;
         if (heroType == "Square")
         {
-            activePlayerSquareHero = Instantiate(availableHeroes[currentPlayerSquareHeroIndex]);
-            newHeroNetworkObject = activePlayerSquareHero.GetComponent<NetworkObject>();
-
+            newHeroObject = Instantiate(availableHeroes[currentPlayerSquareHeroIndex]);
+            newHeroNetworkObject = newHeroObject.GetComponent<NetworkObject>();
         }
         else
         {
-            activePlayerDiamondHero = Instantiate(availableHeroes[currentPlayerDiamondHeroIndex]);
-            newHeroNetworkObject = activePlayerDiamondHero.GetComponent<NetworkObject>();
+            newHeroObject = Instantiate(availableHeroes[currentPlayerDiamondHeroIndex]);
+            newHeroNetworkObject = newHeroObject.GetComponent<NetworkObject>();
         }
 
         //Spawn auf dem Server
         if (newHeroNetworkObject != null)
         {
             newHeroNetworkObject.Spawn();
+            SetActiveHeroRpc(heroType, newHeroNetworkObject);
         }
         else
         {
             Debug.LogError("Das Objekt hat keine NetworkObject-Komponente und kann nicht gespawnt werden.");
+        }
+    }
+
+    [Rpc(SendTo.Everyone)]
+    private void SetActiveHeroRpc(string heroType, NetworkObjectReference heroNetworkObjectReference)
+    {
+        if (heroNetworkObjectReference.TryGet(out NetworkObject heroNetworkObject))
+        {
+            GameObject heroObject = heroNetworkObject.gameObject;
+            if (heroType == "Square")
+            {
+                activePlayerSquareHero = heroObject;
+            }
+            else
+            {
+                activePlayerDiamondHero = heroObject;
+            }
         }
     }
 }
