@@ -1,87 +1,83 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using Unity.Netcode;
 using UnityEngine;
 
-public class CrownManager : MonoBehaviour
+public class CrownManager : NetworkBehaviour
 {
     [SerializeField] private EnemyScript enemyScript;  //Offline only
 
     [SerializeField] private int maxHP = 10;      //Maximaler HP-Wert, mit dem der Spieler beginnt
-    private int currentHP;
+    //CrownHP als Networkvariable, damit nur der Server diese ändern kann
+    private NetworkVariable<int> currentHP = new NetworkVariable<int>(
+        10,     //Startwert
+        NetworkVariableReadPermission.Everyone,     //Clients dürfen den Wert lesen
+        NetworkVariableWritePermission.Server       //Nur der Server darf den Wert schreiben
+        );
 
     //Referenzen zu den  Rädern für die Anzeige
-    [SerializeField] Transform oneWheel;
-    [SerializeField] Transform tenWheel;
+    [SerializeField] private Transform oneWheel;
+    [SerializeField] private Transform tenWheel;
 
     //Events
     public event Action<float, float> OnSetNewHPStatus;
 
     private void Start()
     {
-        SetStartStats();
+        if (IsServer) { SetStartStatsRpc(); }
 
-        TurnManager.Instance.OnInitializeCrownHP += TurnManager_OnInitializeCrownHP;
+        InitialHeroSetting.Instance.OnInitializeCrownHP += TurnManager_OnInitializeCrownHP;
     }
 
     private void TurnManager_OnInitializeCrownHP(object sender, EventArgs e)
     {
-        if (enemyScript != null)
-        {
-            TurnManager.Instance.ChangeCrownHP(enemyScript.playerId, maxHP);
-        }
-        else
-        {
-            //TurnManager.Instance.ChangeCrownHP(PlayerScript.Instance.playerId, maxHP);
-        }
+        if (IsLocalPlayer) { ChangeCrownHPOnTurnManagerRpc(); }
+    }
+
+    [Rpc(SendTo.Server)]
+    private void ChangeCrownHPOnTurnManagerRpc(RpcParams rpcParams = default)
+    {
+        TurnManager.Instance.ChangeCrownHP(rpcParams.Receive.SenderClientId, currentHP.Value);
     }
 
     //Startwerte Setzen
-    private void SetStartStats()
+    [Rpc(SendTo.Server)]
+    private void SetStartStatsRpc()
     {
-        currentHP = maxHP;
-        UpdateHPDisplay();
+        Debug.Log($"CrownHP werden auf {maxHP} gesetzt.");
+        currentHP.Value = maxHP;
         //Debug.Log("Startstats eingegeben für " + this + "!");
     }
 
     //Methode zum Abziehen von HP
-    public void DecreaseHP(int amount)
+    [Rpc(SendTo.Server)]
+    public void DecreaseHPRpc(int amount)
     {
-        currentHP -= amount;
-        if (currentHP < 0)
+        Debug.Log($"CrownHP werden um {amount} verringert.");
+        currentHP.Value -= amount;
+        if (currentHP.Value < 0)
         {
-            currentHP = 0;      //Sicherstellen, dass HP nicht negativ wird
+            currentHP.Value = 0;      //Sicherstellen, dass HP nicht negativ wird
         }
 
-        if (enemyScript != null)
-        {
-            TurnManager.Instance.ChangeCrownHP(enemyScript.playerId, currentHP);
-        }
-        else
-        {
-            //TurnManager.Instance.ChangeCrownHP(PlayerScript.Instance.playerId, currentHP);
-        }
+        ChangeCrownHPOnTurnManagerRpc();
 
         UpdateHPDisplay();
     }
 
     //Methode zum Hinzufügen von HP
-    public void IncreaseHP(int amount)
+    [Rpc(SendTo.Server)]
+    public void IncreaseHPRpc(int amount)
     {
-        currentHP += amount;
-        if (currentHP > maxHP)
+        Debug.Log($"CrownHP werden um {amount} erhöht.");
+        currentHP.Value += amount;
+        if (currentHP.Value > maxHP)
         {
-            currentHP = maxHP;      //Sicherstellen, dass HP nicht über maxHP steigt
+            currentHP.Value = maxHP;      //Sicherstellen, dass HP nicht über maxHP steigt
         }
 
-        if (enemyScript != null)
-        {
-            TurnManager.Instance.ChangeCrownHP(enemyScript.playerId, currentHP);
-        }
-        else
-        {
-            //TurnManager.Instance.ChangeCrownHP(PlayerScript.Instance.playerId, currentHP);
-        }
+        ChangeCrownHPOnTurnManagerRpc();
 
         UpdateHPDisplay();
     }
@@ -89,25 +85,26 @@ public class CrownManager : MonoBehaviour
     //Methode zur Aktualisierung der HP-Anzeige
     private void UpdateHPDisplay()
     {
-        int ones = currentHP % 10;      //Einerstelle
-        int tens = currentHP / 10;      //Zehnerstelle
+        UpdateHPDisplayRpc();
+    }
+
+    [Rpc(SendTo.Everyone)]
+    private void UpdateHPDisplayRpc()
+    {
+        int ones = currentHP.Value % 10;      //Einerstelle
+        int tens = currentHP.Value / 10;      //Zehnerstelle
 
         //Räder entsprechend der aktuellen HP rotieren lassen
         float targetRotationOnes = ones * -36f;
         float targetRotationTens = tens * -36f;
         StartCoroutine(WheelRotator(targetRotationOnes, targetRotationTens));
         OnSetNewHPStatus?.Invoke(targetRotationOnes, targetRotationTens);
+    }
 
-        if (enemyScript != null)
-        {
-            enemyScript.GetHPScriptsSelf().SetCurrentHP(enemyScript.playerId, currentHP);
-            enemyScript.GetHPScriptsEnemy().SetCurrentHP(enemyScript.playerId, currentHP);
-        }
-        else
-        {
-            //PlayerScript.Instance.GetHPScriptsSelf().SetCurrentHP(PlayerScript.Instance.playerId, currentHP);
-            //PlayerScript.Instance.GetHPScriptsEnemy().SetCurrentHP(PlayerScript.Instance.playerId, currentHP);
-        }
+    //Für das erste Anzeigenupdate
+    public void UpdateHPDisplayGlobal()
+    {
+        UpdateHPDisplayRpc();
     }
 
     private IEnumerator WheelRotator(float rotationOnes, float rotationTens)

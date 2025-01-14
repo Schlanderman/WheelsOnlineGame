@@ -82,7 +82,7 @@ public class HeroActions : NetworkBehaviour
 
         //Zuweisung für die Helden
         bool isPlayerOneObject = playerObject.GetComponent<NetworkObject>().OwnerClientId == PlayerScript.LocalInstance.OwnerClientId;
-        bool isHostPlayerOne = IsHost != isPlayerOneObject;
+        bool isHostPlayerOne = IsHost == isPlayerOneObject;
 
         //Bestimme die Helden für den Spieler und den Gegner basierend auf den Bedingungen
         var playerSquare = isHostPlayerOne ? playerOneSquare : playerTwoSquare;
@@ -247,7 +247,7 @@ public class HeroActions : NetworkBehaviour
             yield return StartCoroutine(rodAnimations.ActivateRodAnimation(rodNumber, "Sword", attackSideCrown));
 
             //Schaden an der Krone
-            enemyCrown.DecreaseHP(selfThisHero.GetCrownDamage());
+            if (IsServer) { enemyCrown.DecreaseHPRpc(selfThisHero.GetCrownDamage()); }
         }
     }
 
@@ -287,7 +287,7 @@ public class HeroActions : NetworkBehaviour
             yield return StartCoroutine(rodAnimations.ActivateRodAnimation(rodNumber, "Fireball", attackSideCrown));
 
             //Schaden an der Krone
-            enemyCrown.DecreaseHP(selfThisHero.GetCrownDamage());
+            if (IsServer) { enemyCrown.DecreaseHPRpc(selfThisHero.GetCrownDamage()); }
         }
 
         //Zweiter Angriff
@@ -297,7 +297,7 @@ public class HeroActions : NetworkBehaviour
         yield return StartCoroutine(rodAnimations.ActivateRodAnimation(rodNumber, "Fireball", attackSideCrownHigh));
 
         //Schaden an der Krone
-        enemyCrown.DecreaseHP(selfThisHero.GetCrownDamage());
+        if (IsServer) { enemyCrown.DecreaseHPRpc(selfThisHero.GetCrownDamage()); }
     }
 
     //Archer
@@ -330,7 +330,7 @@ public class HeroActions : NetworkBehaviour
             yield return StartCoroutine(rodAnimations.ActivateRodAnimation(rodNumber, "Arrow", attackSideCrown));
 
             //Schaden an der Krone
-            enemyCrown.DecreaseHP(selfThisHero.GetCrownDamage());
+            if (IsServer) { enemyCrown.DecreaseHPRpc(selfThisHero.GetCrownDamage()); }
         }
     }
 
@@ -367,7 +367,7 @@ public class HeroActions : NetworkBehaviour
             yield return StartCoroutine(rodAnimations.ActivateRodAnimation(rodNumber, "Hammer", attackSideCrown));
 
             //Schaden an der Krone
-            enemyCrown.DecreaseHP(selfThisHero.GetCrownDamage());
+            if (IsServer) { enemyCrown.DecreaseHPRpc(selfThisHero.GetCrownDamage()); }
         }
 
         //Zweite Aktion
@@ -417,7 +417,7 @@ public class HeroActions : NetworkBehaviour
         yield return StartCoroutine(enemyRodAnimations.ActivateRodAnimation(rodNumber, "Dagger", "PopUp"));
 
         //Schaden an der Krone
-        enemyCrown.DecreaseHP(selfThisHero.GetCrownDamage());
+        if (IsServer) { enemyCrown.DecreaseHPRpc(selfThisHero.GetCrownDamage()); }
     }
 
     //Priest
@@ -438,7 +438,7 @@ public class HeroActions : NetworkBehaviour
         yield return StartCoroutine(rodAnimations.ActivateRodAnimation(crownSide, "Book", "PopUp"));
 
         //Spieler-Krone heilen
-        playerCrown.IncreaseHP(selfThisHero.GetHealingAdding());
+        if (IsServer) { playerCrown.IncreaseHPRpc(selfThisHero.GetHealingAdding()); }
 
         //Zweite Aktion
         if (selfOtherHero.PriestChecksAction())

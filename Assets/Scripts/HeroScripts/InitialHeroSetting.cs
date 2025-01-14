@@ -23,6 +23,7 @@ public class InitialHeroSetting : NetworkBehaviour
     public event EventHandler OnDeactivateReadyButton;
     public event EventHandler OnGetHeroes;
     public event EventHandler OnGetPlayerComponents;
+    public event EventHandler OnInitializeCrownHP;
     public event Action<ulong, CrownManager, BulwarkMover, ActionRodAnimManager> OnSetEnemyManagers;
 
     //Multiplayer Events
@@ -58,6 +59,7 @@ public class InitialHeroSetting : NetworkBehaviour
         Debug.Log("Alle sind bereit, Spiel wird gestartet!");
         OnGetPlayerComponents?.Invoke(this, EventArgs.Empty);   //Bekommt HeroActions + EvaluationManager von PlayerScript
         OnGetHeroes?.Invoke(this, EventArgs.Empty);     //Heroes in diesen Manager laden
+        OnInitializeCrownHP?.Invoke(this, EventArgs.Empty);     //CrownHP an den TurnManager senden und damit initialisieren
         SetHeroesOnManagersRpc();     //Heroes in den EvaluationManager und TurnManager laden (auf beiden Instanzen)
     }
 
@@ -92,15 +94,15 @@ public class InitialHeroSetting : NetworkBehaviour
         //Testen, ob die SenderId mit der lokalen ID übereinstimmt
         if (rpcParams.Receive.SenderClientId == NetworkManager.Singleton.LocalClientId)
         {
-            //Wenn die IDs übereinstimmen, dann sind das die Helden vom lokalen Spieler und werden PlayerOne zugewiesen
-            playerOneSquareHero = square;
-            playerOneDiamondHero = diamond;
+            //Wenn die IDs übereinstimmen, dann sind das die Helden vom gengerischen Spieler und werden PlayerTwo zugewiesen
+            playerTwoSquareHero = square;
+            playerTwoDiamondHero = diamond;
         }
         else
         {
-            //Wenn die IDs nicht übereinstimmen, dann sind das die Helden des Gegners und werden PlayerTwo zugewiesen
-            playerTwoSquareHero = square;
-            playerTwoDiamondHero = diamond;
+            //Wenn die IDs nicht übereinstimmen, dann sind das die eigenen Helden und werden PlayerOne zugewiesen
+            playerOneSquareHero = square;
+            playerOneDiamondHero = diamond;
         }
 
         //Nur der Server und das Script, das Spieler 1 entspricht, kann ab hier etwas machen
@@ -129,11 +131,11 @@ public class InitialHeroSetting : NetworkBehaviour
         //Testen, ob die SenderId mit der lokalen ID übereinstimmt
         if (rpcParams.Receive.SenderClientId == NetworkManager.Singleton.LocalClientId)
         {
-            playerTwoEvaluationManager = playerReference.GetEvaluationManager();
+            playerOneEvaluationManager = playerReference.GetEvaluationManager();
         }
         else
         {
-            playerOneEvaluationManager = playerReference.GetEvaluationManager();
+            playerTwoEvaluationManager = playerReference.GetEvaluationManager();
         }
     }
 
@@ -155,10 +157,51 @@ public class InitialHeroSetting : NetworkBehaviour
         playerOneEvaluationManager.SetHeroes(playerOneSquareHero, playerOneDiamondHero);
         playerTwoEvaluationManager.SetHeroes(playerTwoSquareHero, playerTwoDiamondHero);
 
-        TurnManager.Instance.SetHeroes(playerOneSquareHero, playerOneDiamondHero, playerTwoSquareHero, playerTwoDiamondHero);
+        if (IsServer)
+        {
+            SetHeroesToTurnManagerRpc(
+                playerOneSquareHero.GetComponent<NetworkObject>(),
+                playerOneDiamondHero.GetComponent<NetworkObject>(),
+                playerTwoSquareHero.GetComponent<NetworkObject>(),
+                playerTwoDiamondHero.GetComponent<NetworkObject>());
+        }
 
         //Hier wurde alles zugewiesen, also kann das Cover hochgestellt werden
         OnSetCoverUp?.Invoke(this, EventArgs.Empty);
+    }
+
+    //Die Helden nur vom Server aus übertragen, damit bei beiden Turnmanagern die Helden gleich gesetzt sind
+    [Rpc(SendTo.Everyone)]
+    private void SetHeroesToTurnManagerRpc(NetworkObjectReference p1SquareHeroNOReference,NetworkObjectReference p1DiamondHeroNOReference,
+        NetworkObjectReference p2SquareHeroNOReference, NetworkObjectReference p2DiamondHeroNOReference)
+    {
+        if (!p1SquareHeroNOReference.TryGet(out NetworkObject p1SquareHeroNO))
+        {
+            Debug.LogError($"Konnte keine NetworkObject-Komponente in {p1SquareHeroNOReference} finden!");
+            return;
+        }
+        if (!p1DiamondHeroNOReference.TryGet(out NetworkObject p1DiamondHeroNO))
+        {
+            Debug.LogError($"Konnte keine NetworkObject-Komponente in {p1DiamondHeroNOReference} finden!");
+            return;
+        }
+        if (!p2SquareHeroNOReference.TryGet(out NetworkObject p2SquareHeroNO))
+        {
+            Debug.LogError($"Konnte keine NetworkObject-Komponente in {p2SquareHeroNOReference} finden!");
+            return;
+        }
+        if (!p2DiamondHeroNOReference.TryGet(out NetworkObject p2DiamondHeroNO))
+        {
+            Debug.LogError($"Konnte keine NetworkObject-Komponente in {p2DiamondHeroNOReference} finden!");
+            return;
+        }
+
+        Hero p1SquareHero = p1SquareHeroNO.GetComponent<Hero>();
+        Hero p1DiamondHero = p1DiamondHeroNO.GetComponent<Hero>();
+        Hero p2SquareHero = p2SquareHeroNO.GetComponent<Hero>();
+        Hero p2DiamondHero = p2DiamondHeroNO.GetComponent<Hero>();
+
+        TurnManager.Instance.SetHeroes(p1SquareHero, p1DiamondHero, p2SquareHero, p2DiamondHero);
     }
 
     public void SetEnemyManagers(ulong playerId, CrownManager enemyCrownManager, BulwarkMover enemyBulwarkMover, ActionRodAnimManager enemyActionRodManager)

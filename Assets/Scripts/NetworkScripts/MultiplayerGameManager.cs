@@ -177,8 +177,8 @@ public class MultiplayerGameManager : NetworkBehaviour
         NetworkObject copyOfPlayerOneNetwork = newPlayerOneCopyer.GetComponent<NetworkObject>();
         NetworkObject copyOfPlayerTwoNetwork = newPlayerTwoCopyer.GetComponent<NetworkObject>();
 
-        copyOfPlayerOneNetwork.transform.position = gameBoardPlayerOne.transform.position;
-        copyOfPlayerTwoNetwork.transform.position = gameBoardPlayerTwo.transform.position;
+        copyOfPlayerOneNetwork.transform.position = gameBoardPlayerTwo.transform.position;
+        copyOfPlayerTwoNetwork.transform.position = gameBoardPlayerOne.transform.position;
 
         copyOfPlayerOneNetwork.Spawn(true);
         copyOfPlayerTwoNetwork.Spawn(true);
@@ -234,6 +234,6 @@ public class MultiplayerGameManager : NetworkBehaviour
     [Rpc(SendTo.Everyone)]
     private void ActivatePlayerUIElementsRpc()
     {
-        PlayerScript.LocalInstance.ChangePlayerUIElements(false);
+        PlayerScript.LocalInstance.ChangePlayerUIElements(true);
     }
 }

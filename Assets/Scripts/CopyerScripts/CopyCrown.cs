@@ -10,6 +10,7 @@ public class CopyCrown : ManagerCopiesHandler<CrownManager>
     protected override void SetEvents()
     {
         originalManager.OnSetNewHPStatus += CrownManager_OnSetNewHPStatus;
+        if (IsServer) { originalManager.UpdateHPDisplayGlobal(); }  //Ursprüngliches Update düe die HP Anzeige
     }
 
     private void CrownManager_OnSetNewHPStatus(float rotationOnes, float rotationTens)

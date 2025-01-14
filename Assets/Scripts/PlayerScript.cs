@@ -22,12 +22,9 @@ public class PlayerScript : NetworkBehaviour
     [SerializeField] private GameObject heroSpawnPosition;
     [SerializeField] private GameObject playerUIElements;
 
-    private GameObject[] gameboardPositions;
+    [SerializeField] private GameObject[] gameboardPositions;
     private Camera mainCamera;
     private GameObject[] cameraPositions;
-
-    private HPScripts hpScriptsSelf;
-    private HPScripts hpScriptsEnemy;
 
     public override void OnNetworkSpawn()
     {
@@ -40,14 +37,14 @@ public class PlayerScript : NetworkBehaviour
         OnAnyPlayerSpawned?.Invoke(this, new EventArgs());
         //(Wichtiger Code bei 1:17:29!!!)
 
-        gameboardPositions = GameObject.FindGameObjectsWithTag("GameboardPositions");
         mainCamera = Camera.main;
         cameraPositions = GameObject.FindGameObjectsWithTag("CameraPositions");
+        gameboardPositions = GameObject.FindGameObjectsWithTag("GameboardPositions");
+        transform.position = gameboardPositions[(int)OwnerClientId].transform.position;
 
         //Wenn der erste Spieler ist, dann Kameraposition beibehalten
         if (IsServer) { return; }
 
-        ChangePlayerboardServerRpc();
         mainCamera.transform.position = cameraPositions[1].transform.position;
     }
 
@@ -76,22 +73,6 @@ public class PlayerScript : NetworkBehaviour
         return wheelManager;
     }
 
-    public HPScripts GetHPScriptsSelf()
-    {
-        return hpScriptsSelf;
-    }
-
-    public HPScripts GetHPScriptsEnemy()
-    {
-        return hpScriptsEnemy;
-    }
-
-    public void SetHPScripts(HPScripts scriptSelf, HPScripts scriptEnemy)
-    {
-        hpScriptsSelf = scriptSelf;
-        hpScriptsEnemy = scriptEnemy;
-    }
-
     public void ChangePlayerUIElements(bool state)
     {
         if (IsOwner)
@@ -101,12 +82,6 @@ public class PlayerScript : NetworkBehaviour
     }
 
 
-
-    [ServerRpc(RequireOwnership = false)]
-    private void ChangePlayerboardServerRpc()
-    {
-        gameObject.transform.position = gameboardPositions[1].transform.position;
-    }
 
     [Rpc(SendTo.Server)]
     private void SpawnParentsForHeroesRpc()

@@ -7,7 +7,7 @@ using UnityEngine;
 
 public class TurnManager : NetworkBehaviour
 {
-    public static TurnManager Instance {  get; private set; }
+    public static TurnManager Instance { get; private set; }
 
     //Overall Events
     public event EventHandler OnResetRound;
@@ -22,12 +22,14 @@ public class TurnManager : NetworkBehaviour
     public event EventHandler OnApplyEnergyPanels;
 
     //Dictionaries
-    private Dictionary<ulong, bool> playerRoundFinishedDictionary;
     private Dictionary<ulong, int> crownHPDictionary;
+    //Nur Debug
+    [SerializeField] private ulong[] playerIds = new ulong[2];
+    [SerializeField] private int[] playerHps = new int[2];
 
     //Heldenzuweisung
-    private readonly Hero[] playerHeroes = new Hero[2];     //Helden des Spielers
-    private readonly Hero[] enemyHeroes = new Hero[2];      //Helden des Gegners
+    private Hero[] playerHeroes = new Hero[2];     //Helden des Spielers
+    private Hero[] enemyHeroes = new Hero[2];      //Helden des Gegners
 
     private int currentTurnStep = 1;
 
@@ -35,7 +37,6 @@ public class TurnManager : NetworkBehaviour
     {
         Instance = this;
 
-        playerRoundFinishedDictionary = new Dictionary<ulong, bool>();
         crownHPDictionary = new Dictionary<ulong, int>();
     }
 
@@ -48,16 +49,7 @@ public class TurnManager : NetworkBehaviour
 
     private void MultiplayerGameManager_OnPlayersRoundIsFinished(object sender, EventArgs e)
     {
-        BeginTurnRpc();
-    }
-
-    //Die Spieler haben alle ihre Räder gedreht und die Animationen und auswertungen können nun beginnen
-    [Rpc(SendTo.Everyone)]
-    private void BeginTurnRpc()
-    {
-        //Resette den aktuellen Schritt und starte den Zugzyklus
-        currentTurnStep = 1;
-        StartCoroutine(ProcessTurnStep());
+        BeginTurn();
     }
 
     public void SetHeroes(Hero playerSquare, Hero playerDiamond, Hero enemySquare, Hero enemyDiamond)
@@ -76,6 +68,10 @@ public class TurnManager : NetworkBehaviour
     //Logic um den Spielzyklus auszuwerten
     public void BeginTurn()
     {
+        //Nur ausführen, wenn es der Server ist
+        if (!IsServer) { return; }
+        Debug.Log("Der Server startet die Turnreihenfolge.");
+
         //Resette den aktuellen Schritt und starte den Zugzyklus
         currentTurnStep = 1;
         StartCoroutine(ProcessTurnStep());
@@ -375,16 +371,23 @@ public class TurnManager : NetworkBehaviour
         yield return null;
     }
 
-    public void ChangePlayerRoundFinished(ulong playerId, bool state)
-    {
-        playerRoundFinishedDictionary[playerId] = state;
-    }
 
+
+
+    //Hilfsfunktionen
     public void ChangeCrownHP(ulong playerId, int hp)
     {
         Debug.Log($"Spieler {playerId} hat nun {hp} HP!");
 
+        ChangeCrownHPRpc(playerId, hp);
+    }
+
+    [Rpc(SendTo.Everyone)]
+    private void ChangeCrownHPRpc(ulong playerId, int hp)
+    {
         crownHPDictionary[playerId] = hp;
+
+        OnCrownHPChanged();
     }
 
     public IEnumerator InitializeReadynessLate()
@@ -396,6 +399,17 @@ public class TurnManager : NetworkBehaviour
     {
         yield return new WaitForEndOfFrame();
 
+        Debug.Log("Hier sollten die Ursprungs HP initialisiert werden.");
         OnInitializeCrownHP?.Invoke(this, EventArgs.Empty);
+    }
+
+    private void OnCrownHPChanged()
+    {
+        //Debug.Log("HP haben sich geändert");
+        if (crownHPDictionary.Count == 2)
+        {
+            playerIds = crownHPDictionary.Keys.ToArray();
+            playerHps = crownHPDictionary.Values.ToArray();
+        }
     }
 }

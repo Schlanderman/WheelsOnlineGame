@@ -51,9 +51,6 @@ public class DebugMultiplayerUI : MonoBehaviour
         enemyHud.SetManagers(newPlayerTwo.GetComponent<EnemyScript>().GetSelectionRotator(), newPlayerTwo.GetComponent<EnemyScript>().GetWheelManager());
         enemyHud.SetEnemyScript(newPlayerTwo.GetComponent<EnemyScript>());
 
-        newPlayerOne.GetComponent<PlayerScript>().SetHPScripts(hpScriptsPlayerOne, hpScriptsPlayerTwo);
-        newPlayerTwo.GetComponent<EnemyScript>().SetHPScripts(hpScriptsPlayerTwo, hpScriptsPlayerOne);
-
         //Dies hier wird nichts mehr machen!
         StartCoroutine(TurnManager.Instance.InitializeReadynessLate());
         StartCoroutine(TurnManager.Instance.InitializeCrownHPLate());
