@@ -220,17 +220,6 @@ public class WheelManager : MonoBehaviour
             wheel.StopWheel();
         }
 
-        //Kann später weg
-        //Hier übergeben, dass der Spieler bereit ist
-        //if (enemyScript != null)
-        //{
-        //    TurnManager.Instance.ChangePlayerRoundFinished(enemyScript.playerId, true);
-        //}
-        //else
-        //{
-        //    //TurnManager.Instance.ChangePlayerRoundFinished(PlayerScript.Instance.playerId, true);
-        //}
-
         //Dem MultiplayerGameManager ubermitteln, dass der Client alle Turns verbraucht hat
         MultiplayerGameManager.Instance.SetLocalPlayerRoundFinished(true);
 
@@ -242,8 +231,6 @@ public class WheelManager : MonoBehaviour
             wheels[3].GetTopSymbolIndex(),
             wheels[4].GetTopSymbolIndex()
             );
-
-        //TurnManager.Instance.TestForReadyness();
     }
 
     private void ResetRound()

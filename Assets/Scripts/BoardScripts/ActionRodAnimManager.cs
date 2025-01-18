@@ -1,6 +1,5 @@
 using System;
 using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 
 public class ActionRodAnimManager : MonoBehaviour
@@ -28,8 +27,8 @@ public class ActionRodAnimManager : MonoBehaviour
         }
     }
 
-    //Animation ausführen (ohne Zeitrückgabe)
-    public IEnumerator ActivateRodAnimation(int rodNumber, string sprite, string animation)
+    //Animation ausführen
+    public float ActivateRodAnimation(int rodNumber, string sprite, string animation)
     {
         switch (sprite)
         {
@@ -67,18 +66,30 @@ public class ActionRodAnimManager : MonoBehaviour
         }
 
         OnActivateActionRodAnimation?.Invoke(rodNumber, sprite, animation);
-        yield return StartCoroutine(AnimationMaker(rodNumber, animation));
+        return AnimationMaker(rodNumber, animation);
     }
 
-    private IEnumerator AnimationMaker(int rodNumber, string animation)
+    private float AnimationMaker(int rodNumber, string animation)
     {
         //Animation triggern
         rodAnimator[rodNumber].SetTrigger(animation);
 
-        //Warte, bis die Animation fertig ist
-        yield return new WaitForSeconds(rodAnimator[rodNumber].GetCurrentAnimatorStateInfo(0).length);
+        //Länge der Animation ermitteln
+        float animationLength = rodAnimator[rodNumber].GetCurrentAnimatorStateInfo(0).length;
 
-        yield return new WaitForSeconds(0.5f);
+        //Coroutine für die Deaktivierung starten
+        StartCoroutine(HandleAnimationCompletion(rodNumber, animationLength));
+
+        //Animationsdauer zurückgeben
+        return animationLength;
+    }
+
+    private IEnumerator HandleAnimationCompletion(int rodNumber, float animationLength)
+    {
+        //Warten, bis die Animation fertig ist
+        yield return new WaitForSeconds(animationLength + 0.5f);
+
+        //Deaktiviere alle Sprites
         rodSprite[rodNumber].DeactivateAll();
     }
 
@@ -119,6 +130,6 @@ public class ActionRodAnimManager : MonoBehaviour
                 break;
         }
 
-        StartCoroutine(AnimationMaker(rodNumber, animation));
+        //StartCoroutine(AnimationMaker(rodNumber, animation));
     }
 }

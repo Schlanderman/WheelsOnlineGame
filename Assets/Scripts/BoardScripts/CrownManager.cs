@@ -10,8 +10,8 @@ public class CrownManager : NetworkBehaviour
 
     [SerializeField] private int maxHP = 10;      //Maximaler HP-Wert, mit dem der Spieler beginnt
     //CrownHP als Networkvariable, damit nur der Server diese ändern kann
-    private NetworkVariable<int> currentHP = new NetworkVariable<int>(
-        10,     //Startwert
+    public NetworkVariable<int> currentHP = new NetworkVariable<int>(
+        0,      //Startwert
         NetworkVariableReadPermission.Everyone,     //Clients dürfen den Wert lesen
         NetworkVariableWritePermission.Server       //Nur der Server darf den Wert schreiben
         );
@@ -25,6 +25,8 @@ public class CrownManager : NetworkBehaviour
 
     private void Start()
     {
+        currentHP.OnValueChanged += HPValueChanged;
+
         if (IsServer) { SetStartStatsRpc(); }
 
         InitialHeroSetting.Instance.OnInitializeCrownHP += TurnManager_OnInitializeCrownHP;
@@ -62,8 +64,6 @@ public class CrownManager : NetworkBehaviour
         }
 
         ChangeCrownHPOnTurnManagerRpc();
-
-        UpdateHPDisplay();
     }
 
     //Methode zum Hinzufügen von HP
@@ -78,18 +78,15 @@ public class CrownManager : NetworkBehaviour
         }
 
         ChangeCrownHPOnTurnManagerRpc();
-
-        UpdateHPDisplay();
     }
 
     //Methode zur Aktualisierung der HP-Anzeige
-    private void UpdateHPDisplay()
+    private void HPValueChanged(int previousValue, int newValue)
     {
-        UpdateHPDisplayRpc();
+        UpdateHPDisplay();
     }
 
-    [Rpc(SendTo.Everyone)]
-    private void UpdateHPDisplayRpc()
+    private void UpdateHPDisplay()
     {
         int ones = currentHP.Value % 10;      //Einerstelle
         int tens = currentHP.Value / 10;      //Zehnerstelle
@@ -97,14 +94,15 @@ public class CrownManager : NetworkBehaviour
         //Räder entsprechend der aktuellen HP rotieren lassen
         float targetRotationOnes = ones * -36f;
         float targetRotationTens = tens * -36f;
-        StartCoroutine(WheelRotator(targetRotationOnes, targetRotationTens));
         OnSetNewHPStatus?.Invoke(targetRotationOnes, targetRotationTens);
+        StartCoroutine(WheelRotator(targetRotationOnes, targetRotationTens));
     }
 
     //Für das erste Anzeigenupdate
     public void UpdateHPDisplayGlobal()
     {
-        UpdateHPDisplayRpc();
+        currentHP.Value = 11;
+        currentHP.Value = 10;
     }
 
     private IEnumerator WheelRotator(float rotationOnes, float rotationTens)

@@ -1,10 +1,5 @@
-using System.Collections;
-using System.Collections.Generic;
-using Unity.VisualScripting;
 using UnityEngine;
-using System;
 using Unity.Netcode;
-using Unity.Collections;
 
 public class Hero : NetworkBehaviour
 {
@@ -16,8 +11,16 @@ public class Hero : NetworkBehaviour
     [SerializeField] Material goldMaterial;
 
     private HeroStats currentStats;
-    private int xp = 0;
-    private int currentEnergy = 0;  //Aktuelle Energie des Helden
+    private NetworkVariable<int> xp = new NetworkVariable<int>(
+        0,  //Startwert
+        NetworkVariableReadPermission.Everyone,     //Clients dürfen den Wert lesen
+        NetworkVariableWritePermission.Server       //Nur der Server darf den Wert schreiben
+        );
+    private NetworkVariable<int> currentEnergy = new NetworkVariable<int>(  //Aktuelle Energie des Helden
+        0,  //Startwert
+        NetworkVariableReadPermission.Everyone,     //Clients dürfen den Wert lesen
+        NetworkVariableWritePermission.Server       //Nur der Server darf den Wert schreiben
+        );
 
     private HeroUIUpdater uiUpdater;
     private EnergyBar energyBar;
@@ -26,7 +29,7 @@ public class Hero : NetworkBehaviour
     private bool canSendBomb = false;
     private bool canMakeAction = false;
 
-    private HeroActions heroActions;
+    private HeroActionsActivator heroActionsActivator;
 
     private void Awake()
     {
@@ -36,20 +39,20 @@ public class Hero : NetworkBehaviour
     //Methode, um XP hinzuzufügen und den Rang zu erhöhen
     public void AddXP(int amount)
     {
-        xp += amount;
+        xp.Value += amount;
         //Debug.Log(heroType + " hat nun " + xp + " xp.");
-        if (xp >= 6)
+        if (xp.Value >= 6)
         {
             Debug.Log(this + " hat ein Level Up!");
             RankUp();
         }
-        xpLightManager.UpdateXPLamps(xp);
+        xpLightManager.UpdateXPLamps(xp.Value);
     }
 
     //Methode für den Rangaufstieg
     private void RankUp()
     {
-        xp = 0;
+        xp.Value = 0;
         if (heroRank == HeroRank.Gold)
         {
             //SendBomb();     //Sende Bombe bei Gold
@@ -71,13 +74,13 @@ public class Hero : NetworkBehaviour
     private void UpdateHeroStats()
     {
         currentStats = HeroManager.heroData[(heroType, heroRank)];
-        energyBar.UpdateEnergieDisplay(currentEnergy, GetMaxEnergy());
+        energyBar.UpdateEnergieDisplay(currentEnergy.Value, GetMaxEnergy());
         uiUpdater.UpdateHeroDisplay(this);
     }
 
-    public void SetHeroActions(HeroActions actions)
+    public void SetHeroActions(HeroActionsActivator actionsActivator)
     {
-        heroActions = actions;
+        heroActionsActivator = actionsActivator;
     }
 
     private void UpdateHeroAppearence()
@@ -107,53 +110,53 @@ public class Hero : NetworkBehaviour
     }
 
     //Bombe Senden
-    public IEnumerator SendBomb()
+    public float SendBomb()
     {
         Debug.Log(heroType + " hat eine Bombe geschickt!");
-        yield return StartCoroutine(heroActions.SendBomb());
+        return heroActionsActivator.SendBomb();
     }
 
     //Methode zur Energieerfassung
     public void AddEnergy(int amount)
     {
-        currentEnergy += amount;
+        currentEnergy.Value += amount;
         int maxEnergy = GetMaxEnergy();
-        if (currentEnergy >= maxEnergy)
+        if (currentEnergy.Value >= maxEnergy)
         {
-            currentEnergy = maxEnergy;
+            currentEnergy.Value = maxEnergy;
             canMakeAction = true;
         }
 
-        energyBar.UpdateEnergieDisplay(currentEnergy, maxEnergy);
+        energyBar.UpdateEnergieDisplay(currentEnergy.Value, maxEnergy);
     }
 
     //Methode um Energie abzuziehen
     public void DecreaseEnergy(int amount)
     {
-        currentEnergy -= amount;
-        if (currentEnergy < 0)
+        currentEnergy.Value -= amount;
+        if (currentEnergy.Value < 0)
         {
-            currentEnergy = 0;
+            currentEnergy.Value = 0;
         }
 
-        energyBar.UpdateEnergieDisplay(currentEnergy, GetMaxEnergy());
+        energyBar.UpdateEnergieDisplay(currentEnergy.Value, GetMaxEnergy());
     }
 
-    public IEnumerator ActivateAction(HeroType type)
+    public float ActivateAction(HeroType type)
     {
         Debug.Log(type + " führt seine Aktion aus!");
 
         //Vielleicht mit extra Coroutine
-        currentEnergy = 0;
-        energyBar.UpdateEnergieDisplay(currentEnergy, GetMaxEnergy());
+        currentEnergy.Value = 0;
+        energyBar.UpdateEnergieDisplay(currentEnergy.Value, GetMaxEnergy());
 
-        yield return StartCoroutine(heroActions.ActivateHeroAction(this));
+        return heroActionsActivator.ActivateHeroAction(this);
     }
 
-    public IEnumerator ActivateSecondPriest(HeroType type)
+    public float ActivateSecondPriest(HeroType type)
     {
         Debug.Log(type + " führt seine zweite Aktion aus!");
-        yield return StartCoroutine(heroActions.PriestSecondAction());
+        return heroActionsActivator.PriestSecondAction();
     }
 
 
@@ -310,11 +313,11 @@ public class Hero : NetworkBehaviour
 
     public int GetCurrentEnergy()
     {
-        return currentEnergy;
+        return currentEnergy.Value;
     }
 
     public bool GetPriestBoosted()
     {
-        return heroActions.GetPriestBoosted();
+        return heroActionsActivator.GetPriestBoosted();
     }
 }

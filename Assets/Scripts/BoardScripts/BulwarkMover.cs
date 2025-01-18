@@ -1,51 +1,65 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using Unity.Netcode;
 using UnityEngine;
 
-public class BulwarkMover : MonoBehaviour
+public class BulwarkMover : NetworkBehaviour
 {
     [SerializeField] private Transform bulwark;             //Das Objekt, das das Bulwark darstellt
     [SerializeField] private float restingPosition = 0f;    //Die Position, wenn das Bulwark auf 0 steht
     [SerializeField] private float startYPosition = 0.42f;  //Die Startposition des Bulwark wenn es mindestens 1 ist
     [SerializeField] private float stepSize = 0.07f;        //Die Größe jedes Schritts (Verschiebung pro Energieeinheit)
 
-    private int bulwarkLevel = 0;
+    public NetworkVariable<int> bulwarkLevel = new NetworkVariable<int>(
+        0,  //Startwert
+        NetworkVariableReadPermission.Everyone,     //Clients dürfen den Wert lesen
+        NetworkVariableWritePermission.Server       //Nur der Server darf den Wert schreiben
+        );
 
     //Events
     public event Action<float> OnMoveBulwark;
 
+    private void Start()
+    {
+        bulwarkLevel.OnValueChanged += BulwarkLevelChanged;
+    }
+
     public void increaseBulwark(int height)
     {
-        bulwarkLevel += height;
-        if (bulwarkLevel >= 5)
+        bulwarkLevel.Value += height;
+        if (bulwarkLevel.Value >= 5)
         {
-            bulwarkLevel = 5;
+            bulwarkLevel.Value = 5;
         }
-        UpdateBulwark();
     }
 
     public void decreaseBulwark(int height)
     {
-        bulwarkLevel -= height;
-        if (bulwarkLevel <= 0)
+        bulwarkLevel.Value -= height;
+        if (bulwarkLevel.Value <= 0)
         {
-            bulwarkLevel = 0;
+            bulwarkLevel.Value = 0;
         }
+    }
+
+    //Methode, wenn sich das Bulwark bewegen soll
+    private void BulwarkLevelChanged(int previousValue, int newValue)
+    {
         UpdateBulwark();
     }
 
     //Methode um das Bulwark zu aktualisieren
     private void UpdateBulwark()
     {
-        if (bulwarkLevel == 0)
+        if (bulwarkLevel.Value == 0)
         {
             StartCoroutine(MoveBulwark(restingPosition));
         }
         else
         {
             //Berechne die neue Y-Position basierend auf der Höhe
-            float newYPosition = startYPosition + (bulwarkLevel * stepSize);
+            float newYPosition = startYPosition + (bulwarkLevel.Value * stepSize);
 
             //Setze die neue Y-Position des Bulwark
             StartCoroutine(MoveBulwark(newYPosition));
@@ -84,6 +98,6 @@ public class BulwarkMover : MonoBehaviour
 
     public int GetBulwarkLevel()
     {
-        return bulwarkLevel;
+        return bulwarkLevel.Value;
     }
 }

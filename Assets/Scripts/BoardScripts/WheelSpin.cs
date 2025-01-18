@@ -1,8 +1,8 @@
 using System.Collections;
-using System.Collections.Generic;
+using Unity.Netcode;
 using UnityEngine;
 
-public class WheelSpin : MonoBehaviour
+public class WheelSpin : NetworkBehaviour
 {
     [SerializeField] private float spinSpeed = 500f;     //Anfängliche Geschwindigkeit der Rotation
     [SerializeField] private float slowDownRate = 2f;    //Rate, mit der das Rad langsamer wird
@@ -117,7 +117,7 @@ public class WheelSpin : MonoBehaviour
 
         //Die nächste Symbolposition berechnen (vielfaches von 45°)
         float snappedRotation = Mathf.Round(currentXRotation / 45f) * 45f;
-        finalRotation = Mathf.Round(GetXRotationConsistent(transform) / 45) * 45;
+        SetFinalRotationRpc(Mathf.Round(GetXRotationConsistent(transform) / 45) * 45);
         //Debug.Log(this + " war " + currentXRotation + " und ist gesnapped auf: " + snappedRotation);
 
         //Starte die Coroutine für die sanfte Rotation
@@ -183,6 +183,18 @@ public class WheelSpin : MonoBehaviour
             yield return null;
         }
 
+        SetSnappedRotationRpc(targetRotation);
+    }
+
+    [Rpc(SendTo.Everyone)]
+    private void SetFinalRotationRpc(float targetRotation)
+    {
+        finalRotation = targetRotation;
+    }
+
+    [Rpc(SendTo.Everyone)]
+    private void SetSnappedRotationRpc(Quaternion targetRotation)
+    {
         transform.rotation = targetRotation;
     }
 

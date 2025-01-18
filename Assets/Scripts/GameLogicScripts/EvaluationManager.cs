@@ -1,9 +1,10 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using Unity.Netcode;
 using UnityEngine;
 
-public class EvaluationManager : MonoBehaviour
+public class EvaluationManager : NetworkBehaviour
 {
     [SerializeField] private BulwarkMover bulwarkMover;
 
@@ -82,8 +83,8 @@ public class EvaluationManager : MonoBehaviour
         }
 
         //Berechne die XP für die Square- und Diamant-Helden
-        StartCoroutine(UpdateHeroEnergy(squareHero, 0, xpSquareCount, wheelsActivateAnimationSquare));
-        StartCoroutine(UpdateHeroEnergy(diamondHero, 0, xpDiamondCount, wheelsActivateAnimationDiamond));
+        UpdateHeroEnergyRpc(squareHero.gameObject.GetComponent<NetworkObject>(), 0, xpSquareCount, wheelsActivateAnimationSquare);
+        UpdateHeroEnergyRpc(diamondHero.gameObject.GetComponent<NetworkObject>(), 0, xpDiamondCount, wheelsActivateAnimationDiamond);
     }
 
     public void EvaluateHammerCount(WheelSpin[] wheels)
@@ -136,7 +137,7 @@ public class EvaluationManager : MonoBehaviour
         }
 
         //Bulwark-Level erhöhen, wenn genügend Hämmer gerollt wurden
-        StartCoroutine(UpdateBulwark(hammerCount, wheelsActivateAnimation));
+        UpdateBulwarkRpc(hammerCount, wheelsActivateAnimation);
     }
 
     public void EvaluateEnergyCount(WheelSpin[] wheels)
@@ -200,8 +201,22 @@ public class EvaluationManager : MonoBehaviour
         }
 
         //Berechne die Energie für die Square- und Diamant-Helden
-        StartCoroutine(UpdateHeroEnergy(squareHero, squareCount, 0, wheelsActivateAnimationSquare));
-        StartCoroutine(UpdateHeroEnergy(diamondHero, diamondCount, 0, wheelsActivateAnimationDiamond));
+        UpdateHeroEnergyRpc(squareHero.gameObject.GetComponent<NetworkObject>(), squareCount, 0, wheelsActivateAnimationSquare);
+        UpdateHeroEnergyRpc(diamondHero.gameObject.GetComponent<NetworkObject>(), diamondCount, 0, wheelsActivateAnimationDiamond);
+    }
+
+    [Rpc(SendTo.Everyone)]
+    private void UpdateHeroEnergyRpc(NetworkObjectReference heroNetworkObjectReference, int symbolCount, int gainedXP, bool[] whatWheels)
+    {
+        if (!heroNetworkObjectReference.TryGet(out NetworkObject heroNetworkObject))
+        {
+            Debug.LogWarning($"{heroNetworkObjectReference} enthält kein NetworkObject!");
+            return;
+        }
+
+        Hero hero = heroNetworkObject.GetComponent<Hero>();
+
+        StartCoroutine(UpdateHeroEnergy(hero, symbolCount, gainedXP, whatWheels));
     }
 
     private IEnumerator UpdateHeroEnergy(Hero hero, int symbolCount, int gainedXP, bool[] whatWheels)
@@ -248,6 +263,9 @@ public class EvaluationManager : MonoBehaviour
             }
         }
 
+        //Nur XP an den Helden geben, wenn es der Server ausführt
+        if (!IsServer) { yield break; }
+
         yield return new WaitForSeconds(0.8f);
 
         if (gainedXP >= 1)
@@ -261,6 +279,12 @@ public class EvaluationManager : MonoBehaviour
         }
 
         Debug.Log(hero + " hat " + gainedXP + " XP, und " + energyGained + " Energie erhalten");
+    }
+
+    [Rpc(SendTo.Everyone)]
+    private void UpdateBulwarkRpc(int hammerCount, bool[] whatWheels)
+    {
+        StartCoroutine(UpdateBulwark(hammerCount, whatWheels));
     }
 
     private IEnumerator UpdateBulwark(int hammerCount, bool[] whatWheels)
@@ -283,6 +307,9 @@ public class EvaluationManager : MonoBehaviour
                 }
             }
         }
+
+        //Nur den Bulwark erhöhen, wenn es der Server ausführt
+        if (!IsServer) { yield break; }
 
         yield return new WaitForSeconds(0.8f);
 
