@@ -5,26 +5,30 @@ using UnityEngine;
 
 public class HeroActionsActivator : NetworkBehaviour
 {
-    [SerializeField] private CrownManager playerCrown;       //Spielerkrone
-    [SerializeField] private CrownManager enemyCrown;        //Gegnerkrone
+    private CrownManager playerCrown;       //Spielerkrone
+    private CrownManager enemyCrown;        //Gegnerkrone
     
-    [SerializeField] private BulwarkMover playerBulwark;     //Spielerbulwark
-    [SerializeField] private BulwarkMover enemyBulwark;      //Gegnerbulwark
+    private BulwarkMover playerBulwark;     //Spielerbulwark
+    private BulwarkMover enemyBulwark;      //Gegnerbulwark
     
-    [SerializeField] private ActionRodAnimManager playerRodAnimations;   //Spieleranimationen
-    [SerializeField] private ActionRodAnimManager enemyRodAnimations;    //Gegneranimationen
+    private ActionRodAnimManager playerRodAnimations;   //Spieleranimationen
+    private ActionRodAnimManager enemyRodAnimations;    //Gegneranimationen
     
-    [SerializeField] private Hero selfThisHero;          //Der Aktive Held
-    [SerializeField] private Hero selfOtherHero;         //Der andere Held auf Spielerseite
-    [SerializeField] private Hero enemySquareHero;       //Square Held auf Gegnerseite
-    [SerializeField] private Hero enemyDiamondHero;      //Diamond Held auf Gegnerseite
+    private Hero selfThisHero;          //Der Aktive Held
+    private Hero selfOtherHero;         //Der andere Held auf Spielerseite
+    private Hero enemySquareHero;       //Square Held auf Gegnerseite
+    private Hero enemyDiamondHero;      //Diamond Held auf Gegnerseite
     
-    [SerializeField] private HeroAnimationManager heroAnimationManager;      //Der Animationsmanager des Helden
+    private HeroAnimationManager heroAnimationManager;      //Der Animationsmanager des Helden
 
     private string thisHeroSide = "Square";
     private string thisUserSide = "Player";
 
-    private bool priestBoostedOtherHero = false;     //Wert, ob ein Priester den anderen Helden Energie gegeben hat
+    [SerializeField] private NetworkVariable<bool> priestBoostedOtherHero = new NetworkVariable<bool>(   //Wert, ob ein Priester den anderen Helden Energie gegeben hat
+        false,  //Startwert
+        NetworkVariableReadPermission.Everyone,     //Clients dürfen den Wert lesen
+        NetworkVariableWritePermission.Server       //Nur der Owner darf den Wert schreiben
+        );
 
     //Methode um alle Felder zu befüllen
     public void SetManagers(
@@ -57,48 +61,46 @@ public class HeroActionsActivator : NetworkBehaviour
     }
 
     //Auswählen, welcher Held die Aktion ausführt
-    public float ActivateHeroAction(Hero hero)
+    public IEnumerator ActivateHeroAction(Hero hero)
     {
         HeroType hType = hero.GetHeroType();
-        float finalDelay = 0;
 
         switch (hType)
         {
             case HeroType.Warrior:
-                finalDelay = WarriorAction();
+                yield return StartCoroutine(WarriorAction());
                 break;
 
             case HeroType.Mage:
-                finalDelay = MageAction();
+                yield return StartCoroutine(MageAction());
                 break;
 
             case HeroType.Archer:
-                finalDelay = ArcherAction();
+                yield return StartCoroutine(ArcherAction());
                 break;
 
             case HeroType.Engineer:
-                finalDelay = EngineerAction();
+                yield return StartCoroutine(EngineerAction());
                 break;
 
             case HeroType.Assassin:
-                finalDelay = AssassinAction();
+                yield return StartCoroutine(AssassinAction());
                 break;
 
             case HeroType.Priest:
-                finalDelay = PriestAction();
+                yield return StartCoroutine(PriestAction());
                 break;
 
             default:
                 Debug.LogError(hType + " ist kein valider HeroType!");
-                break;
+                yield break;
         }
 
         //Jeder Held, der eine Aktion ausführt bekommt 2 XP
-        DelayedFunctionCallCoroutine(hero.AddXP, 2, finalDelay);
-        return finalDelay;
+        if (IsServer) { hero.AddXP(2); }
     }
 
-    public float SendBomb()
+    public void SendBomb()
     {
         //Auswerten, wo die Animation Stattfinden soll (Standard ist Square)
         int rodNumber = 1;
@@ -109,12 +111,12 @@ public class HeroActionsActivator : NetworkBehaviour
 
         //Animation
         heroAnimationManager.TriggerHeroAction();
-        return playerRodAnimations.ActivateRodAnimation(rodNumber, "Bomb", "PopUp");
+        StartCoroutine(playerRodAnimations.ActivateRodAnimation(rodNumber, "Bomb", "PopUp"));
     }
 
     //Aktionen für die einzelnen Helden
     //Warrior
-    private float WarriorAction()
+    private IEnumerator WarriorAction()
     {
         //Auswerten, wo die Animation Stattfinden soll (Standard ist Square)
         int rodNumber = 0;
@@ -127,33 +129,29 @@ public class HeroActionsActivator : NetworkBehaviour
             attackSideCrown = "AttackLeftCrown";
         }
 
-        float finalDelay = 0f;
         if (enemyBulwark.GetBulwarkLevel() >= 1)
         {
             //Animation
             heroAnimationManager.TriggerHeroAction();
-            finalDelay = playerRodAnimations.ActivateRodAnimation(rodNumber, "Sword", attackSideBulwark);
+            yield return StartCoroutine(playerRodAnimations.ActivateRodAnimation(rodNumber, "Sword", attackSideBulwark));
 
             //Schaden am Bulwark
-            DelayedFunctionCallCoroutine(enemyBulwark.decreaseBulwark, selfThisHero.GetBulwarkDamage(), finalDelay);
+            enemyBulwark.decreaseBulwark(selfThisHero.GetBulwarkDamage());
         }
         else
         {
             //Animation
             heroAnimationManager.TriggerHeroAction();
-            finalDelay = playerRodAnimations.ActivateRodAnimation(rodNumber, "Sword", attackSideCrown);
+            yield return StartCoroutine(playerRodAnimations.ActivateRodAnimation(rodNumber, "Sword", attackSideCrown));
 
             //Schaden an der Krone
-            if (IsServer) { DelayedFunctionCallCoroutine(enemyCrown.DecreaseHPRpc, selfThisHero.GetCrownDamage(), finalDelay); }
+            if (IsServer) { enemyCrown.DecreaseHPRpc(selfThisHero.GetCrownDamage()); }
         }
-
-        return finalDelay;
     }
 
     //Mage
-    private float MageAction()
+    private IEnumerator MageAction()
     {
-        Debug.Log("MageAction wird ausgeführt!");
         //Auswerten, wo die Animation Stattfinden soll (Standard ist Square)
         int rodNumber = 0;
         string attackSideBulwark = "AttackRightBulwark";
@@ -168,42 +166,36 @@ public class HeroActionsActivator : NetworkBehaviour
         }
 
         //Erster Angriff
-        float finalDelay = 0f;
         if (enemyBulwark.GetBulwarkLevel() >= 1)
         {
             //Animation
-            Debug.Log("Erster Angriff mit Bulwarklevel: " + enemyBulwark);
             heroAnimationManager.TriggerHeroAction();
-            finalDelay = playerRodAnimations.ActivateRodAnimation(rodNumber, "Fireball", attackSideBulwark);
+            yield return StartCoroutine(playerRodAnimations.ActivateRodAnimation(rodNumber, "Fireball", attackSideBulwark));
 
             //Schaden am Bulwark
-            DelayedFunctionCallCoroutine(enemyBulwark.decreaseBulwark, selfThisHero.GetBulwarkDamage(), finalDelay);
+            enemyBulwark.decreaseBulwark(selfThisHero.GetBulwarkDamage());
         }
         else
         {
             //Animation
-            Debug.Log("Erster Angriff ohne Bulwark");
             heroAnimationManager.TriggerHeroAction();
-            finalDelay = playerRodAnimations.ActivateRodAnimation(rodNumber, "Fireball", attackSideCrown);
+            yield return StartCoroutine(playerRodAnimations.ActivateRodAnimation(rodNumber, "Fireball", attackSideCrown));
 
             //Schaden an der Krone
-            if (IsServer) { DelayedFunctionCallCoroutine(enemyCrown.DecreaseHPRpc, selfThisHero.GetCrownDamage(), finalDelay); }
+            if (IsServer) { enemyCrown.DecreaseHPRpc(selfThisHero.GetCrownDamage()); }
         }
 
         //Zweiter Angriff
         //Animation
-        Debug.Log("Zweiter Angriff!");
         heroAnimationManager.TriggerHeroAction();
-        finalDelay += playerRodAnimations.ActivateRodAnimation(rodNumber, "Fireball", attackSideCrownHigh);
+        yield return StartCoroutine(playerRodAnimations.ActivateRodAnimation(rodNumber, "Fireball", attackSideCrownHigh));
 
         //Schaden an der Krone
-        if (IsServer) { DelayedFunctionCallCoroutine(enemyCrown.DecreaseHPRpc, selfThisHero.GetCrownDamage(), finalDelay); }
-
-        return finalDelay;
+        if (IsServer) { enemyCrown.DecreaseHPRpc(selfThisHero.GetCrownDamage()); }
     }
 
     //Archer
-    private float ArcherAction()
+    private IEnumerator ArcherAction()
     {
         //Auswerten, wo die Animation Stattfinden soll (Standard ist Square)
         int rodNumber = 0;
@@ -216,31 +208,28 @@ public class HeroActionsActivator : NetworkBehaviour
             attackSideCrown = "ArrowLeftCrown";
         }
 
-        float finalDelay = 0f;
         if (enemyBulwark.GetBulwarkLevel() >= 3)
         {
             //Animation
             heroAnimationManager.TriggerHeroAction();
-            finalDelay = playerRodAnimations.ActivateRodAnimation(rodNumber, "Arrow", attackSideBulwark);
+            yield return StartCoroutine(playerRodAnimations.ActivateRodAnimation(rodNumber, "Arrow", attackSideBulwark));
 
             //Schaden am Bulwark
-            DelayedFunctionCallCoroutine(enemyBulwark.decreaseBulwark, selfThisHero.GetBulwarkDamage(), finalDelay);
+            enemyBulwark.decreaseBulwark(selfThisHero.GetBulwarkDamage());
         }
         else
         {
             //Animation
             heroAnimationManager.TriggerHeroAction();
-            finalDelay = playerRodAnimations.ActivateRodAnimation(rodNumber, "Arrow", attackSideCrown);
+            yield return StartCoroutine(playerRodAnimations.ActivateRodAnimation(rodNumber, "Arrow", attackSideCrown));
 
             //Schaden an der Krone
-            if (IsServer) { DelayedFunctionCallCoroutine(enemyCrown.DecreaseHPRpc, selfThisHero.GetCrownDamage(), finalDelay); }
+            if (IsServer) { enemyCrown.DecreaseHPRpc(selfThisHero.GetCrownDamage()); }
         }
-
-        return finalDelay;
     }
 
     //Engineer
-    private float EngineerAction()
+    private IEnumerator EngineerAction()
     {
         //Auswerten, wo die Animation Stattfinden soll (Standard ist Square)
         int rodNumber = 0;
@@ -256,38 +245,36 @@ public class HeroActionsActivator : NetworkBehaviour
         }
 
         //Erste Aktion
-        float finalDelay = 0f;
         if (enemyBulwark.GetBulwarkLevel() >= 1)
         {
             //Animation
             heroAnimationManager.TriggerHeroAction();
-            finalDelay = playerRodAnimations.ActivateRodAnimation(rodNumber, "Hammer", attackSideBulwark);
+            yield return StartCoroutine(playerRodAnimations.ActivateRodAnimation(rodNumber, "Hammer", attackSideBulwark));
 
             //Schaden am Bulwark
-            DelayedFunctionCallCoroutine(enemyBulwark.decreaseBulwark, selfThisHero.GetBulwarkDamage(), finalDelay);
+            enemyBulwark.decreaseBulwark(selfThisHero.GetBulwarkDamage());
         }
         else
         {
             //Animation
             heroAnimationManager.TriggerHeroAction();
-            finalDelay = playerRodAnimations.ActivateRodAnimation(rodNumber, "Hammer", attackSideCrown);
+            yield return StartCoroutine(playerRodAnimations.ActivateRodAnimation(rodNumber, "Hammer", attackSideCrown));
 
             //Schaden an der Krone
-            if (IsServer) { DelayedFunctionCallCoroutine(enemyCrown.DecreaseHPRpc, selfThisHero.GetCrownDamage(), finalDelay); }
+            if (IsServer) { enemyCrown.DecreaseHPRpc(selfThisHero.GetCrownDamage()); }
         }
 
         //Zweite Aktion
         //Animation
         heroAnimationManager.TriggerHeroAction();
-        finalDelay += playerRodAnimations.ActivateRodAnimation(repairSide, "Hammer", "PopUp");
+        yield return StartCoroutine(playerRodAnimations.ActivateRodAnimation(repairSide, "Hammer", "PopUp"));
 
         //Spieler Bulwark erhöhen
-        DelayedFunctionCallCoroutine(playerBulwark.increaseBulwark, 2, finalDelay);
-        return finalDelay;
+        if (IsServer) { playerBulwark.increaseBulwark(2); }
     }
 
     //Assassin
-    private float AssassinAction()
+    private IEnumerator AssassinAction()
     {
         //Auswerten, wo die Animation Stattfinden soll (Standard ist Square)
         int rodNumber = 1;
@@ -297,41 +284,38 @@ public class HeroActionsActivator : NetworkBehaviour
         }
 
         //Erste Aktion
-        float finalDelay = 0f;
         if (enemySquareHero.GetCurrentEnergy() > enemyDiamondHero.GetCurrentEnergy())
         {
             //Animation
             heroAnimationManager.TriggerHeroAction();
-            finalDelay = enemyRodAnimations.ActivateRodAnimation(0, "Dagger", "PopUp");
+            yield return StartCoroutine(enemyRodAnimations.ActivateRodAnimation(0, "Dagger", "PopUp"));
 
             //Square Held Energie abziehen
-            DelayedFunctionCallCoroutine(enemySquareHero.DecreaseEnergy, selfThisHero.GetDelayAdding(), finalDelay);
-            DelayedFunctionCallCoroutine(enemySquareHero.SetCanMakeAction, false, finalDelay);
+            if (IsServer) { enemySquareHero.DecreaseEnergy(selfThisHero.GetDelayAdding()); }
+            enemySquareHero.SetCanMakeAction(false);
         }
         else
         {
             //Animation
             heroAnimationManager.TriggerHeroAction();
-            finalDelay = enemyRodAnimations.ActivateRodAnimation(3, "Dagger", "PopUp");
+            yield return StartCoroutine(enemyRodAnimations.ActivateRodAnimation(3, "Dagger", "PopUp"));
 
             //Diamond Held Energie abziehen
-            DelayedFunctionCallCoroutine(enemyDiamondHero.DecreaseEnergy, selfThisHero.GetDelayAdding(), finalDelay);
-            DelayedFunctionCallCoroutine(enemyDiamondHero.SetCanMakeAction, false, finalDelay);
+            if (IsServer) { enemyDiamondHero.DecreaseEnergy(selfThisHero.GetDelayAdding()); }
+            enemyDiamondHero.SetCanMakeAction(false);
         }
 
         //Zweite Aktion
         //Animation
         heroAnimationManager.TriggerHeroAction();
-        finalDelay += enemyRodAnimations.ActivateRodAnimation(rodNumber, "Dagger", "PopUp");
+        yield return StartCoroutine(enemyRodAnimations.ActivateRodAnimation(rodNumber, "Dagger", "PopUp"));
 
         //Schaden an der Krone
-        if (IsServer) { DelayedFunctionCallCoroutine(enemyCrown.DecreaseHPRpc, selfThisHero.GetCrownDamage(), finalDelay); }
-
-        return finalDelay;
+        if (IsServer) { enemyCrown.DecreaseHPRpc(selfThisHero.GetCrownDamage()); }
     }
 
     //Priest
-    private float PriestAction()
+    private IEnumerator PriestAction()
     {
         //Auswerten, wo die Animation Stattfinden soll (Standard ist Square)
         int rodNumber = 3;
@@ -344,30 +328,30 @@ public class HeroActionsActivator : NetworkBehaviour
 
         //Erste Aktion
         //Animation
-        float finalDelay = 0f;
         heroAnimationManager.TriggerHeroAction();
-        finalDelay = playerRodAnimations.ActivateRodAnimation(crownSide, "Book", "PopUp");
+        yield return StartCoroutine(playerRodAnimations.ActivateRodAnimation(crownSide, "Book", "PopUp"));
 
         //Spieler-Krone heilen
-        if (IsServer) { DelayedFunctionCallCoroutine(playerCrown.IncreaseHPRpc, selfThisHero.GetHealingAdding(), finalDelay); }
+        if (IsServer) { playerCrown.IncreaseHPRpc(selfThisHero.GetHealingAdding()); }
 
         //Zweite Aktion
         if (selfOtherHero.PriestChecksAction())
         {
             //Animation
             heroAnimationManager.TriggerHeroAction();
-            finalDelay += playerRodAnimations.ActivateRodAnimation(rodNumber, "Book", "PopUp");
+            yield return StartCoroutine(playerRodAnimations.ActivateRodAnimation(rodNumber, "Book", "PopUp"));
 
             //Anderen Helden Energie geben
-            DelayedFunctionCallCoroutine(selfOtherHero.AddEnergy, selfThisHero.GetEnergyAdding(), finalDelay);
-            DelayedFunctionCallCoroutine(SetPriestBoostedOtherHero, true, finalDelay);
+            if (IsServer)
+            {
+                selfOtherHero.AddEnergy(selfThisHero.GetEnergyAdding());
+                SetPriestBoostedOtherHero(true);
+            }
         }
-
-        return finalDelay;
     }
 
     //Priest #2
-    public float PriestSecondAction()
+    public IEnumerator PriestSecondAction()
     {
         //Auswerten, wo die Animation Stattfinden soll (Standard ist Square)
         int rodNumber = 3;
@@ -377,26 +361,23 @@ public class HeroActionsActivator : NetworkBehaviour
         }
 
         //Animation
-        float finalDelay = 0f;
         heroAnimationManager.TriggerHeroAction();
-        finalDelay = playerRodAnimations.ActivateRodAnimation(rodNumber, "Book", "PopUp");
+        yield return StartCoroutine(playerRodAnimations.ActivateRodAnimation(rodNumber, "Book", "PopUp"));
 
         //Anderen Helden Energie geben
-        DelayedFunctionCallCoroutine(selfOtherHero.AddEnergy, selfThisHero.GetEnergyAdding(), finalDelay);
-
-        return finalDelay;
+        if (IsServer) { selfOtherHero.AddEnergy(selfThisHero.GetEnergyAdding()); }
     }
 
     public bool GetPriestBoosted()
     {
-        bool temp = priestBoostedOtherHero;
-        priestBoostedOtherHero = false;
-        return temp;
+            bool temp = priestBoostedOtherHero.Value;
+            priestBoostedOtherHero.Value = false;
+            return temp;
     }
 
     private void SetPriestBoostedOtherHero(bool state)
     {
-        priestBoostedOtherHero = state;
+        priestBoostedOtherHero.Value = state;
     }
 
 

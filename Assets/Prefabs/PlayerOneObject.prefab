@@ -4983,6 +4983,9 @@ PrefabInstance:
     - targetCorrespondingSourceObject: {fileID: 2349567949565748706, guid: 160d486d03509e14b955064c2cc1efcd, type: 3}
       insertIndex: -1
       addedObject: {fileID: 1973981071756955078}
+    - targetCorrespondingSourceObject: {fileID: 2349567949565748706, guid: 160d486d03509e14b955064c2cc1efcd, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 9017233594388357772}
   m_SourcePrefab: {fileID: 100100000, guid: 160d486d03509e14b955064c2cc1efcd, type: 3}
 --- !u!1 &1535552216114925910 stripped
 GameObject:
@@ -5002,17 +5005,18 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   ShowTopMostFoldoutHeaderGroup: 1
-  playerCrown: {fileID: 0}
-  enemyCrown: {fileID: 0}
-  playerBulwark: {fileID: 0}
-  enemyBulwark: {fileID: 0}
-  playerRodAnimations: {fileID: 0}
-  enemyRodAnimations: {fileID: 0}
-  selfThisHero: {fileID: 0}
-  selfOtherHero: {fileID: 0}
-  enemySquareHero: {fileID: 0}
-  enemyDiamondHero: {fileID: 0}
-  heroAnimationManager: {fileID: 0}
+--- !u!114 &9017233594388357772
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1535552216114925910}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 094a4f8dac6cb4d44823380e535aa260, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!114 &1786958856579867668 stripped
 MonoBehaviour:
   m_CorrespondingSourceObject: {fileID: 3249552310672822432, guid: 160d486d03509e14b955064c2cc1efcd, type: 3}
@@ -5605,6 +5609,9 @@ PrefabInstance:
     - targetCorrespondingSourceObject: {fileID: 8078671721116193338, guid: 8392c5b293d564d4a890e7a39447abca, type: 3}
       insertIndex: -1
       addedObject: {fileID: 9203482555712626720}
+    - targetCorrespondingSourceObject: {fileID: 8078671721116193338, guid: 8392c5b293d564d4a890e7a39447abca, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 7301171326572196422}
   m_SourcePrefab: {fileID: 100100000, guid: 8392c5b293d564d4a890e7a39447abca, type: 3}
 --- !u!4 &1149821148708971322 stripped
 Transform:
@@ -5645,17 +5652,18 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   ShowTopMostFoldoutHeaderGroup: 1
-  playerCrown: {fileID: 0}
-  enemyCrown: {fileID: 0}
-  playerBulwark: {fileID: 0}
-  enemyBulwark: {fileID: 0}
-  playerRodAnimations: {fileID: 0}
-  enemyRodAnimations: {fileID: 0}
-  selfThisHero: {fileID: 0}
-  selfOtherHero: {fileID: 0}
-  enemySquareHero: {fileID: 0}
-  enemyDiamondHero: {fileID: 0}
-  heroAnimationManager: {fileID: 0}
+--- !u!114 &7301171326572196422
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4344898060055471106}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 094a4f8dac6cb4d44823380e535aa260, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!114 &7513886652211138359 stripped
 MonoBehaviour:
   m_CorrespondingSourceObject: {fileID: 2600733105004493071, guid: 8392c5b293d564d4a890e7a39447abca, type: 3}

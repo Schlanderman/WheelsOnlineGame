@@ -47,7 +47,7 @@ public class CrownManager : NetworkBehaviour
     [Rpc(SendTo.Server)]
     private void SetStartStatsRpc()
     {
-        Debug.Log($"CrownHP werden auf {maxHP} gesetzt.");
+        //Debug.Log($"CrownHP werden auf {maxHP} gesetzt.");
         currentHP.Value = maxHP;
         //Debug.Log("Startstats eingegeben für " + this + "!");
     }
@@ -56,7 +56,7 @@ public class CrownManager : NetworkBehaviour
     [Rpc(SendTo.Server)]
     public void DecreaseHPRpc(int amount)
     {
-        Debug.Log($"CrownHP werden um {amount} verringert.");
+        //Debug.Log($"CrownHP werden um {amount} verringert.");
         currentHP.Value -= amount;
         if (currentHP.Value < 0)
         {
@@ -70,7 +70,7 @@ public class CrownManager : NetworkBehaviour
     [Rpc(SendTo.Server)]
     public void IncreaseHPRpc(int amount)
     {
-        Debug.Log($"CrownHP werden um {amount} erhöht.");
+        //Debug.Log($"CrownHP werden um {amount} erhöht.");
         currentHP.Value += amount;
         if (currentHP.Value > maxHP)
         {

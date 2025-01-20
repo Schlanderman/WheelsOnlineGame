@@ -99,6 +99,7 @@ public class CopyManager : NetworkBehaviour
         copyWheels.SetOriginalManager(originalWheels);
         copyHeroFigures.SetOriginalManager(originalHeroRotator);
         copyHeroFigures.SetActionRodManager(originalActionRods);
+        copyHeroFigures.SetCopyManager(this);
         copyXPLightsSquare.SetOriginalManager(originalXPLightsSquare);
         copyXPLightsDiamond.SetOriginalManager(originalXPLightsDiamond);
         copyXPParticles.SetOriginalManager(originalXPParticles);
@@ -109,5 +110,10 @@ public class CopyManager : NetworkBehaviour
         copyActionRods.SetOriginalManager(originalActionRods);
         copyEnergyBarSquare.SetOriginalManager(originalEnergyBarSquare);
         CopyEnergyBarDiamond.SetOriginalManager(originalEnergyBarDiamond);
+    }
+
+    public HeroSelectionRotator GetHeroSelectionRotator()
+    {
+        return originalHeroRotator;
     }
 }

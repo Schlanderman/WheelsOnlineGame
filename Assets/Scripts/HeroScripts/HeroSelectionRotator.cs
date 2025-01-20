@@ -32,15 +32,17 @@ public class HeroSelectionRotator : NetworkBehaviour
     private int currentPlayerDiamondHeroIndex = 0;              //Aktuelle Position des Spieler Diamond Helden in der Liste
 
     //Referenz auf den ausgewählten Helden
-    private Hero currentPlayerSquareHero;
-    private Hero currentPlayerDiamondHero;
+    [SerializeField] private Hero currentPlayerSquareHero;
+    [SerializeField] private Hero currentPlayerDiamondHero;
 
     //Referenz auf das aktive Objekt des Helden
-    private GameObject activePlayerSquareHero;      //Referenz zum Objekt des Spieler-Square-Helden
-    private GameObject activePlayerDiamondHero;     //Referenz zum Objekt des Spieler-Diamond-Helden
+    [SerializeField] private GameObject activePlayerSquareHero;      //Referenz zum Objekt des Spieler-Square-Helden
+    [SerializeField] private GameObject activePlayerDiamondHero;     //Referenz zum Objekt des Spieler-Diamond-Helden
 
     //Events
     public event Action<int, int, string> OnActivateChangeHero;
+    public event Action<Hero> OnSquareHeroChanged;
+    public event Action<Hero> OnDiamondHeroChanged;
 
     //Initialisierung
     private void Start()
@@ -206,6 +208,7 @@ public class HeroSelectionRotator : NetworkBehaviour
                 activePlayerSquareHero.GetComponent<Hero>().SetHeroParent(playerHeroObject, HeroSpawnDummy.PlayerSideKey.Player, HeroSpawnDummy.HeroSideKey.Square);
 
                 currentPlayerSquareHero = activePlayerSquareHero.GetComponent<Hero>();
+                OnSquareHeroChanged?.Invoke(currentPlayerSquareHero);
             }
             else
             {
@@ -214,6 +217,7 @@ public class HeroSelectionRotator : NetworkBehaviour
                 activePlayerDiamondHero.GetComponent<Hero>().SetHeroParent(playerHeroObject, HeroSpawnDummy.PlayerSideKey.Player, HeroSpawnDummy.HeroSideKey.Diamond);
 
                 currentPlayerDiamondHero = activePlayerDiamondHero.GetComponent<Hero>();
+                OnDiamondHeroChanged?.Invoke(currentPlayerDiamondHero);
             }
         }
         else
@@ -232,7 +236,7 @@ public class HeroSelectionRotator : NetworkBehaviour
                 currentPlayerSquareHero.SetUIUpdater(playerSquareHeroUIUpdater);
                 playerSquareHeroUIUpdater.UpdateHeroDisplay(currentPlayerSquareHero);
                 currentPlayerSquareHero.SetEnergyBar(playerSquareEnergyBar);
-                playerSquareEnergyBar.UpdateEnergieDisplay(0, currentPlayerSquareHero.GetMaxEnergy());
+                //playerSquareEnergyBar.UpdateEnergieDisplay(0, currentPlayerSquareHero.GetMaxEnergy());
                 currentPlayerSquareHero.SetXPLightManager(playerSquareXPLightManager);
             }
             else
@@ -247,7 +251,7 @@ public class HeroSelectionRotator : NetworkBehaviour
                 currentPlayerDiamondHero.SetUIUpdater(playerDiamondHeroUIUpdater);
                 playerDiamondHeroUIUpdater.UpdateHeroDisplay(currentPlayerDiamondHero);
                 currentPlayerDiamondHero.SetEnergyBar(playerDiamondEnergyBar);
-                playerDiamondEnergyBar.UpdateEnergieDisplay(0, currentPlayerDiamondHero.GetMaxEnergy());
+                //playerDiamondEnergyBar.UpdateEnergieDisplay(0, currentPlayerDiamondHero.GetMaxEnergy());
                 currentPlayerDiamondHero.SetXPLightManager(playerDiamondXPLightManager);
             }
             else

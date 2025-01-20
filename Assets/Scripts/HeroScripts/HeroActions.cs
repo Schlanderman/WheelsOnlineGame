@@ -104,7 +104,7 @@ public class HeroActions : NetworkBehaviour
         SetEnemyHeroes(enemySquare, enemyDiamond);
 
         //Dieses Script dem jeweiligen Helden übergeben
-        selfThisHero.SetHeroActions(gameObject.GetComponent<HeroActionsActivator>());
+        selfThisHero.SetHeroActions(gameObject.GetComponent<HeroActionsActivator>(), gameObject.GetComponent<HeroActionsLengthManager>());
     }
 
     private void InitialHeroSetting_OnSetEnemyManagers(ulong playerId, CrownManager enemyCM, BulwarkMover enemyBM, ActionRodAnimManager enemyARM)
@@ -176,6 +176,14 @@ public class HeroActions : NetworkBehaviour
             rodAnimations, enemyRodAnimations,
             selfThisHero, selfOtherHero, enemySquareHero, enemyDiamondHero,
             heroAnimationManager,
+            thisHeroSide, thisUserSide
+            );
+
+        //Dem LengthManager alle Manager übertragen
+        gameObject.GetComponent<HeroActionsLengthManager>().SetManagers(
+            selfOtherHero,
+            enemyBulwark,
+            rodAnimations, enemyRodAnimations,
             thisHeroSide, thisUserSide
             );
     }

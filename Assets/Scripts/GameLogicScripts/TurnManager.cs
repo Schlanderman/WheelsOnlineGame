@@ -192,7 +192,6 @@ public class TurnManager : NetworkBehaviour
     private async Task ApplyPanelXPAndLevelUps()
     {
         OnApplyXPandLevelUps?.Invoke(this, EventArgs.Empty);
-        //ApplyXPAndLevelUpsRpc();
 
         await WaitForSecondsAsync(0.8f);
     }
@@ -201,7 +200,6 @@ public class TurnManager : NetworkBehaviour
     private async Task ApplyHammerPanels()
     {
         OnApplyHammerPanels?.Invoke(this, EventArgs.Empty);
-        //ApplyHammerPanelsRpc();
 
         await WaitForSecondsAsync(0.8f);
     }
@@ -210,7 +208,6 @@ public class TurnManager : NetworkBehaviour
     private async Task ApplyEnergyPanels()
     {
         OnApplyEnergyPanels?.Invoke(this, EventArgs.Empty);
-        //ApplyEnergyPanelsRpc();
 
         await WaitForSecondsAsync(0.8f);
     }
@@ -222,8 +219,12 @@ public class TurnManager : NetworkBehaviour
         {
             if (hero.GetHeroType() == HeroType.Assassin && hero.GetCanMakeAction())
             {
-                await WaitForSecondsAsync(hero.ActivateAction(hero.GetHeroType()));
-                //Hier Animation einfügen
+                //Animation
+                float animationLength = hero.GetAnimationLength();
+                hero.ActivateActionRpc();
+                
+                //Wartezeit
+                await WaitForSecondsAsync(animationLength);
             }
         }
     }
@@ -233,10 +234,14 @@ public class TurnManager : NetworkBehaviour
     {
         foreach (var hero in heroes)
         {
-            if (hero.GetHeroType() == HeroType.Priest && hero.GetCanMakeAction())
+            if (hero.GetHeroType() == HeroType.Priest && hero.PriestChecksAction())
             {
-                await WaitForSecondsAsync(hero.ActivateAction(hero.GetHeroType()));
-                //Hier Animation einfügen
+                //Animation
+                float animationLength = hero.GetAnimationLength();
+                hero.ActivateActionRpc();
+
+                //Wartezeit
+                await WaitForSecondsAsync(animationLength);
             }
         }
     }
@@ -248,8 +253,12 @@ public class TurnManager : NetworkBehaviour
         {
             if (hero.GetHeroType() == HeroType.Engineer && hero.GetCanMakeAction())
             {
-                await WaitForSecondsAsync(hero.ActivateAction(hero.GetHeroType()));
-                //Hier Animation einfügen
+                //Animation
+                float animationLength = hero.GetAnimationLength();
+                hero.ActivateActionRpc();
+
+                //Wartezeit
+                await WaitForSecondsAsync(animationLength);
             }
         }
     }
@@ -261,8 +270,12 @@ public class TurnManager : NetworkBehaviour
         {
             if (hero.GetCanSendBomb())
             {
-                await WaitForSecondsAsync(hero.SendBomb());
-                //Hier Animation einfügen
+                //Animation
+                float animationLength = hero.GetBombAnimationLength();
+                hero.SendBombRpc();
+
+                //Wartezeit
+                await WaitForSecondsAsync(animationLength);
             }
         }
     }
@@ -280,8 +293,12 @@ public class TurnManager : NetworkBehaviour
 
             if (validHero && hero.GetCanMakeAction())
             {
-                await WaitForSecondsAsync(hero.ActivateAction(hero.GetHeroType()));
-                //Hier Animation einfügen
+                //Animation
+                float animationLength = hero.GetAnimationLength();
+                hero.ActivateActionRpc();
+
+                //Wartezeit
+                await WaitForSecondsAsync(animationLength);
             }
         }
     }
@@ -289,19 +306,41 @@ public class TurnManager : NetworkBehaviour
     // 9) (If the second hero had enough energy from energy panels to act: Priest grants energy)
     private async Task ActingPriest2(Hero[] heroes)
     {
-        //Debug.Log("Das hier sind die Heroes, die angekommen sind: " + heroes);
+        ////Debug.Log("Das hier sind die Heroes, die angekommen sind: " + heroes);
+        //foreach (var hero in heroes)
+        //{
+        //    //Debug.Log("Das ist der Hero der aus " + heroes + " kommt: " + hero);
+        //    foreach (var held in heroes)
+        //    {
+        //        if (hero.GetHeroType() == HeroType.Priest)
+        //        {
+        //            if (IsServer)   //Hier nur ausführen, wenn es der Server ist, damit die NetworkVariable nur vom Server geändert wird
+        //            {
+        //                if ((held != hero) && !hero.GetPriestBoosted())
+        //                {
+        //                    //Animation
+        //                    float animationLength = hero.GetPriestSecondAnimationLength();
+        //                    hero.ActivateSecondPriestRpc();
+
+        //                    //Wartezeit
+        //                    await WaitForSecondsAsync(animationLength); 
+        //                }
+        //            }
+        //        }
+        //    }
+        //}
+
         foreach (var hero in heroes)
         {
-            //Debug.Log("Das ist der Hero der aus " + heroes + " kommt: " + hero);
-            foreach (var held in heroes)
+            if (hero.GetHeroType() == HeroType.Priest && IsServer && !hero.GetPriestBoosted() && hero.GetCanMakeAction())
             {
-                if (hero.GetHeroType() == HeroType.Priest)
+                foreach (var held in heroes.Where(h => h != hero))
                 {
-                    if ((held != hero) && !hero.GetPriestBoosted())
-                    {
-                        await WaitForSecondsAsync(hero.ActivateSecondPriest(hero.GetHeroType()));
-                        //Hier Animation einfügen
-                    }
+                    float animationLength = hero.GetPriestSecondAnimationLength();
+                    hero.ActivateSecondPriestRpc();
+
+                    //Wartezeit
+                    await WaitForSecondsAsync(animationLength);
                 }
             }
         }
@@ -314,8 +353,12 @@ public class TurnManager : NetworkBehaviour
         {
             if (hero.GetCanMakeAction())
             {
-                await WaitForSecondsAsync(hero.ActivateAction(hero.GetHeroType()));
-                //Hier Animation einfügen
+                //Animation
+                float animationLength = hero.GetAnimationLength();
+                hero.ActivateActionRpc();
+
+                //Wartezeit
+                await WaitForSecondsAsync(animationLength);
             }
         }
     }
@@ -327,8 +370,12 @@ public class TurnManager : NetworkBehaviour
         {
             if (hero.GetCanSendBomb())
             {
-                await WaitForSecondsAsync(hero.SendBomb());
-                //Hier Animation einfügen
+                //Animation
+                float animationLength = hero.GetBombAnimationLength();
+                hero.SendBombRpc();
+
+                //Wartezeit
+                await WaitForSecondsAsync(animationLength);
             }
         }
     }

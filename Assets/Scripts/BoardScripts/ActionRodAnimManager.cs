@@ -1,5 +1,6 @@
 using System;
 using System.Collections;
+using System.Linq;
 using UnityEngine;
 
 public class ActionRodAnimManager : MonoBehaviour
@@ -28,7 +29,7 @@ public class ActionRodAnimManager : MonoBehaviour
     }
 
     //Animation ausführen
-    public float ActivateRodAnimation(int rodNumber, string sprite, string animation)
+    public IEnumerator ActivateRodAnimation(int rodNumber, string sprite, string animation)
     {
         switch (sprite)
         {
@@ -66,10 +67,10 @@ public class ActionRodAnimManager : MonoBehaviour
         }
 
         OnActivateActionRodAnimation?.Invoke(rodNumber, sprite, animation);
-        return AnimationMaker(rodNumber, animation);
+        yield return AnimationMaker(rodNumber, animation);
     }
 
-    private float AnimationMaker(int rodNumber, string animation)
+    private IEnumerator AnimationMaker(int rodNumber, string animation)
     {
         //Animation triggern
         rodAnimator[rodNumber].SetTrigger(animation);
@@ -78,10 +79,7 @@ public class ActionRodAnimManager : MonoBehaviour
         float animationLength = rodAnimator[rodNumber].GetCurrentAnimatorStateInfo(0).length;
 
         //Coroutine für die Deaktivierung starten
-        StartCoroutine(HandleAnimationCompletion(rodNumber, animationLength));
-
-        //Animationsdauer zurückgeben
-        return animationLength;
+        yield return StartCoroutine(HandleAnimationCompletion(rodNumber, animationLength));
     }
 
     private IEnumerator HandleAnimationCompletion(int rodNumber, float animationLength)
@@ -91,6 +89,12 @@ public class ActionRodAnimManager : MonoBehaviour
 
         //Deaktiviere alle Sprites
         rodSprite[rodNumber].DeactivateAll();
+    }
+
+    public float GetAnimationLength(int rodNumber, string animation)
+    {
+        //Potentiell noch extra 0.5 Sekunden hinzufügen, falls sich Animationen überlagern
+        return rodAnimator[rodNumber].runtimeAnimatorController.animationClips.First(clip => clip.name == animation).length + 0.5f;
     }
 
     public void TestActivateRodAnimation(int rodNumber, string sprite, string animation)

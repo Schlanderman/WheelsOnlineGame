@@ -1,3 +1,4 @@
+using System.Collections;
 using Unity.Collections;
 using Unity.Netcode;
 using UnityEngine;
@@ -23,6 +24,9 @@ public class CopyHeroFigures : ManagerCopiesHandler<HeroSelectionRotator>
     private int currentPlayerSquareHeroIndex = 0;
     private int currentPlayerDiamondHeroIndex = 0;
 
+    //CopyManager um zugriff auf die OriginalHelden zu haben
+    private CopyManager copyManager;
+
     protected override void SetEvents()
     {
         originalManager.OnActivateChangeHero += HeroSelectionRotator_OnActivateChangeHero;
@@ -46,7 +50,7 @@ public class CopyHeroFigures : ManagerCopiesHandler<HeroSelectionRotator>
             InstantiateNewHeroRpc(heroType);
 
             activePlayerSquareHero.GetComponent<Hero>().SetHeroParent(playerHeroObject, HeroSpawnDummy.PlayerSideKey.Enemy, HeroSpawnDummy.HeroSideKey.Square);
-            activeSquareHeroAnimations = activePlayerSquareHero.GetComponentInChildren<HeroAnimationManager>();
+            SetAnimationManagersRpc(heroType, activePlayerSquareHero.GetComponent<NetworkObject>());
         }
 
         else if (heroType == "Diamond")
@@ -54,7 +58,38 @@ public class CopyHeroFigures : ManagerCopiesHandler<HeroSelectionRotator>
             InstantiateNewHeroRpc(heroType);
 
             activePlayerDiamondHero.GetComponent<Hero>().SetHeroParent(playerHeroObject, HeroSpawnDummy.PlayerSideKey.Enemy, HeroSpawnDummy.HeroSideKey.Diamond);
-            activeDiamondHeroAnimations = activePlayerDiamondHero.GetComponentInChildren<HeroAnimationManager>();
+            SetAnimationManagersRpc(heroType, activePlayerDiamondHero.GetComponent<NetworkObject>());
+        }
+    }
+
+    [Rpc(SendTo.Everyone)]
+    private void SetAnimationManagersRpc(string heroType, NetworkObjectReference heroObjectReference)
+    {
+        if (!heroObjectReference.TryGet(out NetworkObject heroNetworkObject))
+        {
+            Debug.LogError($"{heroObjectReference} hat keine NetworkObject Komponente!");
+        }
+
+        GameObject heroObject = heroNetworkObject.gameObject;
+
+        StartCoroutine(SetAnimationManager(heroType, heroObject));
+    }
+
+    //HeroAnimations übergeben, sobald sie vorhanden sind
+    private IEnumerator SetAnimationManager(string heroType, GameObject hero)
+    {
+        while (hero.GetComponentInChildren<HeroAnimationManager>() == null)
+        {
+            yield return null;
+        }
+
+        if (heroType == "Square")
+        {
+            activeSquareHeroAnimations = hero.GetComponentInChildren<HeroAnimationManager>();
+        }
+        else
+        {
+            activeDiamondHeroAnimations = hero.GetComponentInChildren<HeroAnimationManager>();
         }
     }
 
@@ -62,6 +97,25 @@ public class CopyHeroFigures : ManagerCopiesHandler<HeroSelectionRotator>
     {
         actionRodAnimManager = actionRodManager;
         actionRodAnimManager.OnActivateActionRodAnimation += ActionRodAnimManager_OnActivateActionRodAnimation;
+    }
+
+    public void SetCopyManager(CopyManager copy)
+    {
+        copyManager = copy;
+
+        //Events, die damit einhergehen aktivieren
+        copyManager.GetHeroSelectionRotator().OnSquareHeroChanged += CopyHeroFigures_OnSquareHeroChanged;
+        copyManager.GetHeroSelectionRotator().OnDiamondHeroChanged += CopyHeroFigures_OnDiamondHeroChanged;
+    }
+
+    private void CopyHeroFigures_OnSquareHeroChanged(Hero hero)
+    {
+        hero.SetCopyHero(activePlayerSquareHero.GetComponent<Hero>());
+    }
+
+    private void CopyHeroFigures_OnDiamondHeroChanged(Hero hero)
+    {
+        hero.SetCopyHero(activePlayerDiamondHero.GetComponent<Hero>());
     }
 
     private void ActionRodAnimManager_OnActivateActionRodAnimation(int rodIndex, string sprite, string animation)

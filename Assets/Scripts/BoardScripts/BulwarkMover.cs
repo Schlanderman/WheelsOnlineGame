@@ -27,6 +27,8 @@ public class BulwarkMover : NetworkBehaviour
 
     public void increaseBulwark(int height)
     {
+        if (!IsServer) { return; }
+
         bulwarkLevel.Value += height;
         if (bulwarkLevel.Value >= 5)
         {
@@ -36,6 +38,8 @@ public class BulwarkMover : NetworkBehaviour
 
     public void decreaseBulwark(int height)
     {
+        if (!IsServer) { return; }
+
         bulwarkLevel.Value -= height;
         if (bulwarkLevel.Value <= 0)
         {

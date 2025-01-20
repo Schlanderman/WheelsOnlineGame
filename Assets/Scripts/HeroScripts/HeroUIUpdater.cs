@@ -1,10 +1,8 @@
 using System;
-using System.Collections;
-using System.Collections.Generic;
 using Unity.Netcode;
 using UnityEngine;
 
-public class HeroUIUpdater : MonoBehaviour
+public class HeroUIUpdater : NetworkBehaviour
 {
     //Referenzen zu den beiden Blöcken und den Rädern
     [SerializeField] private GameObject block1Renderer;
@@ -25,6 +23,20 @@ public class HeroUIUpdater : MonoBehaviour
     //Methode zum aktualisieren der Blöcke und Räder
     public void UpdateHeroDisplay(Hero hero)
     {
+        UpdateHeroDisplayRpc(hero.GetComponent<NetworkObject>());
+    }
+
+    [Rpc(SendTo.Everyone)]
+    private void UpdateHeroDisplayRpc(NetworkObjectReference heroObjectReference)
+    {
+        if (!heroObjectReference.TryGet(out NetworkObject heroNetworkObject))
+        {
+            Debug.LogError($"{heroObjectReference} hat kein NetworkObject.");
+            return;
+        }
+
+        Hero hero = heroNetworkObject.GetComponent<Hero>();
+
         OnActivateUIUpdate?.Invoke(hero);
 
         UpdateHeroDisplayActual(hero);
