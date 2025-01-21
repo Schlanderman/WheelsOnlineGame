@@ -10,6 +10,7 @@ public class WheelSpin : NetworkBehaviour
     private float currentSpinSpeed;
     private bool hasStopped = false;    //Ob das Rad angehalten hat
     public bool isLocked = false;       //Ob das Rad gesperrt ist
+    private bool isSpinLocked = false;      //Damit man die Clamps nicht aktivieren kann, während sich die Räder noch drehen
     private bool clampLock = false;
     private bool turnClampLock = false;
     private bool initialClampLock = true;
@@ -26,7 +27,18 @@ public class WheelSpin : NetworkBehaviour
 
     private void Start()
     {
-        //wheelManager = FindObjectOfType<WheelManager>();
+        wheelManager.OnWheelsStartSpinning += WheelManager_OnWheelsStartSpinning;
+        wheelManager.OnWheelsStopSpinning += WheelManager_OnWheelsStopSpinning;
+    }
+
+    private void WheelManager_OnWheelsStartSpinning(object sender, System.EventArgs e)
+    {
+        isSpinLocked = true;
+    }
+
+    private void WheelManager_OnWheelsStopSpinning(object sender, System.EventArgs e)
+    {
+        isSpinLocked = false;
     }
 
     private void Update()
@@ -76,7 +88,7 @@ public class WheelSpin : NetworkBehaviour
             if (WheelStoppedEvent != null)
             {
                 WheelStoppedEvent.Invoke();
-                clampLock = true;
+                //clampLock = true;
             }
         }
 
@@ -84,9 +96,9 @@ public class WheelSpin : NetworkBehaviour
     }
 
     //Methode um das Rad zu sperren oder zu entsperren
-    public void ToggleLock()
+    private void ToggleLock()
     {
-        if (initialClampLock)
+        if (initialClampLock || isSpinLocked)
         {
             return;
         }

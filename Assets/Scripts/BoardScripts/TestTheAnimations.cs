@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEditor;
 
+#if UNITY_EDITOR
 [CustomEditor(typeof(ActionRodAnimManager))]
 public class TestTheAnimations : Editor
 {
@@ -45,3 +46,4 @@ public class TestTheAnimations : Editor
         }
     }
 }
+#endif

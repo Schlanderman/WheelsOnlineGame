@@ -26,6 +26,8 @@ public class WheelManager : MonoBehaviour
     //Events für andere Skripts
     public event Action<int, int, int, int, int> OnWheelsHaveStopped;
     public event EventHandler OnUnlockClamps;
+    public event EventHandler OnWheelsStartSpinning;
+    public event EventHandler OnWheelsStopSpinning;
 
     //Definiere ein Dictionary für jedes Rad und dessen Symbolreihenfolge
     private Dictionary<int, Symbol[]> wheelSymbols = new Dictionary<int, Symbol[]>
@@ -134,6 +136,7 @@ public class WheelManager : MonoBehaviour
         if (spinCount < maxSpins && canSpin && !allLocked)
         {
             canSpin = false;
+            OnWheelsStartSpinning?.Invoke(this, EventArgs.Empty);
             //Starte den Spin für alle Räder
             foreach (var wheel in wheels)
             {
@@ -207,6 +210,7 @@ public class WheelManager : MonoBehaviour
             }
             stoppedWheels = 0;
             canSpin = true;
+            OnWheelsStopSpinning?.Invoke(this, EventArgs.Empty);
         }
     }
 

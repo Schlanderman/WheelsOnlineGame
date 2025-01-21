@@ -1,6 +1,7 @@
 using UnityEditor;
 using UnityEngine;
 
+#if UNITY_EDITOR
 [CustomEditor(typeof(ProfileData))]
 public class ProfileDataEditor : Editor
 {
@@ -16,3 +17,4 @@ public class ProfileDataEditor : Editor
         }
     }
 }
+#endif
