@@ -42,9 +42,6 @@ public class MainMenu : MonoBehaviour
     //Host Game
     public void HostGame()
     {
-        //Startet den Server und den Host
-        //TODO
-
         multiplayerMenu.SetActive(false);
         lobbyMenu.SetActive(true);
     }

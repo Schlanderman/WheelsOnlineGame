@@ -21,31 +21,28 @@ public class TurnManager : NetworkBehaviour
     public event EventHandler OnApplyXPandLevelUps;
     public event EventHandler OnApplyHammerPanels;
     public event EventHandler OnApplyEnergyPanels;
-
-    //Dictionaries
-    private Dictionary<ulong, int> crownHPDictionary;
-    //Nur Debug
-    [SerializeField] private ulong[] playerIds = new ulong[2];
-    [SerializeField] private int[] playerHps = new int[2];
+    public event EventHandler OnGetCrownHP;
 
     //Heldenzuweisung
     private Hero[] playerHeroes = new Hero[2];     //Helden des Spielers
     private Hero[] enemyHeroes = new Hero[2];      //Helden des Gegners
 
+    private Dictionary<ulong, int> CrownHPDictionary;
+
     private int currentTurnStep = 1;
+
+    private bool matchHasEnded = false;     //Wird Wahr, wenn mindestens ein Spieler auf 0 HP gesunken ist und somit das Match beendet
 
     private void Awake()
     {
         Instance = this;
 
-        crownHPDictionary = new Dictionary<ulong, int>();
+        CrownHPDictionary = new Dictionary<ulong, int>();
     }
 
     private void Start()
     {
         MultiplayerGameManager.Instance.OnPlayersRoundIsFinished += MultiplayerGameManager_OnPlayersRoundIsFinished;
-        //StartCoroutine(InitializeReadynessLate());
-        //StartCoroutine(InitializeCrownHPLate());
     }
 
     private void MultiplayerGameManager_OnPlayersRoundIsFinished(object sender, EventArgs e)
@@ -182,9 +179,12 @@ public class TurnManager : NetworkBehaviour
 
     private void EndTurn()
     {
-        Debug.Log("Runde beendet. Nächste Runde wird vorbereitet!");
+        if (!matchHasEnded)
+        {
+            Debug.Log("Runde beendet. Nächste Runde wird vorbereitet!");
 
-        ResetRoundRpc();
+            ResetRoundRpc();
+        }
     }
 
     //Methoden für Heldenaktionen mit Animation
@@ -306,30 +306,6 @@ public class TurnManager : NetworkBehaviour
     // 9) (If the second hero had enough energy from energy panels to act: Priest grants energy)
     private async Task ActingPriest2(Hero[] heroes)
     {
-        ////Debug.Log("Das hier sind die Heroes, die angekommen sind: " + heroes);
-        //foreach (var hero in heroes)
-        //{
-        //    //Debug.Log("Das ist der Hero der aus " + heroes + " kommt: " + hero);
-        //    foreach (var held in heroes)
-        //    {
-        //        if (hero.GetHeroType() == HeroType.Priest)
-        //        {
-        //            if (IsServer)   //Hier nur ausführen, wenn es der Server ist, damit die NetworkVariable nur vom Server geändert wird
-        //            {
-        //                if ((held != hero) && !hero.GetPriestBoosted())
-        //                {
-        //                    //Animation
-        //                    float animationLength = hero.GetPriestSecondAnimationLength();
-        //                    hero.ActivateSecondPriestRpc();
-
-        //                    //Wartezeit
-        //                    await WaitForSecondsAsync(animationLength); 
-        //                }
-        //            }
-        //        }
-        //    }
-        //}
-
         foreach (var hero in heroes)
         {
             if (hero.GetHeroType() == HeroType.Priest && IsServer && !hero.GetPriestBoosted() && hero.GetCanMakeAction())
@@ -383,12 +359,25 @@ public class TurnManager : NetworkBehaviour
     // 12) 0 HP Crown check
     private void CheckCrownHP()
     {
-        ulong[] playerId = crownHPDictionary.Keys.ToArray();
-        int[] crownsHp = crownHPDictionary.Values.ToArray();
+        OnGetCrownHP?.Invoke(this, EventArgs.Empty);
+
+        ulong[] playerId = CrownHPDictionary.Keys.ToArray();
+        int[] crownsHp = CrownHPDictionary.Values.ToArray();
 
         Debug.Log($"Spieler {playerId[0]} hat noch {crownsHp[0]} HP!");
         Debug.Log($"Spieler {playerId[1]} hat noch {crownsHp[1]} HP!");
 
+        //Nur ausführen, wenn mindestens ein Spieler auf 0 HP ist.
+        if (Array.Exists(crownsHp, value => value == 0))
+        {
+            matchHasEnded = true;
+            InvokeEndscreensRpc(playerId, crownsHp);
+        }
+    }
+
+    [Rpc(SendTo.Everyone)]
+    private void InvokeEndscreensRpc(ulong[] playerId, int[] crownsHp)
+    {
         //Checken, ob beide Seiten verloren haben
         if ((crownsHp[0] == 0) && (crownsHp[1] == 0))
         {
@@ -413,53 +402,21 @@ public class TurnManager : NetworkBehaviour
 
 
     //Hilfsfunktionen
-    public void ChangeCrownHP(ulong playerId, int hp)
-    {
-        Debug.Log($"Spieler {playerId} hat nun {hp} HP!");
-
-        ChangeCrownHPRpc(playerId, hp);
-    }
-
-    [Rpc(SendTo.Everyone)]
-    private void ChangeCrownHPRpc(ulong playerId, int hp)
-    {
-        crownHPDictionary[playerId] = hp;
-
-        OnCrownHPChanged();
-    }
-
     [Rpc(SendTo.Everyone)]
     private void ResetRoundRpc()
     {
         OnResetRound?.Invoke(this, EventArgs.Empty);
     }
 
-    public IEnumerator InitializeReadynessLate()
-    {
-        yield return new WaitForEndOfFrame();
-    }
-
-    public IEnumerator InitializeCrownHPLate()
-    {
-        yield return new WaitForEndOfFrame();
-
-        Debug.Log("Hier sollten die Ursprungs HP initialisiert werden.");
-        OnInitializeCrownHP?.Invoke(this, EventArgs.Empty);
-    }
-
-    private void OnCrownHPChanged()
-    {
-        //Debug.Log("HP haben sich geändert");
-        if (crownHPDictionary.Count == 2)
-        {
-            playerIds = crownHPDictionary.Keys.ToArray();
-            playerHps = crownHPDictionary.Values.ToArray();
-        }
-    }
-
     //Zeitverzögerung
     private async Task WaitForSecondsAsync(float seconds)
     {
         await Task.Delay((int)(seconds * 1000));
+    }
+
+    //Empfangen der CrownHP
+    public void SetCrownHPForPlayer(ulong playerId, int hp)
+    {
+        CrownHPDictionary[playerId] = hp;
     }
 }

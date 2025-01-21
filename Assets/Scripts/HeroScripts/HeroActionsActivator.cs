@@ -24,7 +24,7 @@ public class HeroActionsActivator : NetworkBehaviour
     private string thisHeroSide = "Square";
     private string thisUserSide = "Player";
 
-    [SerializeField] private NetworkVariable<bool> priestBoostedOtherHero = new NetworkVariable<bool>(   //Wert, ob ein Priester den anderen Helden Energie gegeben hat
+    private NetworkVariable<bool> priestBoostedOtherHero = new NetworkVariable<bool>(   //Wert, ob ein Priester den anderen Helden Energie gegeben hat
         false,  //Startwert
         NetworkVariableReadPermission.Everyone,     //Clients dürfen den Wert lesen
         NetworkVariableWritePermission.Server       //Nur der Owner darf den Wert schreiben
@@ -111,7 +111,8 @@ public class HeroActionsActivator : NetworkBehaviour
 
         //Animation
         heroAnimationManager.TriggerHeroAction();
-        StartCoroutine(playerRodAnimations.ActivateRodAnimation(rodNumber, "Bomb", "PopUp"));
+        StartCoroutine(enemyRodAnimations.ActivateRodAnimation(rodNumber, "Bomb", "PopUp"));
+        enemyCrown.DecreaseHPRpc(2);
     }
 
     //Aktionen für die einzelnen Helden

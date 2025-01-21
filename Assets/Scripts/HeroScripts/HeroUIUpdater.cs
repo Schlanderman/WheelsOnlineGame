@@ -31,7 +31,7 @@ public class HeroUIUpdater : NetworkBehaviour
     {
         if (!heroObjectReference.TryGet(out NetworkObject heroNetworkObject))
         {
-            Debug.LogError($"{heroObjectReference} hat kein NetworkObject.");
+            Debug.LogError($"GameObject {heroObjectReference.NetworkObjectId} hat kein NetworkObject.");
             return;
         }
 

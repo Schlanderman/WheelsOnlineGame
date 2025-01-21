@@ -63,12 +63,6 @@ public class InitialHeroSetting : NetworkBehaviour
         SetHeroesOnManagersRpc();     //Heroes in den EvaluationManager und TurnManager laden (auf beiden Instanzen)
     }
 
-    public IEnumerator InitializeReadynessLate()
-    {
-        //Macht nix mehr, kann entfernt werden
-        yield return new WaitForEndOfFrame();
-    }
-
     public void SetPlayerHeroes(Hero square, Hero diamond)
     {
         SetMultiplayerPlayerHeroesRpc(square.GetComponent<NetworkObject>(), diamond.GetComponent<NetworkObject>());

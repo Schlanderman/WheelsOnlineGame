@@ -2,12 +2,12 @@ using UnityEngine;
 
 public class HeroActionsLengthManager : MonoBehaviour
 {
-    [SerializeField] private Hero selfOtherHero;  //Dieser Held
+    private Hero selfOtherHero;  //Dieser Held
 
-    [SerializeField] private BulwarkMover enemyBulwark;  //Bulwark des Gegners
+    private BulwarkMover enemyBulwark;  //Bulwark des Gegners
 
-    [SerializeField] private ActionRodAnimManager playerRodAnimations;   //Spieleranimationen
-    [SerializeField] private ActionRodAnimManager enemyRodAnimations;    //Gegneranimationen
+    private ActionRodAnimManager playerRodAnimations;   //Spieleranimationen
+    private ActionRodAnimManager enemyRodAnimations;    //Gegneranimationen
 
     private string thisHeroSide = "Square";
     private string thisUserSide = "Player";

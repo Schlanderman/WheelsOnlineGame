@@ -27,6 +27,8 @@ public class MultiplayerGameManager : NetworkBehaviour
 
     [SerializeField] private GameObject heroSpawnPosition;
 
+    [SerializeField] private Transform playerPrefab;
+
     //Events
     public event EventHandler OnPlayersAreReadyToPlay;
     public event EventHandler OnPlayersRoundIsFinished;
@@ -45,12 +47,31 @@ public class MultiplayerGameManager : NetworkBehaviour
     {
         if (PlayerScript.LocalInstance != null)
         {
-            ClientConnectedToServer();
+            //ClientConnectedToServer();
         }
         else
         {
             PlayerScript.OnAnyPlayerSpawned += PlayerScript_OnAnyPlayerSpawned;
         }
+    }
+
+    public override void OnNetworkSpawn()
+    {
+        if (IsServer)
+        {
+            NetworkManager.Singleton.SceneManager.OnLoadEventCompleted += SceneManager_OnLoadEventCompleted;
+        }
+    }
+
+    private void SceneManager_OnLoadEventCompleted(string sceneName, UnityEngine.SceneManagement.LoadSceneMode loadSceneMode, List<ulong> clientsCompleted, List<ulong> clientsTimedOut)
+    {
+        foreach (ulong clientId in NetworkManager.Singleton.ConnectedClientsIds)
+        {
+            Transform playerTransform = Instantiate(playerPrefab);
+            playerTransform.GetComponent<NetworkObject>().SpawnAsPlayerObject(clientId, true);
+        }
+
+        ClientConnectedToServer();
     }
 
     private void PlayerScript_OnAnyPlayerSpawned(object sender, EventArgs e)
@@ -66,7 +87,8 @@ public class MultiplayerGameManager : NetworkBehaviour
 
         if (PlayerScript.LocalInstance != null)
         {
-            ClientConnectedToServer();
+            Debug.Log($"Client Connected to Server von {sender} aufgerufen");
+            //ClientConnectedToServer();
         }
     }
 

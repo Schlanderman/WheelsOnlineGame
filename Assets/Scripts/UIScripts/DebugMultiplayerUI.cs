@@ -51,11 +51,6 @@ public class DebugMultiplayerUI : MonoBehaviour
         enemyHud.SetManagers(newPlayerTwo.GetComponent<EnemyScript>().GetSelectionRotator(), newPlayerTwo.GetComponent<EnemyScript>().GetWheelManager());
         enemyHud.SetEnemyScript(newPlayerTwo.GetComponent<EnemyScript>());
 
-        //Dies hier wird nichts mehr machen!
-        StartCoroutine(TurnManager.Instance.InitializeReadynessLate());
-        StartCoroutine(TurnManager.Instance.InitializeCrownHPLate());
-        StartCoroutine(InitialHeroSetting.Instance.InitializeReadynessLate());
-
         //CopyObjekte spawnen
         GameObject newCopyOfPlayerOne = Instantiate(actionsCopyer, gameBoardPlayerTwo, false);
         GameObject newCopyOfPlayerTwo = Instantiate(actionsCopyer, gameBoardPlayerOne, false);

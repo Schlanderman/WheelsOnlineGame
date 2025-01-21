@@ -10,7 +10,7 @@ public class CrownManager : NetworkBehaviour
 
     [SerializeField] private int maxHP = 10;      //Maximaler HP-Wert, mit dem der Spieler beginnt
     //CrownHP als Networkvariable, damit nur der Server diese ändern kann
-    public NetworkVariable<int> currentHP = new NetworkVariable<int>(
+    private NetworkVariable<int> currentHP = new NetworkVariable<int>(
         0,      //Startwert
         NetworkVariableReadPermission.Everyone,     //Clients dürfen den Wert lesen
         NetworkVariableWritePermission.Server       //Nur der Server darf den Wert schreiben
@@ -26,30 +26,16 @@ public class CrownManager : NetworkBehaviour
     private void Start()
     {
         currentHP.OnValueChanged += HPValueChanged;
+        TurnManager.Instance.OnGetCrownHP += TurnManager_OnGetCrownHP;
 
         if (IsServer) { SetStartStatsRpc(); }
-
-        InitialHeroSetting.Instance.OnInitializeCrownHP += TurnManager_OnInitializeCrownHP;
-    }
-
-    private void TurnManager_OnInitializeCrownHP(object sender, EventArgs e)
-    {
-        if (IsLocalPlayer) { ChangeCrownHPOnTurnManagerRpc(); }
-    }
-
-    [Rpc(SendTo.Server)]
-    private void ChangeCrownHPOnTurnManagerRpc(RpcParams rpcParams = default)
-    {
-        TurnManager.Instance.ChangeCrownHP(rpcParams.Receive.SenderClientId, currentHP.Value);
     }
 
     //Startwerte Setzen
     [Rpc(SendTo.Server)]
     private void SetStartStatsRpc()
     {
-        //Debug.Log($"CrownHP werden auf {maxHP} gesetzt.");
         currentHP.Value = maxHP;
-        //Debug.Log("Startstats eingegeben für " + this + "!");
     }
 
     //Methode zum Abziehen von HP
@@ -62,8 +48,6 @@ public class CrownManager : NetworkBehaviour
         {
             currentHP.Value = 0;      //Sicherstellen, dass HP nicht negativ wird
         }
-
-        ChangeCrownHPOnTurnManagerRpc();
     }
 
     //Methode zum Hinzufügen von HP
@@ -76,8 +60,6 @@ public class CrownManager : NetworkBehaviour
         {
             currentHP.Value = maxHP;      //Sicherstellen, dass HP nicht über maxHP steigt
         }
-
-        ChangeCrownHPOnTurnManagerRpc();
     }
 
     //Methode zur Aktualisierung der HP-Anzeige
@@ -101,7 +83,15 @@ public class CrownManager : NetworkBehaviour
     //Für das erste Anzeigenupdate
     public void UpdateHPDisplayGlobal()
     {
-        currentHP.Value = 11;
+        StartCoroutine(UpdateHPDisplayLate());
+    }
+
+    //Kurz warten, um es auf allen Clients synchronisieren zu können
+    private IEnumerator UpdateHPDisplayLate()
+    {
+        yield return new WaitForSeconds(0.3f);
+
+        currentHP.Value = 9;
         currentHP.Value = 10;
     }
 
@@ -141,5 +131,10 @@ public class CrownManager : NetworkBehaviour
 
         oneWheel.localEulerAngles = targetRotationOnes;
         tenWheel.localEulerAngles = targetRotationTens;
+    }
+
+    private void TurnManager_OnGetCrownHP(object sender, EventArgs e)
+    {
+        TurnManager.Instance.SetCrownHPForPlayer(OwnerClientId, currentHP.Value);
     }
 }
