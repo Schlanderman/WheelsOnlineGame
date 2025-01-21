@@ -30,6 +30,7 @@ public class CopyHeroFigures : ManagerCopiesHandler<HeroSelectionRotator>
     protected override void SetEvents()
     {
         originalManager.OnActivateChangeHero += HeroSelectionRotator_OnActivateChangeHero;
+        MultiplayerGameManager.Instance.OnPlayersAreReadyToPlay += MultiplayerGameManager_OnPlayersAreReadyToPlay;
     }
 
     private void HeroSelectionRotator_OnActivateChangeHero(int squareHeroIndex, int diamondHeroIndex, string heroType)
@@ -215,11 +216,25 @@ public class CopyHeroFigures : ManagerCopiesHandler<HeroSelectionRotator>
             if (heroType == "Square")
             {
                 activePlayerSquareHero = heroObject;
+                activePlayerSquareHero.SetActive(false);
             }
             else
             {
                 activePlayerDiamondHero = heroObject;
+                activePlayerDiamondHero.SetActive(false);
             }
         }
+    }
+
+    private void MultiplayerGameManager_OnPlayersAreReadyToPlay(object sender, System.EventArgs e)
+    {
+        ShowHeroesRpc();
+    }
+
+    [Rpc(SendTo.Everyone)]
+    private void ShowHeroesRpc()
+    {
+        activePlayerSquareHero.SetActive(true);
+        activePlayerDiamondHero.SetActive(true);
     }
 }

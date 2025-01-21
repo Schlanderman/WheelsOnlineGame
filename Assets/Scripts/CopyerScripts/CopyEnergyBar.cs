@@ -1,13 +1,22 @@
 using System.Collections;
+using Unity.Netcode;
 using UnityEngine;
 
 public class CopyEnergyBar : ManagerCopiesHandler<EnergyBar>
 {
     [SerializeField] private Transform energyBar;       //Das Objekt, das die Stange darstellt
+    [SerializeField] private GameObject uiCoverEnergyBar;
 
     protected override void SetEvents()
     {
         originalManager.OnActivateChangeEnergyBar += EnergyBar_OnActivateChangeEnergyBar;
+        MultiplayerGameManager.Instance.OnPlayersAreReadyToPlay += MultiplayerGameManager_OnPlayersAreReadyToPlay;
+        HideUI();
+    }
+
+    private void MultiplayerGameManager_OnPlayersAreReadyToPlay(object sender, System.EventArgs e)
+    {
+        ShowUIRpc();
     }
 
     private void EnergyBar_OnActivateChangeEnergyBar(float targetYPosition)
@@ -41,5 +50,19 @@ public class CopyEnergyBar : ManagerCopiesHandler<EnergyBar>
         }
 
         energyBar.localPosition = finalPosition;
+    }
+
+    [Rpc(SendTo.Everyone)]
+    private void ShowUIRpc()
+    {
+        energyBar.gameObject.SetActive(true);
+        uiCoverEnergyBar.SetActive(false);
+    }
+
+    //[Rpc(SendTo.Everyone)]
+    private void HideUI()
+    {
+        energyBar.gameObject.SetActive(false);
+        uiCoverEnergyBar.SetActive(true);
     }
 }

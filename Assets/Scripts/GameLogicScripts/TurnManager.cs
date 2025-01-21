@@ -223,6 +223,12 @@ public class TurnManager : NetworkBehaviour
                 
                 //Wartezeit
                 await WaitForSecondsAsync(animationLength);
+
+                //Energy Bar wieder zurücksetzen
+                hero.ResetEnergyBar();
+
+                //Wartezeit 2, um den Spielfluss etwas übersichtlicher zu halten
+                await WaitForSecondsAsync(0.2f);
             }
         }
     }
@@ -240,6 +246,12 @@ public class TurnManager : NetworkBehaviour
 
                 //Wartezeit
                 await WaitForSecondsAsync(animationLength);
+
+                //Energy Bar wieder zurücksetzen
+                hero.ResetEnergyBar();
+
+                //Wartezeit 2, um den Spielfluss etwas übersichtlicher zu halten
+                await WaitForSecondsAsync(0.2f);
             }
         }
     }
@@ -257,6 +269,12 @@ public class TurnManager : NetworkBehaviour
 
                 //Wartezeit
                 await WaitForSecondsAsync(animationLength);
+
+                //Energy Bar wieder zurücksetzen
+                hero.ResetEnergyBar();
+
+                //Wartezeit 2, um den Spielfluss etwas übersichtlicher zu halten
+                await WaitForSecondsAsync(0.2f);
             }
         }
     }
@@ -297,6 +315,12 @@ public class TurnManager : NetworkBehaviour
 
                 //Wartezeit
                 await WaitForSecondsAsync(animationLength);
+
+                //Energy Bar wieder zurücksetzen
+                hero.ResetEnergyBar();
+
+                //Wartezeit 2, um den Spielfluss etwas übersichtlicher zu halten
+                await WaitForSecondsAsync(0.2f);
             }
         }
     }
@@ -333,6 +357,12 @@ public class TurnManager : NetworkBehaviour
 
                 //Wartezeit
                 await WaitForSecondsAsync(animationLength);
+
+                //Energy Bar wieder zurücksetzen
+                hero.ResetEnergyBar();
+
+                //Wartezeit 2, um den Spielfluss etwas übersichtlicher zu halten
+                await WaitForSecondsAsync(0.2f);
             }
         }
     }

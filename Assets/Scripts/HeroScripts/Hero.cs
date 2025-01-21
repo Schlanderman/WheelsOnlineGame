@@ -180,7 +180,7 @@ public class Hero : NetworkBehaviour
         Debug.Log(heroType + " führt seine Aktion aus!");
 
         //Vielleicht mit extra Coroutine
-        if (IsServer) { currentEnergy.Value = 0; }
+        //if (IsServer) { currentEnergy.Value = 0; }
 
         StartCoroutine(heroActionsActivator.ActivateHeroAction(this));
     }
@@ -393,5 +393,10 @@ public class Hero : NetworkBehaviour
     public void SetHeroRank(HeroRank newRank)
     {
         heroRank.Value = newRank;
+    }
+
+    public void ResetEnergyBar()
+    {
+        currentEnergy.Value = 0;
     }
 }

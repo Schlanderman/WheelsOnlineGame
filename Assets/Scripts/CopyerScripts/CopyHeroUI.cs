@@ -1,3 +1,4 @@
+using Unity.Netcode;
 using UnityEngine;
 
 public class CopyHeroUI : ManagerCopiesHandler<HeroUIUpdater>
@@ -7,6 +8,8 @@ public class CopyHeroUI : ManagerCopiesHandler<HeroUIUpdater>
     [SerializeField] private GameObject block2Renderer;
     [SerializeField] private Transform wheel1;
     [SerializeField] private Transform wheel2;
+    [SerializeField] private GameObject uiCover1;
+    [SerializeField] private GameObject uiCover2;
 
     //Materialien für die verschiedenen Aktionen
     [SerializeField] private Material crownDamageMaterial;
@@ -20,11 +23,18 @@ public class CopyHeroUI : ManagerCopiesHandler<HeroUIUpdater>
         if (originalManager != null)
         {
             originalManager.OnActivateUIUpdate += HeroUIUpdater_OnActivateUIUpdate;
+            MultiplayerGameManager.Instance.OnPlayersAreReadyToPlay += MultiplayerGameManager_OnPlayersAreReadyToPlay;
+            HideUI();
         }
         else
         {
             Debug.LogError("Der Originale Manager konnte nicht zugewiesen werden!");
         }
+    }
+
+    private void MultiplayerGameManager_OnPlayersAreReadyToPlay(object sender, System.EventArgs e)
+    {
+        ShowUIRpc();
     }
 
     private void HeroUIUpdater_OnActivateUIUpdate(Hero hero)
@@ -118,5 +128,19 @@ public class CopyHeroUI : ManagerCopiesHandler<HeroUIUpdater>
 
         wheel1.localRotation = Quaternion.Euler(target1Rotation, wheel1.localRotation.y, wheel1.localRotation.z);
         wheel2.localRotation = Quaternion.Euler(target2Rotation, wheel2.localRotation.y, wheel2.localRotation.z);
+    }
+
+    [Rpc(SendTo.Everyone)]
+    private void ShowUIRpc()
+    {
+        uiCover1.SetActive(false);
+        uiCover2.SetActive(false);
+    }
+
+    //[Rpc(SendTo.Everyone)]
+    private void HideUI()
+    {
+        uiCover1.SetActive(true);
+        uiCover2.SetActive(true);
     }
 }
