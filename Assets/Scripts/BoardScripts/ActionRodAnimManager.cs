@@ -94,7 +94,7 @@ public class ActionRodAnimManager : MonoBehaviour
     public float GetAnimationLength(int rodNumber, string animation)
     {
         //Potentiell noch extra 0.5 Sekunden hinzufügen, falls sich Animationen überlagern
-        return rodAnimator[rodNumber].runtimeAnimatorController.animationClips.First(clip => clip.name == animation).length + 0.5f;
+        return rodAnimator[rodNumber].runtimeAnimatorController.animationClips.First(clip => clip.name == animation).length + 0.8f;
     }
 
     public void TestActivateRodAnimation(int rodNumber, string sprite, string animation)

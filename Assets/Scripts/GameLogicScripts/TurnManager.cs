@@ -14,7 +14,6 @@ public class TurnManager : NetworkBehaviour
     public event EventHandler OnResetRound;
     public event EventHandler OnSetCoverUp;
     public event EventHandler OnSetCoverDown;
-    public event EventHandler OnInitializeCrownHP;
     public event Action<bool, ulong> OnSetEndscreen;
 
     //Herostuff Events
@@ -84,7 +83,7 @@ public class TurnManager : NetworkBehaviour
                 await WaitForSecondsAsync(1f);
 
                 //Cover herunterfahren
-                OnSetCoverDown?.Invoke(this, EventArgs.Empty);
+                ChangeCoverStateRpc(false);
                 await WaitForSecondsAsync(1f);
                 break;
 
@@ -170,8 +169,7 @@ public class TurnManager : NetworkBehaviour
         else
         {
             await WaitForSecondsAsync(2f);
-            OnSetCoverUp?.Invoke(this, EventArgs.Empty);
-            //SetCoverUpRpc();
+            ChangeCoverStateRpc(true);     //Cover hochfahren
             await WaitForSecondsAsync(1f);
             EndTurn();
         }
@@ -418,5 +416,19 @@ public class TurnManager : NetworkBehaviour
     public void SetCrownHPForPlayer(ulong playerId, int hp)
     {
         CrownHPDictionary[playerId] = hp;
+    }
+
+    //Cover triggern
+    [Rpc(SendTo.Everyone)]
+    private void ChangeCoverStateRpc(bool setCoverUp)
+    {
+        if (setCoverUp)
+        {
+            OnSetCoverUp?.Invoke(this, EventArgs.Empty);
+        }
+        else
+        {
+            OnSetCoverDown?.Invoke(this, EventArgs.Empty);
+        }
     }
 }

@@ -186,6 +186,9 @@ public class HeroActionsActivator : NetworkBehaviour
             if (IsServer) { enemyCrown.DecreaseHPRpc(selfThisHero.GetCrownDamage()); }
         }
 
+        //Kurz warten, damit der nächste Sprite nicht ausversehen deaktiviert wird
+        yield return new WaitForSeconds(0.2f);
+
         //Zweiter Angriff
         //Animation
         heroAnimationManager.TriggerHeroAction();
@@ -265,6 +268,9 @@ public class HeroActionsActivator : NetworkBehaviour
             if (IsServer) { enemyCrown.DecreaseHPRpc(selfThisHero.GetCrownDamage()); }
         }
 
+        //Kurz warten, damit der nächste Sprite nicht ausversehen deaktiviert wird
+        yield return new WaitForSeconds(0.2f);
+
         //Zweite Aktion
         //Animation
         heroAnimationManager.TriggerHeroAction();
@@ -306,6 +312,9 @@ public class HeroActionsActivator : NetworkBehaviour
             enemyDiamondHero.SetCanMakeAction(false);
         }
 
+        //Kurz warten, damit der nächste Sprite nicht ausversehen deaktiviert wird
+        yield return new WaitForSeconds(0.2f);
+
         //Zweite Aktion
         //Animation
         heroAnimationManager.TriggerHeroAction();
@@ -334,6 +343,9 @@ public class HeroActionsActivator : NetworkBehaviour
 
         //Spieler-Krone heilen
         if (IsServer) { playerCrown.IncreaseHPRpc(selfThisHero.GetHealingAdding()); }
+
+        //Kurz warten, damit der nächste Sprite nicht ausversehen deaktiviert wird
+        yield return new WaitForSeconds(0.2f);
 
         //Zweite Aktion
         if (selfOtherHero.PriestChecksAction())
