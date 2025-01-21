@@ -9,9 +9,11 @@ public class ProfileData : MonoBehaviour
     //Profildaten
     public string ProfileName { get; private set; }
     public Texture2D ProfileImage { get; private set; }
+    public bool DontShowStartScreenAgain { get; private set; }
 
     private const string ProfileNameKey = "ProfileName";
     private const string ProfileImagePathKey = "ProfileImagePath";
+    private const string ProfileDontShowStartAgainKey = "DontShowStartAgain";
 
     private void Awake()
     {
@@ -48,11 +50,24 @@ public class ProfileData : MonoBehaviour
         PlayerPrefs.Save();
     }
 
+    //Setzt, ob die Startnachricht erneut gezeigt werden soll
+    public void SetShowStartScreenAgain(bool valueToSave)
+    {
+        DontShowStartScreenAgain = valueToSave;
+
+        //Speichern, ob der Startscreen angezeigt werden soll
+        PlayerPrefs.SetInt(ProfileDontShowStartAgainKey, valueToSave ? 1 : 0);
+        PlayerPrefs.Save();
+    }
+
     //Lädt die Profildaten aus den PlayerPrefs
     private void LoadProfileData()
     {
         //Profilname Laden
         ProfileName = PlayerPrefs.GetString(ProfileNameKey, "Player");
+
+        //ShowStartScreenAgain Laden
+        DontShowStartScreenAgain = PlayerPrefs.GetInt(ProfileDontShowStartAgainKey, 0) == 1;    //Standardwert ist 0 (false)
 
         //Profilbild laden
         string imagePath = PlayerPrefs.GetString(ProfileImagePathKey, string.Empty);
@@ -66,5 +81,13 @@ public class ProfileData : MonoBehaviour
         {
             ProfileImage = null;
         }
+    }
+
+    //ProfileData zurücksetzen
+    public void ResetPlayerPrefs()
+    {
+        PlayerPrefs.DeleteAll();
+        PlayerPrefs.Save();
+        Debug.Log("Alle PlayerPrefs wurden zurückgesetzt!");
     }
 }
