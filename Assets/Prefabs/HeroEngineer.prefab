@@ -61,7 +61,7 @@ PrefabInstance:
       value: 0
       objectReference: {fileID: 0}
     - target: {fileID: -7511558181221131132, guid: 57be2fe39838978489d15576d0f2f3e5, type: 3}
-      propertyPath: m_Materials.Array.data[0]
+      propertyPath: 'm_Materials.Array.data[0]'
       value: 
       objectReference: {fileID: 2100000, guid: 91f924a58a2cea24e88b89a33c961a0c, type: 2}
     - target: {fileID: 919132149155446097, guid: 57be2fe39838978489d15576d0f2f3e5, type: 3}
@@ -81,6 +81,9 @@ PrefabInstance:
       addedObject: {fileID: 9103088460255923859}
     - targetCorrespondingSourceObject: {fileID: 919132149155446097, guid: 57be2fe39838978489d15576d0f2f3e5, type: 3}
       insertIndex: -1
+      addedObject: {fileID: 4380041433304400375}
+    - targetCorrespondingSourceObject: {fileID: 919132149155446097, guid: 57be2fe39838978489d15576d0f2f3e5, type: 3}
+      insertIndex: -1
       addedObject: {fileID: 4821784030851106779}
     - targetCorrespondingSourceObject: {fileID: 919132149155446097, guid: 57be2fe39838978489d15576d0f2f3e5, type: 3}
       insertIndex: -1
@@ -93,7 +96,7 @@ GameObject:
   m_PrefabAsset: {fileID: 0}
 --- !u!95 &9103088460255923859
 Animator:
-  serializedVersion: 5
+  serializedVersion: 7
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
@@ -107,11 +110,37 @@ Animator:
   m_ApplyRootMotion: 0
   m_LinearVelocityBlending: 0
   m_StabilizeFeet: 0
+  m_AnimatePhysics: 0
   m_WarningMessage: 
   m_HasTransformHierarchy: 1
   m_AllowConstantClipSamplingOptimization: 1
   m_KeepAnimatorStateOnDisable: 0
   m_WriteDefaultValuesOnDisable: 0
+--- !u!114 &4380041433304400375
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8659753276594678948}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d5a57f767e5e46a458fc5d3c628d0cbb, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  GlobalObjectIdHash: 242511232
+  InScenePlacedSourceGlobalObjectIdHash: 0
+  DeferredDespawnTick: 0
+  Ownership: 1
+  AlwaysReplicateAsRoot: 0
+  SynchronizeTransform: 1
+  ActiveSceneSynchronization: 0
+  SceneMigrationSynchronization: 1
+  SpawnWithObservers: 1
+  DontDestroyWithOwner: 0
+  AutoObjectParentSync: 1
+  SyncOwnerTransformWhenParented: 1
+  AllowOwnerToParent: 0
 --- !u!114 &4821784030851106779
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -124,6 +153,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: faa8c5a900a84d6469dd68410e25bf60, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  ShowTopMostFoldoutHeaderGroup: 1
   heroType: 3
   heroRank: 1
   bronzeMaterial: {fileID: 2100000, guid: 91f924a58a2cea24e88b89a33c961a0c, type: 2}
@@ -141,4 +171,5 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 950f84fd698eba640bb4c90862727390, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  ShowTopMostFoldoutHeaderGroup: 1
   Animator: {fileID: 9103088460255923859}
