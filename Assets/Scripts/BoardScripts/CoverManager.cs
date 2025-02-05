@@ -21,16 +21,19 @@ public class CoverManager : MonoBehaviour
     //Events
     private void TurnManager_OnSetCoverUp(object sender, System.EventArgs e)
     {
+        AudioManager.Instance.PlaySoundClip(SoundClipRef.BrickSlide, SoundSourceRef.SFXSource, 0.1f);
         StartCoroutine(SetCoverUp());
     }
 
     private void TurnManager_OnSetCoverDown(object sender, System.EventArgs e)
     {
+        AudioManager.Instance.PlaySoundClip(SoundClipRef.BrickSlide, SoundSourceRef.SFXSource, 0.1f);
         StartCoroutine(SetCoverDown());
     }
 
     private void InitialHeroSetting_OnSetCoverUp(object sender, System.EventArgs e)
     {
+        AudioManager.Instance.PlaySoundClip(SoundClipRef.BrickSlide, SoundSourceRef.SFXSource, 0.1f);
         StartCoroutine(SetCoverUp());
     }
 

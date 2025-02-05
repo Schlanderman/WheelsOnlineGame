@@ -27,6 +27,7 @@ public class MainMenu : MonoBehaviour
     //Multiplayer-Men� anzeigen
     public void Multiplayer()
     {
+        AudioManager.Instance.PlaySoundClip(SoundClipRef.Button, SoundSourceRef.UISource, 0.5f);
         mainMenu.SetActive(false);
         multiplayerMenu.SetActive(true);
         gameBrowser.SetActive(false);
@@ -35,6 +36,7 @@ public class MainMenu : MonoBehaviour
     //Zur�ck zum Hauptmen�
     public void BackToMainMenu()
     {
+        AudioManager.Instance.PlaySoundClip(SoundClipRef.Button, SoundSourceRef.UISource, 0.5f);
         multiplayerMenu.SetActive(false);
         mainMenu.SetActive(true);
     }
@@ -42,6 +44,7 @@ public class MainMenu : MonoBehaviour
     //Host Game
     public void HostGame()
     {
+        AudioManager.Instance.PlaySoundClip(SoundClipRef.Button, SoundSourceRef.UISource, 0.5f);
         multiplayerMenu.SetActive(false);
         lobbyMenu.SetActive(true);
     }
@@ -49,6 +52,7 @@ public class MainMenu : MonoBehaviour
     //Join Game
     public void OpenGameBrowser()
     {
+        AudioManager.Instance.PlaySoundClip(SoundClipRef.Button, SoundSourceRef.UISource, 0.5f);
         gameBrowser.SetActive(true);
         lobbyManager.FetchLobbies();
     }
@@ -56,6 +60,7 @@ public class MainMenu : MonoBehaviour
     //Methode f�r das Verlassen einer Lobby
     public void ExitLobbyBrowser()
     {
+        AudioManager.Instance.PlaySoundClip(SoundClipRef.Button, SoundSourceRef.UISource, 0.5f);
         //Browser ausblenden
         gameBrowser.SetActive(false);
     }

@@ -1,10 +1,11 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using Unity.Netcode;
 using UnityEngine;
 using UnityEngine.UI;
 
-public class WheelManager : MonoBehaviour
+public class WheelManager : NetworkBehaviour
 {
     [SerializeField] private EnemyScript enemyScript;  //Offline only
 
@@ -22,6 +23,7 @@ public class WheelManager : MonoBehaviour
     public int stoppedWheels = 0;           //Anzahl der Räder, die sich nicht mehr drehen
     private bool canSpin = true;            //Zeigt an, ob man alle Räder drehen darf
     private bool firstSpin = true;          //Zeigt an, ob dies der erste Dreh des Spiels auf einer Seite ist
+    private bool isSpinning = false;        //Für AudioManager, um zu sehen, ob noch audio für's drehen abgespielt werden soll
 
     //Events für andere Skripts
     public event Action<int, int, int, int, int> OnWheelsHaveStopped;
@@ -137,6 +139,7 @@ public class WheelManager : MonoBehaviour
         {
             canSpin = false;
             OnWheelsStartSpinning?.Invoke(this, EventArgs.Empty);
+
             //Starte den Spin für alle Räder
             foreach (var wheel in wheels)
             {
@@ -145,11 +148,13 @@ public class WheelManager : MonoBehaviour
 
             spinCount++;    //Zähler erhöhen
             UpdateSpinLamps();      //Aktualisieren der Lampen nach jedem Spin
+            AudioManager.Instance.PlaySoundClip(SoundClipRef.LeverPull, SoundSourceRef.UISource, 0.4f);
         }
         else if (spinCount < maxSpins && canSpin && allLocked)
         {
             spinCount++;    //Zähler erhöhen
             UpdateSpinLamps();      //Aktualisieren der Lampen nach jedem Spin
+            AudioManager.Instance.PlaySoundClip(SoundClipRef.LeverPull, SoundSourceRef.UISource, 0.4f);
 
             if (spinCount >= maxSpins)
             {
@@ -224,6 +229,8 @@ public class WheelManager : MonoBehaviour
             wheel.StopWheel();
         }
 
+        AudioManager.Instance.PlaySoundClip(SoundClipRef.MechanicalClickMulti, SoundSourceRef.SFXSource, 0.3f);
+
         //Dem MultiplayerGameManager ubermitteln, dass der Client alle Turns verbraucht hat
         MultiplayerGameManager.Instance.SetLocalPlayerRoundFinished(true);
 
@@ -244,6 +251,8 @@ public class WheelManager : MonoBehaviour
             spinCount = 0;
             stoppedWheels = 0;
             canSpin = true;
+
+            AudioManager.Instance.PlaySoundClip(SoundClipRef.MechanicalClickMulti, SoundSourceRef.SFXSource, 0.3f);
 
             foreach (var wheel in wheels)
             {

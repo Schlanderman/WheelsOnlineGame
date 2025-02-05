@@ -74,6 +74,9 @@ public class BulwarkMover : NetworkBehaviour
     {
         OnMoveBulwark?.Invoke(targetYPosition);
 
+        //Audio abspielen
+        AudioManager.Instance.PlaySoundClip(SoundClipRef.BrickBuildUp, SoundSourceRef.SFXSource, 0.3f);
+
         //Dauer der Animation
         float duration = 0.5f;
         float timeElapsed = 0f;

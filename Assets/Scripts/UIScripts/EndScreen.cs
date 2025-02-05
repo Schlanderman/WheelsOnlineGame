@@ -37,16 +37,25 @@ public class EndScreen : MonoBehaviour
         {
             tieScreen.SetActive(true);
             quitToMainMenuButton.gameObject.SetActive(true);
+
+            //Audio abspielen
+            AudioManager.Instance.PlaySoundClip(SoundClipRef.Tie, SoundSourceRef.SFXSource, 0.3f);
         }
         else if (winnerId == PlayerScript.LocalInstance.OwnerClientId)
         {
             winScreen.SetActive(true);
             quitToMainMenuButton.gameObject.SetActive(true);
+
+            //Audio abspielen
+            AudioManager.Instance.PlaySoundClip(SoundClipRef.Win, SoundSourceRef.SFXSource, 0.3f);
         }
         else
         {
             loseScreen.SetActive(true);
             quitToMainMenuButton.gameObject.SetActive(true);
+
+            //Audio abspielen
+            AudioManager.Instance.PlaySoundClip(SoundClipRef.Lose, SoundSourceRef.SFXSource, 0.3f);
         }
     }
 }

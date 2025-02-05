@@ -72,6 +72,7 @@ public class LobbyManager : MonoBehaviour
     {
         try
         {
+            AudioManager.Instance.PlaySoundClip(SoundClipRef.Button, SoundSourceRef.UISource, 0.5f);
             OnCreateLobbyStarted?.Invoke(this, new EventArgs());
 
             //Lobby Optionen
@@ -137,6 +138,7 @@ public class LobbyManager : MonoBehaviour
     {
         try
         {
+            AudioManager.Instance.PlaySoundClip(SoundClipRef.Button, SoundSourceRef.UISource, 0.5f);
             OnJoinStarted?.Invoke(this, EventArgs.Empty);
             JoinLobbyByIdOptions options = new JoinLobbyByIdOptions
             {
@@ -172,6 +174,7 @@ public class LobbyManager : MonoBehaviour
         {
             try
             {
+                AudioManager.Instance.PlaySoundClip(SoundClipRef.Button, SoundSourceRef.UISource, 0.5f);
                 await LobbyService.Instance.RemovePlayerAsync(joinedLobby.Id, AuthenticationService.Instance.PlayerId);
                 joinedLobby = null;
                 hostLobby = null;
@@ -197,6 +200,8 @@ public class LobbyManager : MonoBehaviour
 
                 //Hier logik für den Spielstart hinzufügen
                 Debug.Log($"Starting the Game, mit {RelayManager.Instance}");
+
+                AudioManager.Instance.PlaySoundClip(SoundClipRef.Button, SoundSourceRef.UISource, 0.5f);
 
                 //Szene für alle Spieler Synchronisieren
                 StopPollingForLobbyUpdates();

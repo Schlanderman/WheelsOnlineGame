@@ -263,10 +263,14 @@ public class EvaluationManager : NetworkBehaviour
             }
         }
 
+        yield return new WaitForSeconds(0.8f);
+
+        //Audio abspielen
+        if (gainedXP >= 1) { AudioManager.Instance.PlaySoundClip(SoundClipRef.WandPing, SoundSourceRef.SFXSource, 0.2f); }
+        if (energyGained >= 1) { AudioManager.Instance.PlaySoundClip(SoundClipRef.ChimeLow, SoundSourceRef.SFXSource, 0.2f); }
+
         //Nur XP an den Helden geben, wenn es der Server ausführt
         if (!IsServer) { yield break; }
-
-        yield return new WaitForSeconds(0.8f);
 
         if (gainedXP >= 1)
         {
@@ -314,6 +318,9 @@ public class EvaluationManager : NetworkBehaviour
         yield return new WaitForSeconds(0.8f);
 
         bulwarkMover.increaseBulwark(bulwarkIncrease);
+
+        //Audio abspielen
+        if (bulwarkIncrease >= 1) { AudioManager.Instance.PlaySoundClip(SoundClipRef.ChimeLow, SoundSourceRef.SFXSource, 0.2f); }
     }
 
     public void SetHeroes(Hero square, Hero diamond)

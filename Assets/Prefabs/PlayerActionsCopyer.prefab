@@ -4559,6 +4559,7 @@ GameObject:
   m_Component:
   - component: {fileID: 4185827721526857329}
   - component: {fileID: 589937463375077019}
+  - component: {fileID: 6549839375288424938}
   m_Layer: 0
   m_Name: ActionRodAnimation3
   m_TagString: Untagged
@@ -4604,6 +4605,18 @@ Animator:
   m_AllowConstantClipSamplingOptimization: 1
   m_KeepAnimatorStateOnDisable: 0
   m_WriteDefaultValuesOnDisable: 0
+--- !u!114 &6549839375288424938
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2360196499512441411}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 5d4ceb3ab74f68b49b88d729cbbda4f0, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &2365220850609850084
 GameObject:
   m_ObjectHideFlags: 0
@@ -8645,6 +8658,7 @@ GameObject:
   m_Component:
   - component: {fileID: 2596653466207483176}
   - component: {fileID: 8005697413296266457}
+  - component: {fileID: 6790880836655365452}
   m_Layer: 0
   m_Name: ActionRodAnimation2
   m_TagString: Untagged
@@ -8690,6 +8704,18 @@ Animator:
   m_AllowConstantClipSamplingOptimization: 1
   m_KeepAnimatorStateOnDisable: 0
   m_WriteDefaultValuesOnDisable: 0
+--- !u!114 &6790880836655365452
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4708965382439067428}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 5d4ceb3ab74f68b49b88d729cbbda4f0, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &4727075248161371464
 GameObject:
   m_ObjectHideFlags: 0
@@ -8880,6 +8906,7 @@ GameObject:
   m_Component:
   - component: {fileID: 3821360047263836850}
   - component: {fileID: 2438709415577419240}
+  - component: {fileID: 5315505264068112224}
   m_Layer: 0
   m_Name: ActionRodAnimation4
   m_TagString: Untagged
@@ -8925,6 +8952,18 @@ Animator:
   m_AllowConstantClipSamplingOptimization: 1
   m_KeepAnimatorStateOnDisable: 0
   m_WriteDefaultValuesOnDisable: 0
+--- !u!114 &5315505264068112224
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4923203618868587549}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 5d4ceb3ab74f68b49b88d729cbbda4f0, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &5057337663313522610
 GameObject:
   m_ObjectHideFlags: 0
@@ -15660,6 +15699,7 @@ GameObject:
   m_Component:
   - component: {fileID: 4933003597073595216}
   - component: {fileID: 6093619012383198421}
+  - component: {fileID: 8664557902789078648}
   m_Layer: 0
   m_Name: ActionRodAnimation1
   m_TagString: Untagged
@@ -15705,6 +15745,18 @@ Animator:
   m_AllowConstantClipSamplingOptimization: 1
   m_KeepAnimatorStateOnDisable: 0
   m_WriteDefaultValuesOnDisable: 0
+--- !u!114 &8664557902789078648
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7963390432321269628}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 5d4ceb3ab74f68b49b88d729cbbda4f0, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &7979023038217005149
 GameObject:
   m_ObjectHideFlags: 0

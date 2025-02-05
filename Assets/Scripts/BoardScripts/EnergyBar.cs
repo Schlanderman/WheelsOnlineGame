@@ -1,9 +1,9 @@
 using System;
 using System.Collections;
-using System.Collections.Generic;
+using Unity.Netcode;
 using UnityEngine;
 
-public class EnergyBar : MonoBehaviour
+public class EnergyBar : NetworkBehaviour
 {
     [SerializeField] private Transform energyBar;       //Das Objekt, das die Stange darstellt
     [SerializeField] private float startYPosition = 0f; //Die Startposition der Stange
@@ -30,6 +30,9 @@ public class EnergyBar : MonoBehaviour
 
     private IEnumerator MoveEnergyBar(float targetYPosition)
     {
+        //Audio abspielen
+        if (IsOwner) { AudioManager.Instance.PlaySoundClip(SoundClipRef.MetalRattleSlow, SoundSourceRef.SFXSource, 0.2f); }
+
         //Dauer der Animation
         float duration = 0.2f;
         float timeElapsed = 0f;

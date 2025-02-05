@@ -205,6 +205,8 @@ public class MultiplayerGameManager : NetworkBehaviour
         copyOfPlayerOneNetwork.Spawn(true);
         copyOfPlayerTwoNetwork.Spawn(true);
 
+        copyOfPlayerOneNetwork.ChangeOwnership(GetOtherPlayerClientId());
+
         SpawnParentsForHeroesRpc(copyOfPlayerOneNetwork);
         SpawnParentsForHeroesRpc(copyOfPlayerTwoNetwork);
 
@@ -257,5 +259,18 @@ public class MultiplayerGameManager : NetworkBehaviour
     private void ActivatePlayerUIElementsRpc()
     {
         PlayerScript.LocalInstance.ChangePlayerUIElements(true);
+    }
+
+    private ulong GetOtherPlayerClientId()
+    {
+        foreach (var client in NetworkManager.Singleton.ConnectedClientsList)
+        {
+            if (client.ClientId != NetworkManager.Singleton.LocalClientId)
+            {
+                return client.ClientId;
+            }
+        }
+
+        return ulong.MaxValue;  //Kein andrer Spieler gefunden
     }
 }

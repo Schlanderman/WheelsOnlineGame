@@ -7,6 +7,8 @@ public class CopyEnergyBar : ManagerCopiesHandler<EnergyBar>
     [SerializeField] private Transform energyBar;       //Das Objekt, das die Stange darstellt
     [SerializeField] private GameObject uiCoverEnergyBar;
 
+    private bool playersAreReadyToPlay = false;     //Für das Audio, damit es nur abgespielt wird, wenn der gegner es auch sieht
+
     protected override void SetEvents()
     {
         originalManager.OnActivateChangeEnergyBar += EnergyBar_OnActivateChangeEnergyBar;
@@ -26,6 +28,9 @@ public class CopyEnergyBar : ManagerCopiesHandler<EnergyBar>
 
     private IEnumerator MoveEnergyBar(float targetYPosition)
     {
+        //Audio abspielen
+        if (IsOwner && playersAreReadyToPlay) { AudioManager.Instance.PlaySoundClip(SoundClipRef.MetalRattleSlow, SoundSourceRef.SFXSource, 0.2f); }
+
         //Dauer der Animation
         float duration = 0.2f;
         float timeElapsed = 0f;
@@ -57,6 +62,7 @@ public class CopyEnergyBar : ManagerCopiesHandler<EnergyBar>
     {
         energyBar.gameObject.SetActive(true);
         uiCoverEnergyBar.SetActive(false);
+        playersAreReadyToPlay = true;
     }
 
     //[Rpc(SendTo.Everyone)]

@@ -70,6 +70,9 @@ public class CrownManager : NetworkBehaviour
 
     private void UpdateHPDisplay()
     {
+        //Audio abspielen
+        AudioManager.Instance.PlaySoundClip(SoundClipRef.LoopingRotatingWheelShort, SoundSourceRef.SFXSource, 0.1f);
+
         int ones = currentHP.Value % 10;      //Einerstelle
         int tens = currentHP.Value / 10;      //Zehnerstelle
 

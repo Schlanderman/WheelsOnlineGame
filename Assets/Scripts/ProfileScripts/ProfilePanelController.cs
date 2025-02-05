@@ -1,5 +1,4 @@
 using UnityEngine;
-using UnityEngine.UI;
 
 public class ProfilePanelController : MonoBehaviour
 {
@@ -18,5 +17,6 @@ public class ProfilePanelController : MonoBehaviour
         isExpanded = !isExpanded;
         savetyButton.SetActive(isExpanded);
         animator.SetBool("isExpanded", isExpanded);
+        AudioManager.Instance.PlaySoundClip(SoundClipRef.Button, SoundSourceRef.UISource, 0.5f);
     }
 }

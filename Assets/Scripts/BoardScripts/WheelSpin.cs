@@ -14,6 +14,7 @@ public class WheelSpin : NetworkBehaviour
     private bool clampLock = false;
     private bool turnClampLock = false;
     private bool initialClampLock = true;
+    private float lastClickAngle = 0f;  // Speichert die letzte 45°-Marke
 
     [SerializeField] private int wheelIndex;     //Welches Rad ist das? (0-4)
     private float finalRotation;
@@ -21,6 +22,8 @@ public class WheelSpin : NetworkBehaviour
     [SerializeField] private WheelManager wheelManager;
 
     [SerializeField] private ClampActivator clampedActivator;
+
+    [SerializeField] private AudioClip clickAudioClip;
 
     public delegate void OnWheelStopped();
     public event OnWheelStopped WheelStoppedEvent;
@@ -50,6 +53,8 @@ public class WheelSpin : NetworkBehaviour
 
             //Reduziere die Spingeschwindigkeit allmählich
             currentSpinSpeed = Mathf.Lerp(currentSpinSpeed, 0f, Time.deltaTime * slowDownRate);
+
+            //PlaySoundAfterEigthRotation();
 
             //Wenn die Geschwindigkeit fast 0 erreicht, stoppe das Rad
             if (currentSpinSpeed < 10f)
@@ -108,6 +113,7 @@ public class WheelSpin : NetworkBehaviour
             isLocked = !isLocked;
             clampedActivator.ToggleClamps(isLocked);    //Klammeranimation triggern
             //Debug.Log("Rad " + (isLocked ? "gesperrt" : "entsperrt"));
+            AudioManager.Instance.PlaySoundClip(SoundClipRef.MechanicalClick, SoundSourceRef.SFXSource, 0.2f);
         }
     }
 
@@ -196,6 +202,9 @@ public class WheelSpin : NetworkBehaviour
         }
 
         SetSnappedRotationRpc(targetRotation);
+
+        //Sound ein letztes Mal abspielen, sobald das Rad zur finalen Position snappt
+        AudioManager.Instance.PlaySoundClip(SoundClipRef.Chime, SoundSourceRef.SFXSource, 0.2f);
     }
 
     [Rpc(SendTo.Everyone)]
@@ -228,5 +237,21 @@ public class WheelSpin : NetworkBehaviour
         else { symbolIndex--; }
 
         return symbolIndex;
+    }
+
+    //Spiele einen Sound, wenn das Rad sich um mindestens 45° gedreht hat
+    private void PlaySoundAfterEigthRotation()
+    {
+        float currentAngle = transform.eulerAngles.x;
+
+        //Berechne das nächte 45°-Vielfache
+        float nearestMultiple = Mathf.Round(currentAngle / 45f) * 45f;
+
+        //Prüfen, ob wir uns einem 45°-Vielfachen annähern (Toleranz ±5°)
+        if (Mathf.Abs(currentAngle - nearestMultiple) <= 5f && nearestMultiple != lastClickAngle)
+        {
+            AudioManager.Instance.PlaySoundClip(SoundClipRef.Slap, SoundSourceRef.SFXSource, 0.3f);
+            lastClickAngle = nearestMultiple;
+        }
     }
 }

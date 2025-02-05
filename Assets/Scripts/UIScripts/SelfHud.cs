@@ -22,24 +22,28 @@ public class SelfHud : MonoBehaviour
         figureSquareSelectLeftButton.onClick.AddListener(() =>
         {
             heroSelection.RotateLeft("Square");
+            AudioManager.Instance.PlaySoundClip(SoundClipRef.Thud, SoundSourceRef.UISource, 0.5f);
             StartCoroutine(ButtonCooldown(figureSquareSelectLeftButton));
         });
 
         figureSquareSelectRightButton.onClick.AddListener(() =>
         {
             heroSelection.RotateRight("Square");
+            AudioManager.Instance.PlaySoundClip(SoundClipRef.Thud, SoundSourceRef.UISource, 0.5f);
             StartCoroutine(ButtonCooldown(figureSquareSelectRightButton));
         });
 
         figureDiamondSelectLeftButton.onClick.AddListener(() =>
         {
             heroSelection.RotateLeft("Diamond");
+            AudioManager.Instance.PlaySoundClip(SoundClipRef.Thud, SoundSourceRef.UISource, 0.5f);
             StartCoroutine(ButtonCooldown(figureDiamondSelectLeftButton));
         });
 
         figureDiamondSelectRightButton.onClick.AddListener(() =>
         {
             heroSelection.RotateRight("Diamond");
+            AudioManager.Instance.PlaySoundClip(SoundClipRef.Thud, SoundSourceRef.UISource, 0.5f);
             StartCoroutine(ButtonCooldown(figureDiamondSelectRightButton));
         });
 
@@ -52,6 +56,7 @@ public class SelfHud : MonoBehaviour
         readyButton.onClick.AddListener(() =>
         {
             DeactivateAllButtons();
+            AudioManager.Instance.PlaySoundClip(SoundClipRef.Button, SoundSourceRef.UISource, 0.5f);
             MultiplayerGameManager.Instance.SetLocalPlayerReadyToPlay(true);
         });
     }

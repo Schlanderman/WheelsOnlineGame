@@ -20,6 +20,9 @@ public class CopyCrown : ManagerCopiesHandler<CrownManager>
 
     private IEnumerator WheelRotator(float rotationOnes, float rotationTens)
     {
+        //Audio abspielen
+        if (IsOwner) { AudioManager.Instance.PlaySoundClip(SoundClipRef.LoopingRotatingWheelShort, SoundSourceRef.SFXSource, 0.1f); }
+
         //Dauer der Animation
         float duration = 0.3f;
         float timeElapsed = 0f;

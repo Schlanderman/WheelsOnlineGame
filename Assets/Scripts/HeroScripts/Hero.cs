@@ -93,6 +93,9 @@ public class Hero : NetworkBehaviour
         {
             heroRank.Value++;
             copyHero.SetHeroRank(heroRank.Value);
+
+            //Audio abspielen
+            AudioManager.Instance.PlaySoundClip(SoundClipRef.LevelUp, SoundSourceRef.SFXSource, 0.3f);
         }
     }
 
@@ -393,6 +396,9 @@ public class Hero : NetworkBehaviour
     public void SetHeroRank(HeroRank newRank)
     {
         heroRank.Value = newRank;
+
+        //Audio abspielen
+        if (IsOwner) { AudioManager.Instance.PlaySoundClip(SoundClipRef.LevelUp, SoundSourceRef.SFXSource, 0.3f); }
     }
 
     public void ResetEnergyBar()
