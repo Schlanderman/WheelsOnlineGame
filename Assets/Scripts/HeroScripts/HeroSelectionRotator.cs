@@ -29,7 +29,7 @@ public class HeroSelectionRotator : NetworkBehaviour
 
     //Welcher Held in der Liste ist ausgewählt
     private int currentPlayerSquareHeroIndex = 0;               //Aktuelle Position des Spieler Square Helden in der Liste
-    private int currentPlayerDiamondHeroIndex = 0;              //Aktuelle Position des Spieler Diamond Helden in der Liste
+    private int currentPlayerDiamondHeroIndex = 1;              //Aktuelle Position des Spieler Diamond Helden in der Liste
 
     //Referenz auf den ausgewählten Helden
     [SerializeField] private Hero currentPlayerSquareHero;
@@ -102,10 +102,22 @@ public class HeroSelectionRotator : NetworkBehaviour
             if (heroType == "Square")
             {
                 currentPlayerSquareHeroIndex = (currentPlayerSquareHeroIndex + 1) % availableHeroes.Length;
+
+                //Verhindern, dass Square und Diamond gleich sind, indem ein index übersprungen wird
+                if (currentPlayerSquareHeroIndex == currentPlayerDiamondHeroIndex)
+                {
+                    currentPlayerSquareHeroIndex = (currentPlayerSquareHeroIndex + 1) % availableHeroes.Length;
+                }
             }
             else if (heroType == "Diamond")
             {
                 currentPlayerDiamondHeroIndex = (currentPlayerDiamondHeroIndex + 1) % availableHeroes.Length;
+
+                //Verhindern, dass Square und Diamond gleich sind, indem ein index übersprungen wird
+                if (currentPlayerDiamondHeroIndex == currentPlayerSquareHeroIndex)
+                {
+                    currentPlayerDiamondHeroIndex = (currentPlayerDiamondHeroIndex + 1) % availableHeroes.Length;
+                }
             }
             else
             {
@@ -118,10 +130,22 @@ public class HeroSelectionRotator : NetworkBehaviour
             if (heroType == "Square")
             {
                 currentPlayerSquareHeroIndex = (currentPlayerSquareHeroIndex - 1 + availableHeroes.Length) % availableHeroes.Length;
+
+                //Verhindern, dass Square und Diamond gleich sind, indem ein index übersprungen wird
+                if (currentPlayerSquareHeroIndex == currentPlayerDiamondHeroIndex)
+                {
+                    currentPlayerSquareHeroIndex = (currentPlayerSquareHeroIndex - 1 + availableHeroes.Length) % availableHeroes.Length;
+                }
             }
             else if (heroType == "Diamond")
             {
                 currentPlayerDiamondHeroIndex = (currentPlayerDiamondHeroIndex - 1 + availableHeroes.Length) % availableHeroes.Length;
+
+                //Verhindern, dass Square und Diamond gleich sind, indem ein index übersprungen wird
+                if (currentPlayerDiamondHeroIndex == currentPlayerSquareHeroIndex)
+                {
+                    currentPlayerDiamondHeroIndex = (currentPlayerDiamondHeroIndex - 1 + availableHeroes.Length) % availableHeroes.Length;
+                }
             }
             else
             {
